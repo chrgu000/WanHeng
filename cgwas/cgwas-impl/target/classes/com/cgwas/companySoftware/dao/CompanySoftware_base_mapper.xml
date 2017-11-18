@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.companySoftware.dao">
+<select id="getSoftwareId" resultType="java.lang.Long">
+select id from p_company_software where software_name=#{softwareName} and (company_id=0 or company_id=#{company_id})
+</select>
+	<sql id="columns">
+		id, software_name, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{software_name}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="software_name != null and software_name != ''">
+			and software_name = #{software_name}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanySoftware" parameterType="com.cgwas.companySoftware.entity.CompanySoftware" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanySoftwareVo" parameterType="com.cgwas.companySoftware.entity.CompanySoftwareVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCompanySoftware">
+		delete from p_company_software
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanySoftwareVo">
+		delete from p_company_software
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCompanySoftware">
+		delete from p_company_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanySoftwareVo">
+		delete from p_company_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCompanySoftware" resultType="com.cgwas.companySoftware.entity.CompanySoftwareVo">
+		select 
+		<include refid="columns"/>
+		from p_company_software
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCompanySoftware" resultType="com.cgwas.companySoftware.entity.CompanySoftwareVo">
+		select 
+		<include refid="columns"/>
+		from p_company_software
+		where  company_id=0 or company_id=#{company_id}
+		 
+	</select>
+
+	<update id="updateCompanySoftware">
+		update p_company_software
+		<set>
+			id=#{id}, 
+			software_name=#{software_name}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCompanySoftwareVo">
+		update p_company_software
+		<set>
+			id=#{id}, 
+			software_name=#{software_name}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCompanySoftware">
+		update p_company_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="software_name != null and software_name != ''">
+			software_name=#{software_name}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCompanySoftwareVo">
+		update p_company_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="software_name != null and software_name != ''">
+			software_name=#{software_name}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCompanySoftware">
+		update p_company_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="software_name != null and software_name != ''">
+			software_name=#{software_name}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCompanySoftwareVo">
+		update p_company_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="software_name != null and software_name != ''">
+			software_name=#{software_name}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

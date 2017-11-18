@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.SelectDao">
+	<select id="findMarksByTitleId" resultType="Mark">
+	select m.* from jxc_mark m left join jxc_mark_title t on m.id=t.mark_id where t.title_id=#{title_id}
+	</select>
+	  <select id="findAllPrice" resultType="Price">
+	 select * from jxc_price
+	 </select>
+	  <select id="findAllDistance" resultType="Distance">
+	 select * from jxc_distance
+	 </select>
+	  <select id="findAllSequence" resultType="Sequence">
+	 select * from jxc_sequence
+	 </select>
+</mapper>

@@ -1,0 +1,393 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userAuthInfo.dao">
+
+	<sql id="columns">
+		id, idcard, idcard_pic_path, status,
+		user_id,create_time,idcard_pic_path_back
+	</sql>
+	<sql id="vals">
+		#{id}, #{idcard}, #{idcard_pic_path}, #{status},
+		#{user_id},#{create_time},#{idcard_pic_path_back}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="idcard != null and idcard != ''">
+			and idcard = #{idcard}
+		</if>
+		<if test="idcard_pic_path != null and idcard_pic_path != ''">
+			and idcard_pic_path = #{idcard_pic_path}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveUserAuthInfo" parameterType="com.cgwas.userAuthInfo.entity.UserAuthInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_auth_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserAuthInfoVo" parameterType="com.cgwas.userAuthInfo.entity.UserAuthInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_auth_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserAuthInfo">
+		delete from u_user_auth_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserAuthInfoVo">
+		delete from u_user_auth_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserAuthInfo">
+		delete from u_user_auth_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserAuthInfoVo">
+		delete from u_user_auth_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserAuthInfo" resultType="com.cgwas.userAuthInfo.entity.UserAuthInfoVo">
+		select
+		<include refid="columns" />
+		from u_user_auth_info
+		where id=#{id}
+	</select>
+
+	<select id="selectUserAuthInfo" resultType="com.cgwas.userAuthInfo.entity.UserAuthInfoVo">
+		select
+		<include refid="columns" />
+		from u_user_auth_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserAuthInfo">
+		update u_user_auth_info
+		<set>
+			id=#{id},
+			idcard=#{idcard},
+			idcard_pic_path=#{idcard_pic_path},
+			status=#{status},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserAuthInfoVo">
+		update u_user_auth_info
+		<set>
+			id=#{id},
+			idcard=#{idcard},
+			idcard_pic_path=#{idcard_pic_path},
+			status=#{status},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserAuthInfo">
+		update u_user_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="idcard != null and idcard != ''">
+				idcard=#{idcard},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="idcard_pic_path_back != null and idcard_pic_path_back != ''">
+				idcard_pic_path_back=#{idcard_pic_path_back},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+
+	<update id="updateIgnoreNullUserAuthInfoVo">
+		update u_user_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="idcard != null and idcard != ''">
+				idcard=#{idcard},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserAuthInfo">
+		update u_user_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="idcard != null and idcard != ''">
+				idcard=#{idcard},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserAuthInfoVo">
+		update u_user_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="idcard != null and idcard != ''">
+				idcard=#{idcard},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据ID得到认证信息表 -->
+	<select id="getUserAuthInfoById" resultType="com.cgwas.userAuthInfo.entity.UserAuthInfo">
+		select * from
+		u_user_auth_info
+		where user_id = #{userId}
+	</select>
+	<!-- 根据用户ID更改认证信息表 -->
+	<update id="updateUserAuthInfoById">
+		update u_user_auth_info
+		<set>
+			<if test="idcard != null and idcard != ''">
+				idcard=#{idcard},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="status != null and status != ''">
+				status='未认证',
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="idcard_pic_path_back != null and idcard_pic_path_back != ''">
+				idcard_pic_path_back=#{idcard_pic_path_back},
+			</if>
+			
+			<if test="user_id != null">
+				user_id=#{user_id},
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+	<!-- 获取用户认证状态 -->
+	<select id="getUserAuthInfoStatus" resultType="java.lang.String">
+		select `status`
+		from
+		u_user_auth_info WHERE user_id = #{user_id} limit 1 ;
+	</select>
+	<!-- 更改用户审核信息审核状态 -->
+	<update id="updateUserAuthInfoStatus">
+		update u_user_auth_info
+		<set>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+	<!-- 获取用户认证列表 -->
+	<select id="getUserAuthInfoList"
+		resultType="com.cgwas.userAuthInfo.entity.AttestationUserAuthInfo">
+		SELECT
+		a.id,
+		a.nickname,
+		b.`name`,
+		b.sex,
+		b.birth,
+		a.tel,
+		d.company_name,
+		e.section_name,
+		a.regist_time,
+		a.last_login_time,
+		f.`status`
+		FROM
+		u_user AS
+		a
+		LEFT JOIN u_user_info AS b ON a.id = b.user_id
+		LEFT JOIN u_employee AS
+		c ON a.id = c.user_id
+		LEFT JOIN u_company AS d ON c.company_id = d.id
+		LEFT JOIN u_company_section AS e ON e.id = c.section_id
+		LEFT JOIN
+		u_user_auth_info AS f ON a.id = f.user_id
+		where 1 = 1 and a.is_delete =
+		'N' and f.status = '未认证'
+		<choose>
+			<when test="attestationUserAuthInfo.id!=null">
+				and a.id=#{attestationUserAuthInfo.id}
+			</when>
+			<when test="attestationUserAuthInfo.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{attestationUserAuthInfo.nickname},'%')
+			</when>
+
+			<when test="attestationUserAuthInfo.name!=null">
+				and a.name like
+				CONCAT('%',#{attestationUserAuthInfo.name},'%')
+			</when>
+			<when test="attestationUserAuthInfo.sex!=null">
+				and b.sex =#{attestationUserAuthInfo.sex}
+			</when>
+			<when test="attestationUserAuthInfo.tel!=null">
+				and a.tel like
+				CONCAT('%',#{attestationUserAuthInfo.tel},'%')
+			</when>
+			<when test="attestationUserAuthInfo.company_name!=null">
+				and d.company_name
+				CONCAT('%',#{attestationUserAuthInfo.company_name},'%')
+			</when>
+			<when test="attestationUserAuthInfo.section_name!=null">
+				and e.section_name like
+				CONCAT('%',#{attestationUserAuthInfo.section_name},'%')
+			</when>
+		</choose>
+		<if test="page.sortColumn==null">
+			ORDER BY f.create_time DESC
+		</if>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取用户认证列表(数量) -->
+	<select id="getUserAuthInfoListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_user AS
+		a
+		LEFT JOIN u_user_info AS b ON a.id =
+		b.user_id
+		LEFT JOIN u_employee AS
+		c ON a.id = c.user_id
+		LEFT JOIN
+		u_company AS d ON c.company_id = d.id
+		LEFT JOIN u_company_section AS e
+		ON e.id = c.section_id
+		LEFT JOIN
+		u_user_auth_info AS f ON a.id =
+		f.user_id
+		where 1 = 1 and a.is_delete = 'N' and f.status = '未认证'
+		<choose>
+			<when test="attestationUserAuthInfo.id!=null">
+				and a.id=#{attestationUserAuthInfo.id}
+			</when>
+			<when test="attestationUserAuthInfo.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{attestationUserAuthInfo.nickname},'%')
+			</when>
+
+			<when test="attestationUserAuthInfo.name!=null">
+				and a.name like
+				CONCAT('%',#{attestationUserAuthInfo.name},'%')
+			</when>
+			<when test="attestationUserAuthInfo.sex!=null">
+				and b.sex =#{attestationUserAuthInfo.sex}
+			</when>
+			<when test="attestationUserAuthInfo.tel!=null">
+				and a.tel like
+				CONCAT('%',#{attestationUserAuthInfo.tel},'%')
+			</when>
+			<when test="attestationUserAuthInfo.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{attestationUserAuthInfo.company_name},'%')
+			</when>
+			<when test="attestationUserAuthInfo.section_name!=null">
+				and e.section_name like
+				CONCAT('%',#{attestationUserAuthInfo.section_name},'%')
+			</when>
+		</choose>
+	</select>
+
+	<!-- 根据用户id得到用户认证信息 -->
+	<select id="getUserAuthInfoByUserId" resultType="com.cgwas.userAuthInfo.entity.UserAuthInfo">
+		select * from u_user_auth_info WHERE user_id = #{user_id} LIMIT 0,1
+	</select>
+	<!-- 检测身份证是否存在  -->
+	<select id="getHaveIdCard" resultType="java.lang.Long">
+		SELECT count(*) FROM u_user_auth_info as a  where a.idcard = #{idcard} AND a.`status` ='已认证'
+	</select>
+
+
+</mapper>

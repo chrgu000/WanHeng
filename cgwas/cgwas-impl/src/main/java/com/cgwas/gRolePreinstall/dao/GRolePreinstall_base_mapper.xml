@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.gRolePreinstall.dao">
+	<sql id="columns">
+		id, role_name
+	</sql>
+	<sql id="vals">
+		#{id}, #{role_name}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="role_name != null and role_name != ''">
+			and role_name = #{role_name}
+		</if>
+	</sql>
+
+	<insert id="saveGRolePreinstall" parameterType="com.cgwas.gRolePreinstall.entity.GRolePreinstall" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_g_role_preinstall (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveGRolePreinstallVo" parameterType="com.cgwas.gRolePreinstall.entity.GRolePreinstallVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_g_role_preinstall (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteGRolePreinstall">
+		delete from p_g_role_preinstall
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteGRolePreinstallVo">
+		delete from p_g_role_preinstall
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleGRolePreinstall">
+		delete from p_g_role_preinstall
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleGRolePreinstallVo">
+		delete from p_g_role_preinstall
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadGRolePreinstall" resultType="com.cgwas.gRolePreinstall.entity.GRolePreinstallVo">
+		select 
+		<include refid="columns"/>
+		from p_g_role_preinstall
+		where id=#{id} 
+	</select>
+	
+	<select id="selectGRolePreinstall" resultType="com.cgwas.gRolePreinstall.entity.GRolePreinstallVo">
+		select 
+		<include refid="columns"/>
+		from p_g_role_preinstall
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateGRolePreinstall">
+		update p_g_role_preinstall
+		<set>
+			id=#{id}, 
+			role_name=#{role_name}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateGRolePreinstallVo">
+		update p_g_role_preinstall
+		<set>
+			id=#{id}, 
+			role_name=#{role_name}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullGRolePreinstall">
+		update p_g_role_preinstall
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullGRolePreinstallVo">
+		update p_g_role_preinstall
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleGRolePreinstall">
+		update p_g_role_preinstall
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleGRolePreinstallVo">
+		update p_g_role_preinstall
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

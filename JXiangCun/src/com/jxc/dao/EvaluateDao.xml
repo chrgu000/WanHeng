@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.EvaluateDao">
+	<insert id="addEvaluate">
+		insert into jxc_evaluate(content,merchant_id,nickname,path,creatrDate)
+		values(#{content},#{merchant_id},#{nickname},#{path},#{createDate})
+	</insert>
+	<select id="findEvaluateByPage" resultMap="EvaluateMaps">
+		select * from jxc_evaluate
+		<where>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				and merchant_id=#{merchant_id}
+			</if>
+			<if test="nickname!=null&amp;&amp;!nickname.equals('')">
+				and nickname like "%"#{nickname}"%"
+			</if>
+		</where>
+		order by createDate desc
+		limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Evaluate" id="EvaluateMaps">
+	<association property="merchant" column="merchant_id" javaType="Merchant" select="findMerchantById">
+	</association>
+	</resultMap>
+	<select id="findMerchantById" resultType="Merchant">
+	select * from jxc_merchant where id=#{merchant_id}
+	</select>
+	<select id="findRows"  resultType="int">
+	 select count(*) from jxc_evaluate<where>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				and merchant_id=#{merchant_id}
+			</if>
+			<if test="nickname!=null&amp;&amp;!nickname.equals('')">
+				and nickname like "%"#{nickname}"%"
+			</if>
+		</where>
+	</select>
+	<delete id="deleteEvaluate">
+	delete from jxc_evaluate where id=#{id}
+	</delete>
+</mapper>

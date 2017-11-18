@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>添加合同</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="../css/date.min.css" rel="stylesheet" type="text/css" />
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body v-cloak>
+<div class="form contract">
+    <div class="address" v-cloak>
+        <img src="../img/address.png" class="img-responsive">
+        <p><span>{{data.city}}</span><small>{{data.gardenName}}{{data.address}}</small></p>
+    </div>
+
+    <label>
+        <span>房号</span>
+        <input type="text" id="houseNum" placeholder="请输入房号">
+    </label>
+    <label>
+        <span>租客姓名</span>
+        <input type="text" id="name" placeholder="请输入租客姓名">
+    </label>
+    <label>
+        <span>租客电话</span>
+        <input type="text" id="tel" placeholder="请输入租客电话">
+    </label>
+    <label>
+        <span>租客身份证号</span>
+        <input type="text" id="idCardNum" placeholder="请输入租客身份证号">
+    </label>
+    <label>
+        <span>房东姓名</span>
+        <input type="text" id="hostName" placeholder="房东姓名">
+    </label>
+    <label>
+        <span>房东电话</span>
+        <input type="text" id="hostTel" placeholder="请输入房东电话">
+    </label>
+    <label>
+        <span>房东身份证号</span>
+        <input type="text" id="hostIdCardNum" placeholder="请输入房东身份证号">
+    </label>
+
+
+    <!--<label class="door_model">-->
+        <!--<span>租赁期限</span>-->
+        <!--<input type="button" value="请选择" id="startTime" style="text-align: left;" class="kbtn" readonly >-->
+        <!--<i>至</i>-->
+        <!--<input type="button" id="endTime" value="请选择" class="kbtn" style="text-align: left;" readonly >-->
+    <!--</label>-->
+
+
+
+    <div class="door_model">
+        <span>租赁期限</span>
+        <input  id="startTime" class="kbtn" readonly placeholder="请选择" /><i>至</i>
+        <input id="endTime" class="kbtn" readonly placeholder="请选择"/>
+    </div>
+    <div id="datePlugin" ></div>
+    <label class="label_three">
+        <span>租金</span>
+        <input type="text" id="rent" placeholder="">
+        <span>元/月</span>
+    </label>
+    <label class="label_three">
+        <span>押金</span>
+        <input type="text" id="deposit" placeholder="">
+        <span>元/月</span>
+    </label>
+    <div class="nice-select" name="nice-select">
+        <span>付款方式</span>
+        <input type="text" value=""   class="showv" readonly  placeholder="请选择">
+        <input type="hidden" value="" id="payWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+        <ul>
+            <li v-for="payWay in payWays" :data-value="payWay.id">{{payWay.content}}</li>
+        </ul>
+            </div>
+        </div>
+    </div>
+    <div class="nice-select" name="nice-select">
+        <span>物业费</span>
+        <input type="text" value="" readonly   class="showv" placeholder="请选择">
+        <input type="hidden" value="" id="condoWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+                    <ul>
+                        <li data-value="租客缴">租客缴</li>
+                        <li data-value="房东缴">房东缴</li>
+                        <li data-value="无">无</li>
+                     </ul>
+            </div>
+        </div>
+    </div>
+    <div class="nice-select" name="nice-select">
+        <span>水费</span>
+        <input type="text" value="" readonly   class="showv" placeholder="请选择">
+        <input type="hidden" value="" id="waterWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+                <ul>
+                    <li data-value="租客缴">租客缴</li>
+                    <li data-value="房东缴">房东缴</li>
+                    <li data-value="无">无</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="nice-select" name="nice-select">
+        <span>电费</span>
+        <input type="text" value=""  class="showv" readonly  placeholder="请选择">
+        <input type="hidden" value="" id="powerWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+
+                <ul>
+                    <li data-value="租客缴">租客缴</li>
+                    <li data-value="房东缴">房东缴</li>
+            <li data-value="无">无</li>
+        </ul>
+            </div>
+        </div>
+    </div>
+    <div class="nice-select" name="nice-select">
+        <span>燃气费</span>
+        <input type="text" value="" readonly class="showv" placeholder="请选择">
+        <input type="hidden" value="" id="gasWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+                <ul>
+                    <li data-value="租客缴">租客缴</li>
+                    <li data-value="房东缴">房东缴</li>
+            <li data-value="无">无</li>
+        </ul>
+            </div>
+        </div>
+    </div>
+    <a class="release" href="#" onclick="submit()" >提交</a>
+</div>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/iscroll.js">
+</script>
+<script type="text/javascript" src="../js/date.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script type="text/javascript" src="../js/form.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script type="text/javascript" language="javascript"
+        src="../../static/common/getQueryString.js"></script>
+<script src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script type="text/javascript">
+    var id=getQueryString("id");
+    function submit(){
+        var houseNum=$("#houseNum").val();
+        if(!houseNum){
+            $.pop.tips("请输入房号");
+            return;
+        }
+        var name=$("#name").val();
+        if(!name){
+            $.pop.tips("请输入租客姓名");
+            return;
+        }
+        var  tel=$("#tel").val();
+        var reg = /^1[3|4|5|7|8]\d{9}$/;
+        if (!reg.test(tel)) {
+            $.pop.tips("手机号格式不对,请重新输入!");
+            return;
+        }
+        var idcardreg=/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/;
+        var idCardNum=$("#idCardNum").val();
+        if (!idcardreg.test(idCardNum)) {
+            $.pop.tips("身份证号格式不对,请重新输入!");
+            return;
+        }
+        var hostName=$("#hostName").val();
+        if(!hostName){
+            $.pop.tips("请输入房东姓名");
+            return;
+        }
+        var  hostTel=$("#hostTel").val();
+        if (!reg.test(hostTel)) {
+            $.pop.tips("手机号格式不对,请重新输入!");
+            return;
+        }
+        var hostIdCardNum=$("#hostIdCardNum").val();
+        if (!idcardreg.test(hostIdCardNum)) {
+            $.pop.tips("身份证号格式不对,请重新输入!");
+            return;
+        }
+        var startTime=$("#startTime").val();
+        if(!startTime){
+            $.pop.tips("请输入起始日期");
+            return;
+        }
+        var endTime=$("#endTime").val();
+        if(!endTime){
+            $.pop.tips("请输入结束日期");
+            return;
+        }
+        var rent=$("#rent").val();
+        if(!rent){
+            $.pop.tips("请输入租金");
+            return;
+        }
+        var deposit=$("#deposit").val();
+        if(!deposit){
+            $.pop.tips("请输入押金");
+            return;
+        }
+        var payWayId=$("#payWay").val()
+        if(!payWayId){
+            $.pop.tips("请选择付款方式");
+            return;
+
+        }
+        var condoWay=$("#condoWay").val();
+        if(!condoWay){
+            $.pop.tips("请选择物业费");
+            return;
+        }
+        var waterWay=$("#waterWay").val();
+        if(!waterWay){
+            $.pop.tips("请选择水费");
+            return;
+        }
+
+        var powerWay=$("#powerWay").val();
+        if(!powerWay){
+            $.pop.tips("请选择电费");
+            return;
+        }
+        var gasWay=$("#gasWay").val();
+        if(!gasWay){
+            $.pop.tips("请选择天然气费");
+            return;
+        }
+        $.ajax( {
+            url : "../../compact/addCompact.do",
+            type : "post",
+            dataType : "json",
+            data : {
+                houseId:id,
+                houseNum:houseNum,
+                name:name,
+                tel:tel,
+                idCardNum:idCardNum,
+                hostName:hostName,
+                hostTel:hostTel,
+                hostIdCardNum:hostIdCardNum,
+                startTime:startTime,
+                endTime:endTime,
+                rent:rent,
+                deposit:deposit,
+                payWayId:payWayId,
+                condoWay:condoWay,
+                waterWay:waterWay,
+                powerWay:powerWay,
+                gasWay:gasWay
+            },
+            success : function(data) {
+                $.pop.tips(data.errInfo);
+                setTimeout(function(){
+                    location.href="cont_list.html"
+                },1000);
+            },
+            error : function() {
+            }
+        });
+    }
+    $.ajax( {
+        url : "../../house/getHouseById.do",
+        type : "post",
+        dataType : "json",
+        data : {id:id},
+        success : function(data) {
+           new Vue({
+               el:'.address',
+               data:{
+                   data:data
+               }
+           });
+        },
+        error : function() {
+        }
+    });
+    $(function() {
+        $('#startTime').date();
+        $('#endTime').date();
+        $(".body .kbtn").click(function() {
+            $(this).css("width", "100%");
+            $(this).css("border", "1")
+        })
+        $.ajax({
+            url: "../../decorateSituation/getAllPayWay.do",
+            type: "post",
+            dataType: "json",
+            data: {},
+            success: function (data) {
+                var vm=new Vue({
+                    el:'body',
+                    data:{
+                        payWays:data
+                    }
+                });
+                vm.$nextTick(function(){
+                    $('[name="nice-select"] li').click(function(e){
+                        var val = $(this).text();
+                        $(this).parents('[name="nice-select"]').find(' .showv').val(val);
+                        $(this).parents('[name="nice-select"]').find(' .setv').val($(this).attr("data-value"));
+                        $('[name="nice-select"] .black').hide();
+                        $('[name="nice-select"] .select_center').animate({bottom:'-100%'},"fast");
+
+                        $(this).parents('[name="nice-select"]').removeClass("nice-select-red");
+                        e.stopPropagation();
+                    });
+                    $(".check_box li").click(function () {
+                        $(this).toggleClass("active");
+                    });
+                });
+            },
+            error: function () {
+            }
+        });
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.ModuleDao">
+	<select id="getAllModule" resultType="Module">
+		select * from dq_module
+	</select>
+	<select id="getModulesByMap" resultType="Module">
+		select * from dq_module m left join dq_role_module rm on
+		m.mid=rm.module_id
+		<where>
+			<if test="nflag !=null ">
+				and m.nflag=#{nflag}
+			</if>
+			<if test="role_id !=null">
+				and rm.role_id=#{role_id}
+			</if>
+			<if test="pmid !=null">
+				and m.pmid=#{pmid}
+			</if>
+			order by num asc
+		</where>
+	</select>
+	<select id="getTopModules" resultMap="ModuleMaps1">
+		select * from dq_module
+		where pmid is null 
+	</select>
+	<resultMap type="Module" id="ModuleMaps1">
+		<id column="mid" property="mid" />
+		<collection property="children" column="mid" javaType="arrayList"
+			ofType="Module" select="getChildren" />
+	</resultMap>
+	<select id="getChildren" resultMap="ModuleMaps2">
+		select * from dq_module where
+		pmid=#{mid}
+	</select>
+	<resultMap type="Module" id="ModuleMaps2">
+		<id column="mid" property="mid" />
+		<collection property="children" column="mid" javaType="arrayList"
+			ofType="Module" select="getChildren1" />
+	</resultMap>
+	<select id="getChildren1" resultType="Module">
+		select * from dq_module
+		where pmid=#{mid}
+</select>
+	<select id="getModulesByRoleId" resultType="int">
+		select module_id from dq_role_module where role_id=#{role_id} 
+</select>
+	<delete id="deleteRoleModuleByRoleId">
+		delete from dq_role_module where role_id=#{role_id}
+</delete>
+	<insert id="addRoleModule">
+		insert into dq_role_module(role_id,module_id)values(#{role_id},#{module_id})
+	</insert>
+</mapper>

@@ -1,0 +1,345 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.visitor.dao">
+
+	<sql id="columns">
+		id, ip, country, region, city, area, county, isp,
+		visit_time, status
+	</sql>
+	<sql id="vals">
+		#{id}, #{ip}, #{country}, #{region}, #{city}, #{area},
+		#{county}, #{isp}, #{visit_time}, #{status}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="ip != null and ip != ''">
+			and ip = #{ip}
+		</if>
+		<if test="country != null and country != ''">
+			and country = #{country}
+		</if>
+		<if test="region != null and region != ''">
+			and region = #{region}
+		</if>
+		<if test="city != null and city != ''">
+			and city = #{city}
+		</if>
+		<if test="area != null and area != ''">
+			and area = #{area}
+		</if>
+		<if test="county != null and county != ''">
+			and county = #{county}
+		</if>
+		<if test="isp != null and isp != ''">
+			and isp = #{isp}
+		</if>
+		<if test="visit_time != null">
+			and visit_time = #{visit_time}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+	</sql>
+
+	<insert id="saveVisitor" parameterType="com.cgwas.visitor.entity.Visitor"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_visitor (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveVisitorVo" parameterType="com.cgwas.visitor.entity.VisitorVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_visitor (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteVisitor">
+		delete from s_visitor
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteVisitorVo">
+		delete from s_visitor
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleVisitor">
+		delete from s_visitor
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleVisitorVo">
+		delete from s_visitor
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadVisitor" resultType="com.cgwas.visitor.entity.VisitorVo">
+		select
+		<include refid="columns" />
+		from s_visitor
+		where id=#{id}
+	</select>
+
+	<select id="selectVisitor" resultType="com.cgwas.visitor.entity.VisitorVo">
+		select
+		<include refid="columns" />
+		from s_visitor
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateVisitor">
+		update s_visitor
+		<set>
+			id=#{id},
+			ip=#{ip},
+			country=#{country},
+			region=#{region},
+			city=#{city},
+			area=#{area},
+			county=#{county},
+			isp=#{isp},
+			visit_time=#{visit_time},
+			status=#{status}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateVisitorVo">
+		update s_visitor
+		<set>
+			id=#{id},
+			ip=#{ip},
+			country=#{country},
+			region=#{region},
+			city=#{city},
+			area=#{area},
+			county=#{county},
+			isp=#{isp},
+			visit_time=#{visit_time},
+			status=#{status}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullVisitor">
+		update s_visitor
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="country != null and country != ''">
+				country=#{country},
+			</if>
+			<if test="region != null and region != ''">
+				region=#{region},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="county != null and county != ''">
+				county=#{county},
+			</if>
+			<if test="isp != null and isp != ''">
+				isp=#{isp},
+			</if>
+			<if test="visit_time != null">
+				visit_time=#{visit_time},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullVisitorVo">
+		update s_visitor
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="country != null and country != ''">
+				country=#{country},
+			</if>
+			<if test="region != null and region != ''">
+				region=#{region},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="county != null and county != ''">
+				county=#{county},
+			</if>
+			<if test="isp != null and isp != ''">
+				isp=#{isp},
+			</if>
+			<if test="visit_time != null">
+				visit_time=#{visit_time},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleVisitor">
+		update s_visitor
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="country != null and country != ''">
+				country=#{country},
+			</if>
+			<if test="region != null and region != ''">
+				region=#{region},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="county != null and county != ''">
+				county=#{county},
+			</if>
+			<if test="isp != null and isp != ''">
+				isp=#{isp},
+			</if>
+			<if test="visit_time != null">
+				visit_time=#{visit_time},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleVisitorVo">
+		update s_visitor
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="country != null and country != ''">
+				country=#{country},
+			</if>
+			<if test="region != null and region != ''">
+				region=#{region},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="county != null and county != ''">
+				county=#{county},
+			</if>
+			<if test="isp != null and isp != ''">
+				isp=#{isp},
+			</if>
+			<if test="visit_time != null">
+				visit_time=#{visit_time},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取是否存在当前ip -->
+	<select id="getHaveIp" resultType="java.lang.Long">
+		select
+		count(*) from s_visitor where ip = #{ip}
+	</select>
+	<!-- 按条件搜索 -->
+	<select id="getVisitorCount" resultType="java.lang.Long">
+		select count(*) from s_visitor where 1 = 1
+		<if test="svisitor.id != null and svisitor.id != ''">
+			and id=#{svisitor.id}
+		</if>
+		<if test="svisitor.ip != null and svisitor.ip != ''">
+			and ip like
+			CONCAT('%',#{svisitor.ip},'%')
+		</if>
+		<if test="svisitor.country != null and svisitor.country != ''">
+			and country like
+			CONCAT('%',#{svisitor.country},'%')
+		</if>
+		<if test="svisitor.region != null and svisitor.region != ''">
+			and region like
+			CONCAT('%',#{svisitor.region},'%')
+		</if>
+		<if test="svisitor.city != null and svisitor.city != ''">
+			and city like
+			CONCAT('%',#{svisitor.city},'%')
+		</if>
+		<if test="svisitor.area != null and svisitor.area != ''">
+			and area like
+			CONCAT('%',#{svisitor.area},'%')
+		</if>
+		<if test="svisitor.county != null and svisitor.county != ''">
+			and county like
+			CONCAT('%',#{svisitor.county},'%')
+		</if>
+		<if test="svisitor.isp != null and svisitor.isp != ''">
+			and isp like
+			CONCAT('%',#{svisitor.isp},'%')
+		</if>
+		<if test="svisitor.startTime != null and svisitor.endTime != null">
+			and visit_time <![CDATA[ => ]]>
+			#{svisitor.startTime} and visit_time <![CDATA[ <= ]]>
+			#{svisitor.endTime}
+		</if>
+		<if test="svisitor.status != null and svisitor.status != ''">
+			and status=#{svisitor.status}
+		</if>
+	</select>
+
+</mapper>

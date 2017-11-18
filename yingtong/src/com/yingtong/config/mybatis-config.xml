@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Admin" type="com.yingtong.entity.Admin" />
+		<typeAlias alias="Brand" type="com.yingtong.entity.Brand" />
+		<typeAlias alias="Car" type="com.yingtong.entity.Car" />
+		<typeAlias alias="Power" type="com.yingtong.entity.Power" />
+		<typeAlias alias="Price" type="com.yingtong.entity.Price" />
+		<typeAlias alias="Vehicle" type="com.yingtong.entity.Vehicle" />
+		<typeAlias alias="TitleAddr" type="com.yingtong.entity.TitleAddr" />
+		<typeAlias alias="Address" type="com.yingtong.entity.Address" />
+		<typeAlias alias="Motorcycle" type="com.yingtong.entity.Motorcycle" />
+		<typeAlias alias="Title" type="com.yingtong.entity.Title" />
+		<typeAlias alias="Article" type="com.yingtong.entity.Article" />
+		<typeAlias alias="LongRentService" type="com.yingtong.entity.LongRentService" />
+		<typeAlias alias="Enterprise" type="com.yingtong.entity.Enterprise" />
+		<typeAlias alias="User" type="com.yingtong.entity.User" />
+		<typeAlias alias="Order" type="com.yingtong.entity.Order" />
+		<typeAlias alias="Advice" type="com.yingtong.entity.Advice" />
+		<typeAlias alias="Phone" type="com.yingtong.entity.Phone" />
+
+	</typeAliases>
+</configuration>

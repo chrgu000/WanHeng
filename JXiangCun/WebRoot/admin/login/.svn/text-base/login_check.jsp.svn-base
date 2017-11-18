@@ -1,0 +1,76 @@
+<%@ page contentType="text/html; charset=utf-8" language="java" import="java.sql.*" errorPage="" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<jsp:useBean id="rect" scope="page" class="com.db.DB.DB">
+</jsp:useBean>
+<jsp:useBean id='oMD5' scope='page' class='beartool.MD5'/>
+<%@ page import='java.util.*'%>
+<%@ page import='java.sql.*'%>
+<%@ page import="com.db.DB.*" %>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Cache-Control" content="no-cache" />
+<meta http-equiv="Expires" content="0" />
+<title>登陆检测</title>
+</head>
+
+<body>
+			
+			<%
+				Statement stmt=null;
+				request.setCharacterEncoding("utf-8");
+				String adminname=request.getParameter("adminname");
+				String pwd=request.getParameter("password");
+				String admintag="",pswmd5="";
+
+	
+			if(adminname!=null && !adminname.equals(""))
+				{
+			try{
+				pswmd5=oMD5.getMD5ofStr(pwd);
+				String strSQL1="select * from admin where Aname='"+adminname+"' and Apasswords='"+pswmd5+"'"; //管理员
+				ResultSet rs=null;
+				
+				DB con=new DB();
+				con.conn();
+
+				rs=con.executeQuery(strSQL1);
+				if(rs.next())
+				{	
+				
+					admintag=rs.getString(5);
+					session.setAttribute("Alogin","OK");
+					session.setAttribute("adminname",adminname);
+					session.setAttribute("atag",admintag);
+					
+					response.sendRedirect("../index.jsp");
+					
+					
+				}else
+				{
+					%>
+            		<script language="javascript">	alert("用户名或密码错误！");	window.location.href="../login.jsp";   </script>
+            		<%
+            		
+					//response.sendRedirect("login.jsp");
+					
+				}			
+				
+			}catch(Exception e)
+			{
+				e.printStackTrace();
+			}
+		}else
+		{	
+			%>
+            <script language="javascript">	alert("用户名和密码不能为空！");window.location.href="../login.jsp";  </script>
+            <%
+			//response.sendRedirect("login.jsp");
+			
+		}
+			
+             
+            %>
+</body>
+</html>

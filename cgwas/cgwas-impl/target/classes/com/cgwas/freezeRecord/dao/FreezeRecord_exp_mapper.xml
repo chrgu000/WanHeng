@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.freezeRecord.dao">
+	<sql id="columnsAs">
+		t1.id, t1.freeze_price, t1.freeze_state, t1.consume_state, t1.trade_type, t1.task_type, t1.user_id, t1.task_id, t1.company_id, t1.create_time
+	</sql>
+
+	<select id="selectFreezeRecordPage" resultType="com.cgwas.freezeRecord.entity.FreezeRecordVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_freeze_record t1
+		join
+		(SELECT
+		id
+		from
+		u_freeze_record
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectFreezeRecordCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_freeze_record
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

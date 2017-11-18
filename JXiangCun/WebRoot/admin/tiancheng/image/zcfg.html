@@ -1,0 +1,328 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=gb2312">
+<LINK href="css/user.css" type=text/css rel=stylesheet>
+<title>杭州万恒会计服务有限公司</title>
+<style type="text/css">
+<!--
+body {
+	background-image: url(css/by/by_01.jpg);
+	background-repeat: repeat-x;
+}
+-->
+#search{
+	background:url(images/search.gif) no-repeat;
+	width:59px;
+	height:26px;
+	cursor:pointer;
+	
+}
+</style>
+<style>
+
+ul,ol,li,dl,dt,dd { margin:0; padding:0; list-style-type:none;}
+h1,h2,h3,form,input,iframe,span { margin:0; padding:0;} 
+/*a { color:#7FB0C8;}
+a:link {color: #7FB0C8; TEXT-DECORATION: none;}
+a:visited {color: #7FB0C8; TEXT-DECORATION: none;}
+a:hover {color: #fff; TEXT-DECORATION: none;}
+.white { color:#fff;}
+.white a:link {color: #fff; TEXT-DECORATION: none;}
+.white a:visited {color: #fff; TEXT-DECORATION: none;}
+.white a:hover {color: #73E1F5; TEXT-DECORATION: none;}
+*/
+a:link { TEXT-DECORATION: none;}
+a:visited { TEXT-DECORATION: none;}
+a:hover {TEXT-DECORATION: none;}
+/* 树形菜单开始 */
+.close { float:right; clear:right; font-size:7px; font-weight:normal; cursor:pointer; padding-right:130px;}
+.title { font-size:14px; color:#fff; margin-bottom:10px; padding-left:5px; width:290px;}
+.zmenu {width:198px; height:340px;overflow:hidden; padding-left:1px;;}
+.menu { width:208px; height:360px; overflow:auto;  margin-bottom:10px;}
+/*.menu { SCROLLBAR-FACE-COLOR: #002537; SCROLLBAR-HIGHLIGHT-COLOR: #002537; SCROLLBAR-SHADOW-COLOR: #0E6893; SCROLLBAR-3DLIGHT-COLOR: #0E6893; SCROLLBAR-ARROW-COLOR: #fff; SCROLLBAR-TRACK-COLOR: #053d58;SCROLLBAR-DARKSHADOW-COLOR: #002537; SCROLLBAR-BASE-COLOR: #01152a;}
+*/
+.l1 { background:url(zcd.png); font-size:13px; padding:5px 0 0 10px; height:20px; margin-bottom:3px; cursor:pointer;}
+.slist { margin:0 0 5px 0; display:none; overflow:hidden;}
+.l2 { background:url(zcd.png); font-size:13px; padding:0px 30px 0 5px;margin-bottom:3px; margin-left:5px; font-weight:100;}
+.l2 a { padding:6px 0 0 5px; width:200px; height:21px; display:block;} 
+.currentl2 a,.l2 a:hover { background:#1E5A82; color:#fff;}
+.sslist { background:#156890; width:200px; overflow:hidden; margin:0 0 5px 35px; display:none;}
+.l3 {background:url(zcd.png); margin-bottom:1px;}
+.l3 a { padding:6px 0 0 5px; width:200px; height:20px; display:block;} 
+.currentl3 a,.l3 a:hover { color:#fff; font-weight:normal;}
+</style>
+<script type="text/javascript" src="http://www.codefans.net/ajaxjs/jquery1.3.2.js"></script>
+<script>
+// 树状菜单
+$(document).ready(function(){
+   $(".l1").toggle(function(){
+	 $(".slist").animate({height: 'toggle', opacity: 'hide'}, "slow");
+     $(this).next(".slist").animate({height: 'toggle', opacity: 'toggle'}, "slow");
+   },function(){
+	     $(".slist").animate({height: 'toggle', opacity: 'hide'}, "slow");
+		 $(this).next(".slist").animate({height: 'toggle', opacity: 'toggle'}, "slow");
+   });
+   
+   $(".l2").toggle(function(){
+     $(this).next(".sslist").animate({height: 'toggle', opacity: 'toggle'}, "slow");
+   },function(){
+		 $(this).next(".sslist").animate({height: 'toggle', opacity: 'toggle'}, "slow");
+   });
+   
+   $(".l2").click(function(){
+	$(".l3").removeClass("currentl3");
+	$(".l2").removeClass("currentl2");
+	$(this).addClass("currentl2");
+	});  
+   
+   $(".l3").click(function(){
+	$(".l3").removeClass("currentl3");		  
+	$(this).addClass("currentl3");
+	});  
+   
+   $(".close").toggle(function(){
+	$(".slist").animate({height: 'toggle', opacity: 'hide'}, "fast");  
+	$(".sslist").animate({height: 'toggle', opacity: 'hide'}, "fast");  
+	 },function(){
+	$(".slist").animate({height: 'toggle', opacity: 'show'}, "fast");  
+	$(".sslist").animate({height: 'toggle', opacity: 'show'}, "fast");  
+	});  
+});
+</script>
+<script for=window event=onload language="jscript">     
+    //载入页面后，调用函数initAd()   
+    initAd();  
+ </script>   
+ <script language="JScript">
+<!--
+function initAd() {   
+     //设置onLoad事件激发以后，广告层相对于固定后的y方向位置   
+     document.all.AdLayer.style.posTop = -200;  
+    //设置层为可见   
+     document.all.AdLayer.style.visibility = 'visible';  
+    //调用函数MoveLayer()   
+     MoveLayer('AdLayer');  
+ }   
+ function MoveLayer(layerName) {   
+    //浮动广告层固定于浏览器的x方向位置  
+     var x = -3;   
+     //浮动广告层固定于浏览器的y方向位置  
+     var y = 120;   
+    //0.40是速度，在0到1之间，数值越大，浮动广告动作越慢。实现广告由远及近，由快到慢的效果，可总是不太明白这样的写法，晕：（  
+    //scrollTop:滚动条的顶部，无单位  
+    //posTop:同top,无px单位  
+     var diff = (document.body.scrollTop + y - document.all.AdLayer.style.posTop)*.40;   
+     var y = document.body.scrollTop + y - diff;   
+    //移动广告层  
+     eval("document.all." + layerName + ".style.posTop = y");   
+     eval("document.all." + layerName + ".style.posLeft = x");   
+     //设置20毫秒后再调用函数MoveLayer()  
+     setTimeout("MoveLayer('AdLayer');", 20);       
+ }
+
+function MM_swapImgRestore() { //v3.0
+  var i,x,a=document.MM_sr; for(i=0;a&&i<a.length&&(x=a[i])&&x.oSrc;i++) x.src=x.oSrc;
+}
+
+function MM_preloadImages() { //v3.0
+  var d=document; if(d.images){ if(!d.MM_p) d.MM_p=new Array();
+    var i,j=d.MM_p.length,a=MM_preloadImages.arguments; for(i=0; i<a.length; i++)
+    if (a[i].indexOf("#")!=0){ d.MM_p[j]=new Image; d.MM_p[j++].src=a[i];}}
+}
+
+function MM_findObj(n, d) { //v4.01
+  var p,i,x;  if(!d) d=document; if((p=n.indexOf("?"))>0&&parent.frames.length) {
+    d=parent.frames[n.substring(p+1)].document; n=n.substring(0,p);}
+  if(!(x=d[n])&&d.all) x=d.all[n]; for (i=0;!x&&i<d.forms.length;i++) x=d.forms[i][n];
+  for(i=0;!x&&d.layers&&i<d.layers.length;i++) x=MM_findObj(n,d.layers[i].document);
+  if(!x && d.getElementById) x=d.getElementById(n); return x;
+}
+
+function MM_swapImage() { //v3.0
+  var i,j=0,x,a=MM_swapImage.arguments; document.MM_sr=new Array; for(i=0;i<(a.length-2);i+=3)
+   if ((x=MM_findObj(a[i]))!=null){document.MM_sr[j++]=x; if(!x.oSrc) x.oSrc=x.src; x.src=a[i+2];}
+}
+//-->
+</script> 
+<body onLoad="MM_preloadImages('images/anniu/1.jpg','images/anniu/2.jpg','images/anniu/3a.jpg','images/anniu/4.jpg','images/anniu/5.jpg','images/anniu/6.jpg','images/anniu/7.jpg','images/anniu/8.jpg','images/anniu/9.jpg','images/anniu/10.jpg','images/anniu/11.jpg')">
+ <!--下面为一个ID为AdLayer的层（如ID名不为AdLayer，上面MoveLayer()内的AdLayer也要作相应修改），包括一张带链接的图片-->   
+<div id=AdLayer style='position:absolute; width:111px; height:36px; z-index:60; visibility:hidden;; left: 36px; top: 50px'>   
+	<iframe src="kf.htm" width="130" height="320" marginwidth=0 marginheight=0 frameborder="0" allowTransparency="true" scrolling="no"></iframe>
+</div> 
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td width="421" height="91" valign="top"><a href="index.html"><img src="images/sy_02.jpg" width="421" height="91" border="0"></a></td>
+    <td width="564" valign="top"><img src="images/sy_03.jpg" width="564" height="91"></td>
+  </tr>
+</table>
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td height="28" align="center"><table width="99%" border="0" cellspacing="0" cellpadding="0">
+      <tr>
+        <td align="center"><a href="index.html" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image83','','images/anniu/1.jpg',1)"><img src="images/anniu/1a.jpg" name="Image83" width="83" height="28" border="0"></a><a href="index.html" target="_self"></a></td>
+        <td align="center"><a href="guanyu.html" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image84','','images/anniu/2.jpg',1)"><img src="images/anniu/2a.jpg" name="Image84" width="83" height="28" border="0"></a><a href="guanyu.html" target="_self"></a></td>
+        <td align="center"><a href="fuwu.html" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image85','','images/anniu/3a.jpg',1)"><img src="images/anniu/3a.jpg" name="Image85" width="83" height="28" border="0"></a><a href="fuwu.html" target="_self"></a></td>
+        <td align="center"><a href="http://www.hangzhou.gov.cn/main/cjsfw/qycl/" target="_blank" onMouseOver="MM_swapImage('Image86','','images/anniu/4.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/4a.jpg" name="Image86" width="83" height="28" border="0"></a><a href="http://www.hangzhou.gov.cn/main/cjsfw/qycl/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.hangzhou.gov.cn/main/cjsfw/qyns/" target="_blank" onMouseOver="MM_swapImage('Image87','','images/anniu/5.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/5a.jpg" name="Image87" width="83" height="28" border="0"></a><a href="http://www.hangzhou.gov.cn/main/cjsfw/qyns/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.hangzhou.gov.cn/main/cjsfw/qynj/" target="_blank" onMouseOver="MM_swapImage('Image88','','images/anniu/6.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/6a.jpg" name="Image88" width="83" height="28" border="0"></a><a href="http://www.hangzhou.gov.cn/main/cjsfw/qynj/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.hangzhou.gov.cn/main/cjsfw/blsb/" target="_blank" onMouseOver="MM_swapImage('Image89','','images/anniu/7.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/7a.jpg" name="Image89" width="83" height="28" border="0"></a><a href="http://www.hangzhou.gov.cn/main/cjsfw/blsb/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.zjtax.gov.cn/" target="_blank" onMouseOver="MM_swapImage('Image90','','images/anniu/8.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/8a.jpg" name="Image90" width="83" height="28" border="0"></a><a href="http://www.zjtax.gov.cn/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.zj-l-tax.gov.cn/" target="_blank" onMouseOver="MM_swapImage('Image91','','images/anniu/9.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/9a.jpg" name="Image91" width="83" height="28" border="0"></a><a href="http://www.zj-l-tax.gov.cn/" target="_blank"></a></td>
+        <td align="center"><a href="http://www.hzft.gov.cn/jpm/portal/media-type/html/user/guest/page/default.psml/js_pane/P-10827c9799d-10008" target="_blank" onMouseOver="MM_swapImage('Image92','','images/anniu/10.jpg',1)" onMouseOut="MM_swapImgRestore()"><img src="images/anniu/10a.jpg" name="Image92" width="83" height="28" border="0"></a><a href="http://www.hzft.gov.cn/jpm/portal/media-type/html/user/guest/page/default.psml/js_pane/P-10827c9799d-10008" target="_blank"></a></td>
+        <td align="center"><a href="lianxi.html" onMouseOut="MM_swapImgRestore()" onMouseOver="MM_swapImage('Image93','','images/anniu/11.jpg',1)"><img src="images/anniu/11a.jpg" name="Image93" width="83" height="28" border="0"></a><a href="lianxi.html" target="_self"></a></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="32" align="center" valign="top"><table width="95%">
+      <tr>
+        <td height="23"><marquee scrollAmount=4  width="100%" class="add">
+          杭州万恒会计服务有限公司:注册公司,代理记帐,申报一般纳税人资格,代购公司注册地址,代理公司变更,公司验资,公司审计
+        </marquee></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="7"></td>
+  </tr>
+</table>
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td width="985" height="180" align="center" valign="top" background="images/sy_08.jpg"><object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=7,0,19,0" width="985" height="180">
+      <param name="movie" value="images/flash/aa.swf">
+      <param name="wmode" value="transparent">
+      <param name="quality" value="high">
+      <embed src="images/flash/aa.swf" quality="high" pluginspage="http://www.macromedia.com/go/getflashplayer" type="application/x-shockwave-flash" width="985" height="180"></embed>
+  </object>      <script type="text/javascript">
+AC_FL_RunContent( 'codebase','http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,28,0','width','980','height','180','src','images/flash/灰线翻滚','quality','high','pluginspage','http://www.adobe.com/shockwave/download/download.cgi?P1_Prod_Version=ShockwaveFlash','wmode','transparent','movie','images/flash/灰线翻滚' ); //end AC code</script></td></tr>
+</table>
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td width="240" height="511" valign="top"><table width="100%" border="0" cellpadding="0" cellspacing="0">
+      <tr>
+        <td width="325" height="511" background="images/zcfg.gif">
+        <table width="220" border="0" cellpadding="0" cellspacing="0">
+          <tr></tr>
+          <tr>
+            <td width="17" height="41">&nbsp;</td>
+            <td width="132">&nbsp;</td>
+          </tr>
+          <tr>
+            <td ></td>
+            <td height="35"><input id="search"  type="text" value="   站内搜索" name="search" style="width:130px;"> </td>
+           <td width="71" height="35" ><img src="images/ss.png" width="60px;" height="27px;" style="margin-left:14px; padding-top:-3px; "></td>
+          </tr>
+          <tr  style="width:260px;">
+            <td height="33"  colspan="1">&nbsp;</td>
+            <td colspan="5">&nbsp;
+            <!--<h1 class="title"><span class="close">全部收起/展开</span>树形菜单</h1>-->
+        <div class="zmenu">
+        <div class="menu">
+          <h1 class="l1">地税政策</h1>
+          <div class="slist">
+            <h2 class="l2" ><a href="javascript:function()">省地方税务局审批项目</a></h2>
+           <!-- <ul class="sslist">
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+            </ul>
+            -->
+            <h2 class="l2"><a href="javascript:function()">市、县（市）地方税务局审批项目</a></h2>
+           <!-- <ul class="sslist">
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+              <li class="l3"><a href="javascript:function()">·三级菜单</a></li>
+            </ul>
+            -->
+            
+            <h2 class="l2"><a href="javascript:function()" >市、县（市）主管地方税务局备案项目</a></h2>
+          </div>
+          <h1 class="l1">国税政策</h1>
+          <!--<div class="slist">
+            <h2 class="l2"><a href="javascript:function()">二级菜单</a></h2>
+            <h2 class="l2"><a href="javascript:function()">二级菜单</a></h2>
+            <h2 class="l2"><a href="javascript:function()">二级菜单</a></h2>
+          </div>
+          -->
+          <h1 class="l1">法规相关</h1>
+          <div class="slist">
+            <h2 class="l2"><a href="javascript:function()">成本费用跨年取得发票的财务、税务处理分析</a></h2>
+            <h2 class="l2"><a href="javascript:function()">实施企业所得税过渡优惠政策表</a></h2>
+            <h2 class="l2"><a href="javascript:function()">中华人民共和国企业所得税法</a></h2>
+             <h2 class="l2"><a href="javascript:function()">其他</a></h2>
+          </div>
+        </div>
+        </div>
+            </td>
+          </tr>
+          <!--<tr>
+            <td height="33">&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr>
+            <td height="35">&nbsp;</td>
+            <td>&nbsp;</td>
+          </tr>
+          -->
+        </table>
+          <p>&nbsp;</p>
+          
+          </td>
+      </tr>
+    </table></td>
+    <td width="745" rowspan="2" valign="top"><table width="100%" border="0" cellpadding="0"  cellspacing="0"><tr>
+        <td height="82" colspan="4" valign="top"><img src="tese_04.gif" width="745" height="82"></td>
+      </tr>
+      <tr>
+        <td width="36" rowspan="2" valign="top" background="images/guanyu/gy_06.jpg"><img src="images/guanyu/gy_06.jpg" width="36" height="192"></td>
+        <td width="668" height="431" bgcolor="#F9F9F9" class="h8">
+        <div> &nbsp;</div>
+        </td>
+        <td width="9" valign="top" bgcolor="#F9F9F9" >&nbsp;</td>
+        <td width="33" rowspan="2" valign="top" background="images/guanyu/gy_09.jpg"><img src="images/guanyu/gy_09.jpg" width="33" height="192"></td>
+      </tr>
+      <tr>
+        <th height="28" colspan="2" bgcolor="#F9F9F9">&nbsp;</th>
+      </tr>
+      <tr>
+        <td height="67" colspan="4" valign="top"><img src="images/guanyu/gy_12.jpg" width="745" height="67"></td>
+      </tr>
+    </table></td>
+  </tr>
+  <tr>
+    <td height="94"></td>
+  </tr>
+</table>
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center"><tr>
+    <td width="8" rowspan="3" valign="top"><img src="images/sy_96.jpg" width="8" height="48"></td>
+    <td width="969" height="13" valign="top" background="images/sy_97.jpg"><img src="images/sy_97.jpg" width="38" height="10"></td>
+  <td width="8" rowspan="3" valign="top"><img src="images/sy_99.jpg" width="8" height="48"></td>
+  </tr>
+  <tr>
+    <td height="26" align="center">友情连接:<a href="http://www.pbc.gov.cn/">中国人民银行</a>|<a href="http://gongshang.rfqy.com/hangzhougongshangju.asp">杭州工商网</a>|<a href="http://www.hzguoshui.gov.cn/portal/">杭州国税局</a>|<a href="http://www.zj-l-tax.gov.cn/">杭州地税局</a>|<a href="www.wh168168.com">杭州评估公司</a>|<A href="http://www.hzaic.gov.cn/" target="_blank">杭州工商管理局</A>|<A href="http://www.hzsj.gov.cn/" target="_blank">杭州市审计局</A>|<A href="http://www.hzggzy.gov.cn" target="_blank">杭州市投资网</A>|<A href="http://www.hzsrsj.gov.cn" target="_blank">杭州人事局</A>
+      <DIV></DIV></td>
+  </tr>
+  <tr>
+    <td height="9" valign="top" background="images/sy_102.jpg"><img src="images/sy_102.jpg" width="38" height="9"></td>
+  </tr>
+</table>
+<table width="985" border="0" cellpadding="0" cellspacing="0" align="center">
+  <tr>
+    <td width="985" height="87" bgcolor="#D0D0D0"><table width="100%" height="87" cellspacing="0">
+      <tr>
+        <td width="93%" height="29" align="center">copyrights@2010.杭州万恒会计服务有限公司.All Rights Reserved.电话:0571-86824490 | 传真：0571-86686403</td>
+        <td width="7%" rowspan="3" align="center"><img src="images/sy_105.jpg" width="42" height="49"></td>
+      </tr>
+      <tr>
+        <td align="center">杭州万恒会计：专业注册杭州公司,杭州注册公司,杭州公司注册,注册杭州公司找万恒</td>
+      </tr>
+      <tr>
+        <td align="center">闽ICP备********号   技术支持：万恒会计  SEO支持：网优科技</td>
+      </tr>
+    </table></td>
+  </tr>
+</table>
+</body>
+</html>

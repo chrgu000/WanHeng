@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.TicketDao">
+	<insert id="save">
+		insert into
+		dq_ticket(name,start_time,end_time,join_time,price,num,unum,details,minprice,state,flag,delflag)
+		values(#{name},#{start_time},#{end_time},#{join_time},#{price},#{num},#{unum},#{details},#{minprice},#{state},#{flag},#{delflag})
+	</insert>
+	<update id="update">
+		update dq_ticket
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+			<if test="num!=null and num!=''">
+				num=#{num},
+</if>
+			<if test="flag!=null and flag!=''">
+				flag=#{flag},
+</if>
+			<if test="details!=null and details!=''">
+				details=#{details},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_ticket where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="Ticket">
+		select * from dq_ticket
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="Ticket">
+		select * from dq_ticket
+		<where>
+			and delflag=1
+			<if test="name!=null and name!=''">
+				and name like "%" #{name}"%"
+		</if>
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_ticket
+		<where>
+			and delflag=1
+			<if test="name!=null and name!=''">
+				and name like "%" #{name}"%"
+		</if>
+
+		</where>
+	</select>
+	<select id="getTicketsByUserId" resultMap="UserTicketMap">
+		select * from
+		dq_user_ticket where user_id=#{user_id}
+ </select>
+	<resultMap type="UserTicket" id="UserTicketMap">
+		<association property="ticket" column="ticket_id"
+			javaType="Ticket" select="getTicketById" />
+	</resultMap>
+	<select id="getTicketById" resultType="Ticket">
+		select * from dq_ticket
+		where id=#{ticket_id}
+ </select>
+	<update id="updateByIds">
+		update dq_ticket set delflag=2 where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}
+	</foreach>
+	</update>
+	<select id="getTicketsByFlag" resultType="Ticket">
+		select * from dq_ticket where flag!=3
+	</select>
+</mapper>

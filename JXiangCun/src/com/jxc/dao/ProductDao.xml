@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.ProductDao">
+	<select id="findAllProduct" resultType="Product">
+		select * from jxc_product
+	</select>
+	<select id="findAllProductByPage" resultMap="productMaps">
+		select * from jxc_product
+		<where>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				and title like "%"#{title}"%"
+			</if>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				and merchant_id=#{merchant_id}
+			</if>
+			<if
+				test="merchant_id==null &amp;&amp;merchantIds!=null&amp;&amp;merchantIds.size()>0">
+				and merchant_id in
+				<foreach collection="merchantIds" open="(" close=")"
+					separator="," item="merchant_id">
+					#{merchant_id}
+				</foreach>
+			</if>
+			<if test="merchantIds.size()==0">
+				and merchant_id=0
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="findMerchantById" resultMap="MerchantMap">
+		select * from
+		jxc_merchant where id=#{merchant_id}
+	</select>
+	<resultMap type="Merchant" id="MerchantMap">
+		<id column="id" property="id" />
+		<collection property="titles" column="id" javaType="arrayList"
+			ofType="Title" select="findTitlesByMerchantId"></collection>
+	</resultMap>
+	<select id="findTitlesByMerchantId" resultType="Title">
+		select t.* from jxc_title t left join jxc_merchant_title m on
+		t.id=m.title_id where m.merchant_id=#{id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_product
+		<where>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				and title like "%"#{title}"%"
+			</if>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				and merchant_id=#{merchant_id}
+			</if>
+			<if
+				test="merchant_id==null&amp;&amp;merchantIds!=null&amp;&amp;merchantIds.size()>0">
+				and merchant_id in
+				<foreach collection="merchantIds" open="(" close=")"
+					separator="," item="merchant_id">
+					#{merchant_id}
+				</foreach>
+			</if>
+			<if test="merchantIds.size()==0">
+				and merchant_id=0
+			</if>
+		</where>
+	</select>
+
+	<select id="findProductById" resultMap="productMap">
+		select * from jxc_product
+		p left join jxc_date_price d on p.id=d.product_id
+		and
+		floor((now()-d.date)/(7*24*3600))=0 where p.id=#{id}
+	</select>
+	<resultMap type="Product" id="productMaps">
+		<id column="id" property="id" />
+		<association property="merchant" column="merchant_id"
+			javaType="Merchant" select="findMerchantById" />
+		<collection property="datePrices" column="id" javaType="arrayList"
+			ofType="DatePrice" select="findDatePriceByProductId"></collection>
+		<collection property="titles" column="id" javaType="arrayList"
+			ofType="Title" select="findTitlesByProductId"></collection>
+		<collection property="titleIds" column="id" javaType="arrayList"
+			ofType="int" select="findTitleIdsByProductId"></collection>
+	</resultMap>
+	<select id="findTitlesByProductId" resultType="Title">
+		select t.* from jxc_title t left join jxc_product_title p on t.id=p.title_id
+		where p.product_id=#{id}
+	</select>
+	<select id="findTitleIdsByProductId" resultType="int">
+		select title_id from jxc_product_title where product_id=#{id}
+	</select>
+	<select id="findDatePriceByProductId" resultType="DatePrice">
+		select * from
+		jxc_date_price where product_id=#{id}
+	</select>
+	<select id="findProductsByMerchantId" resultMap="productMap">
+		select * from
+		jxc_product p left join jxc_date_price d on p.id=d.product_id
+		and
+		floor((now()-d.date)/(7*24*3600))=0 where
+		p.merchant_id=#{merchant_id}
+	</select>
+	<resultMap type="Product" id="productMap">
+		<id column="id" property="id" />
+		<association property="merchant" column="merchant_id"
+			javaType="Merchant" select="findMerchantById" />
+		<collection property="datePrices" column="id" javaType="arrayList"
+			ofType="DatePrice" select="findDatePriceByProductId" />
+		<collection property="titles" column="id" javaType="arrayList"
+			ofType="Title" select="findTitlesByProductId"></collection>
+		<collection property="titleIds" column="id" javaType="arrayList"
+			ofType="int" select="findTitleIdsByProductId"></collection>
+	</resultMap>
+	<select id="getPrice" resultType="double">
+		select sum(favourable_price)
+		from jxc_date_price where date>= #{beginTime}
+		and date &lt;=#{endTime}
+		and product_id=#{product_id}
+	</select>
+	<insert id="addProductTitle">
+		insert into jxc_product_title(product_id,title_id)
+		values(#{product_id},#{title_id})
+	</insert>
+	<insert id="addProduct" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		jxc_product(title,sub_title,path,merchant_id,isFree,endDate,free_num,pointDate)
+		values
+		(#{title},#{sub_title},#{path},#{merchant_id},#{isFree},#{endDate},#{free_num},#{pointDate})
+	</insert>
+	<update id="updateProduct" parameterType="Product">
+		update jxc_product
+		<set>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				title=#{title},
+			</if>
+			<if test="sub_title!=null&amp;&amp;!sub_title.equals('')">
+				sub_title=#{sub_title},
+			</if>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				merchant_id=#{merchant_id},
+			</if>
+			<if test="isFree!=null&amp;&amp;!isFree.equals('')">
+				isFree=#{isFree},
+			</if>
+			endDate=#{endDate},
+			free_num=#{free_num},
+			pointDate=#{pointDate}
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteProductTitle">
+		delete from jxc_product_title where product_id=#{product_id}
+	</delete>
+</mapper>

@@ -1,0 +1,325 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.tradeRecord.dao">
+
+	<sql id="columns">
+		id, trade_price, trade_type,trade_state,trade_order_no, trade_content, for_id,
+		user_id, bank_num,trade_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{trade_price}, #{trade_type}, #{trade_state}, #{trade_order_no}, #{trade_content},
+		#{for_id}, #{user_id}, #{bank_num}, #{trade_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="trade_price != null and trade_price != ''">
+			and trade_price = #{trade_price}
+		</if>
+		<if test="trade_type != null and trade_type != ''">
+			and trade_type = #{trade_type}
+		</if>
+		<if test="trade_state != null and trade_state != ''">
+			and trade_state = #{trade_state}
+		</if>
+		<if test="trade_order_no != null and trade_order_no != ''">
+			and trade_order_no = #{trade_order_no}
+		</if>
+		<if test="trade_content != null and trade_content != ''">
+			and trade_content = #{trade_content}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and for_id = #{for_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="bank_num != null and bank_num != ''">
+			and bank_num = #{bank_num}
+		</if>
+		<if test="trade_time != null">
+			and trade_time = #{trade_time}
+		</if>
+	</sql>
+
+	<insert id="saveTradeRecord" parameterType="com.cgwas.tradeRecord.entity.TradeRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_trade_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveTradeRecordVo" parameterType="com.cgwas.tradeRecord.entity.TradeRecordVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_trade_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteTradeRecord">
+		delete from u_trade_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteTradeRecordVo">
+		delete from u_trade_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleTradeRecord">
+		delete from u_trade_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleTradeRecordVo">
+		delete from u_trade_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadTradeRecord" resultType="com.cgwas.tradeRecord.entity.TradeRecordVo">
+		select
+		<include refid="columns" />
+		from u_trade_record
+		where id=#{id}
+	</select>
+
+	<select id="selectTradeRecord" resultType="com.cgwas.tradeRecord.entity.TradeRecordVo">
+		select
+		<include refid="columns" />
+		from u_trade_record
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateTradeRecord">
+		update u_trade_record
+		<set>
+			id=#{id},
+			trade_price=#{trade_price},
+			trade_type=#{trade_type},
+			trade_state=#{trade_state},
+			trade_order_no=#{trade_order_no},
+			trade_content=#{trade_content},
+			for_id=#{for_id},
+			user_id=#{user_id},
+			bank_num = #{bank_num},
+			trade_time=#{trade_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateTradeRecordVo">
+		update u_trade_record
+		<set>
+			id=#{id},
+			trade_price=#{trade_price},
+			trade_type=#{trade_type},
+			trade_state=#{trade_state},
+			trade_order_no=#{trade_order_no},
+			trade_content=#{trade_content},
+			for_id=#{for_id},
+			user_id=#{user_id},
+			bank_num = #{bank_num},
+			trade_time=#{trade_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullTradeRecord">
+		update u_trade_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="trade_price != null and trade_price != ''">
+				trade_price=#{trade_price},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="trade_state != null and trade_state != ''">
+				trade_state=#{trade_state},
+			</if>
+			<if test="trade_order_no != null and trade_order_no != ''">
+				trade_order_no=#{trade_order_no},
+			</if>
+			<if test="trade_content != null and trade_content != ''">
+				trade_content=#{trade_content},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+			    bank_num = #{bank_num},
+			</if>
+			<if test="trade_time != null">
+				trade_time=#{trade_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullTradeRecordVo">
+		update u_trade_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="trade_price != null and trade_price != ''">
+				trade_price=#{trade_price},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="trade_state != null and trade_state != ''">
+				trade_state=#{trade_state},
+			</if>
+			<if test="trade_order_no != null and trade_order_no != ''">
+				trade_order_no=#{trade_order_no},
+			</if>
+			<if test="trade_content != null and trade_content != ''">
+				trade_content=#{trade_content},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+			    bank_num = #{bank_num},
+			</if>
+			<if test="trade_time != null">
+				trade_time=#{trade_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleTradeRecord">
+		update u_trade_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="trade_price != null and trade_price != ''">
+				trade_price=#{trade_price},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="trade_state != null and trade_state != ''">
+				trade_state=#{trade_state},
+			</if>
+			<if test="trade_order_no != null and trade_order_no != ''">
+				trade_order_no=#{trade_order_no},
+			</if>
+			<if test="trade_content != null and trade_content != ''">
+				trade_content=#{trade_content},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+			    bank_num = #{bank_num},
+			</if>
+			<if test="trade_time != null">
+				trade_time=#{trade_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleTradeRecordVo">
+		update u_trade_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="trade_price != null and trade_price != ''">
+				trade_price=#{trade_price},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="trade_state != null and trade_state != ''">
+				trade_state=#{trade_state},
+			</if>
+			<if test="trade_order_no != null and trade_order_no != ''">
+				trade_order_no=#{trade_order_no},
+			</if>
+			<if test="trade_content != null and trade_content != ''">
+				trade_content=#{trade_content},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+			    bank_num = #{bank_num},
+			</if>
+			<if test="trade_time != null">
+				trade_time=#{trade_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取本年度出金记录 -->
+	<select id="selectYearTrade" resultType="com.cgwas.tradeRecord.entity.TradeStatistics">
+		SELECT
+		MONTH (trade_time)
+		AS mon,
+		SUM(trade_price) as trade_price
+		FROM
+		u_trade_record
+		WHERE
+		trade_type = #{type}
+		AND trade_time BETWEEN date_sub(NOW(), interval 1
+		YEAR)
+		AND now()
+		GROUP BY
+		MONTH (trade_time)
+	</select>
+	<select id="getUserAllTrade" resultType="java.lang.String">
+		select SUM(trade_price)
+		FROM u_trade_record WHERE user_id = #{user_id} AND trade_type
+		=#{trade_type}
+	</select>
+	<!-- 查询充值订单是否存在 -->
+	<select id="checkRechargeTrade" resultType="java.lang.Long">
+		select COUNT(*) from
+		u_trade_record where trade_type = 1 AND user_id =
+		#{user_id} AND
+		trade_content like CONCAT('%',#{order_no},'%')
+	</select>
+	
+</mapper>

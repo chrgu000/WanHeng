@@ -1,0 +1,566 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.forbid.dao">
+
+	<sql id="columns">
+		id, validity, type, reason, for_id, type_id, user_id,
+		creat_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{validity}, #{type}, #{reason}, #{for_id},
+		#{type_id}, #{user_id}, #{creat_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="validity != null and validity != ''">
+			and validity = #{validity}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="reason != null and reason != ''">
+			and reason = #{reason}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and for_id = #{for_id}
+		</if>
+		<if test="type_id != null and type_id != ''">
+			and type_id = #{type_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="creat_time != null">
+			and creat_time = #{creat_time}
+		</if>
+	</sql>
+
+	<insert id="saveForbid" parameterType="com.cgwas.forbid.entity.Forbid"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_forbid (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveForbidVo" parameterType="com.cgwas.forbid.entity.ForbidVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_forbid (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteForbid">
+		delete from u_forbid
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteForbidVo">
+		delete from u_forbid
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleForbid">
+		delete from u_forbid
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleForbidVo">
+		delete from u_forbid
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadForbid" resultType="com.cgwas.forbid.entity.ForbidVo">
+		select
+		<include refid="columns" />
+		from u_forbid
+		where id=#{id}
+	</select>
+
+	<select id="selectForbid" resultType="com.cgwas.forbid.entity.ForbidVo">
+		select
+		<include refid="columns" />
+		from u_forbid
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateForbid">
+		update u_forbid
+		<set>
+			id=#{id},
+			validity=#{validity},
+			type=#{type},
+			reason=#{reason},
+			for_id=#{for_id},
+			type_id=#{type_id},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateForbidVo">
+		update u_forbid
+		<set>
+			id=#{id},
+			validity=#{validity},
+			type=#{type},
+			reason=#{reason},
+			for_id=#{for_id},
+			type_id=#{type_id},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullForbid">
+		update u_forbid
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="validity != null and validity != ''">
+				validity=#{validity},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="type_id != null and type_id != ''">
+				type_id=#{type_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullForbidVo">
+		update u_forbid
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="validity != null and validity != ''">
+				validity=#{validity},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="type_id != null and type_id != ''">
+				type_id=#{type_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleForbid">
+		update u_forbid
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="validity != null and validity != ''">
+				validity=#{validity},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="type_id != null and type_id != ''">
+				type_id=#{type_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleForbidVo">
+		update u_forbid
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="validity != null and validity != ''">
+				validity=#{validity},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="type_id != null and type_id != ''">
+				type_id=#{type_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取用户被禁记录 -->
+	<select id="getUserForbidList" resultType="com.cgwas.forbid.entity.UserForbid">
+		SELECT
+		b.nickname,
+		c.content,
+		a.reason,
+		a.creat_time,
+		d.nickname as baner
+
+		FROM
+		u_forbid AS a
+		LEFT JOIN u_user AS b ON a.for_id = b.id
+		LEFT JOIN u_forbid_type AS c
+		ON a.type_id = c.id
+		LEFT JOIN u_user as d on a.user_id = d.id
+		WHERE
+		b.id=#{userId} and a.type=1
+		ORDER BY
+		a.creat_time DESC
+	</select>
+	<!-- 获取可禁用公司列表 -->
+	<select id="getCompanyListForForbid" resultType="com.cgwas.forbid.entity.ForbidCompany">
+		SELECT
+		a.id,
+		c.nickname,
+		a.company_name,
+		a.legal_person,
+		a.company_begin_date,
+		a.registered_assets,
+		a.`status`,
+		a.province,
+		a.city,
+		c.tel,
+		c.last_login_time,
+		d.`status` as status1,
+		a.area,
+		a.address
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_user
+		AS c ON c.id = b.use_id
+		LEFT JOIN u_user_auth_info AS d ON c.id =
+		d.user_id
+		WHERE
+		b.relation = '1'
+		<choose>
+			<when test="forbidCompany.id!=null">
+				and a.id=#{forbidCompany.id}
+			</when>
+			<when test="forbidCompany.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{forbidCompany.nickname},'%')
+			</when>
+			<when test="forbidCompany.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{forbidCompany.company_name},'%')
+			</when>
+			<when test="forbidCompany.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{forbidCompany.legal_person},'%')
+			</when>
+			<when test="forbidCompany.status!=null">
+				and d.`status` = #{forbidCompany.status}
+			</when>
+			<when test="forbidCompany.province!=null">
+				and a.province = #{forbidCompany.province}
+			</when>
+			<when test="forbidCompany.city!=null">
+				and a.city = #{forbidCompany.city}
+			</when>
+			<when test="forbidCompany.tel!=null">
+				and c.tel like CONCAT('%',#{forbidCompany.tel},'%')
+			</when>
+			<when test="forbidCompany.status1!=null">
+				and d.`status` =#{forbidCompany.status1}
+			</when>
+			<when test="forbidCompany.area!=null">
+				and a.area = #{forbidCompany.area}
+			</when>
+			<when test="forbidCompany.address!=null">
+				and a.address like CONCAT('%',#{forbidCompany.address},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+
+	</select>
+	<!-- 获取可禁用公司列表（总数） -->
+	<select id="getCompanyListForForbidCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id
+		=
+		b.company_id
+		LEFT JOIN u_user AS c ON c.id = b.use_id
+		LEFT JOIN
+		u_user_auth_info AS
+		d ON c.id = d.user_id
+		WHERE
+		b.relation = '1'
+		<choose>
+			<when test="forbidCompany.id!=null">
+				and a.id=#{forbidCompany.id}
+			</when>
+			<when test="forbidCompany.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{forbidCompany.nickname},'%')
+			</when>
+			<when test="forbidCompany.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{forbidCompany.company_name},'%')
+			</when>
+			<when test="forbidCompany.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{forbidCompany.legal_person},'%')
+			</when>
+			<when test="forbidCompany.status!=null">
+				and d.`status` = #{forbidCompany.status}
+			</when>
+			<when test="forbidCompany.province!=null">
+				and a.province = #{forbidCompany.province}
+			</when>
+			<when test="forbidCompany.city!=null">
+				and a.city = #{forbidCompany.city}
+			</when>
+			<when test="forbidCompany.tel!=null">
+				and c.tel like CONCAT('%',#{forbidCompany.tel},'%')
+			</when>
+			<when test="forbidCompany.status1!=null">
+				and d.`status` =#{forbidCompany.status1}
+			</when>
+			<when test="forbidCompany.area!=null">
+				and a.area = #{forbidCompany.area}
+			</when>
+			<when test="forbidCompany.address!=null">
+				and a.address like CONCAT('%',#{forbidCompany.address},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 获取可禁用用户列表 -->
+	<select id="getUserListForForbid" resultType="com.cgwas.forbid.entity.ForbidUser">
+		SELECT
+		a.id,
+		a.nickname,
+		b.`name`,
+		b.sex,
+		b.birth,
+		a.tel,
+		d.company_name,
+		c.relation,
+		a.last_login_time,
+		e.`status`,
+		a.regist_time
+		FROM
+		u_user AS a
+		LEFT JOIN
+		u_user_info AS b ON a.id = b.user_id
+		LEFT JOIN u_user_company
+		AS c ON
+		a.id = c.use_id
+		LEFT JOIN u_company AS d ON c.company_id = d.id
+		LEFT
+		JOIN u_user_auth_info AS e ON a.id = e.user_id
+		where 1=1
+		<choose>
+			<when test="forbidUser.id!=null">
+				and a.id=#{forbidUser.id}
+			</when>
+			<when test="forbidUser.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{forbidUser.nickname},'%')
+			</when>
+			<when test="forbidUser.name!=null">
+				and b.name like CONCAT('%',#{forbidUser.name},'%')
+			</when>
+			<when test="forbidUser.sex!=null">
+				and b.sex = #{forbidUser.sex}
+			</when>
+			<when test="forbidUser.tel!=null">
+				and a.tel like
+				CONCAT('%',#{forbidUser.tel},'%')
+			</when>
+			<when test="forbidUser.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{forbidUser.company_name},'%')
+			</when>
+			<when test="forbidUser.relation!=null">
+				and c.relation like
+				CONCAT('%',#{forbidUser.relation},'%')
+			</when>
+			<when test="forbidUser.status!=null">
+				and e.status like
+				CONCAT('%',#{forbidUser.status},'%')
+			</when>
+		</choose>
+
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取可禁用用户列表(数量) -->
+	<select id="getUserListForForbidCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_info AS b ON a.id =
+		b.user_id
+		LEFT JOIN u_user_company AS c ON a.id = c.use_id
+		LEFT JOIN
+		u_company AS
+		d ON c.company_id = d.id
+		LEFT JOIN u_user_auth_info AS e ON
+		a.id =
+		e.user_id
+		where 1=1
+		<choose>
+			<when test="forbidUser.id!=null">
+				and a.id=#{forbidUser.id}
+			</when>
+			<when test="forbidUser.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{forbidUser.nickname},'%')
+			</when>
+			<when test="forbidUser.name!=null">
+				and b.name like CONCAT('%',#{forbidUser.name},'%')
+			</when>
+			<when test="forbidUser.sex!=null">
+				and b.sex = #{forbidUser.sex}
+			</when>
+			<when test="forbidUser.tel!=null">
+				and a.tel like
+				CONCAT('%',#{forbidUser.tel},'%')
+			</when>
+			<when test="forbidUser.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{forbidUser.company_name},'%')
+			</when>
+			<when test="forbidUser.relation!=null">
+				and c.relation like
+				CONCAT('%',#{forbidUser.relation},'%')
+			</when>
+			<when test="forbidUser.status!=null">
+				and e.status like
+				CONCAT('%',#{forbidUser.status},'%')
+			</when>
+		</choose>
+
+	</select>
+	<!-- 获得最长的禁用日期 -->
+	<select id="getNewForbid" resultType="com.cgwas.forbid.entity.Forbid">
+		SELECT
+		*
+		FROM
+		u_forbid
+		WHERE
+		for_id = #{for_id}
+		AND type = #{type}
+		ORDER BY
+		validity DESC
+		LIMIT 0,1
+	</select>
+	<!-- 根据ID得到公司禁用记录 -->
+	<select id="getConpanyForbidList" resultType="com.cgwas.forbid.entity.CompanyForbid">
+		SELECT
+		b.company_name,
+		c.content,
+		a.reason,
+		a.creat_time,
+		d.nickname as baner
+		FROM
+		u_forbid AS a
+		LEFT JOIN u_company AS b ON a.for_id = b.id
+		LEFT JOIN
+		u_forbid_type AS c ON a.type_id = c.id
+		LEFT JOIN u_user as d on
+		a.user_id =d.id
+		WHERE
+		a.type = 0
+		AND b.id =
+		#{company_id}
+		ORDER BY
+		a.creat_time DESC
+	</select>
+</mapper>

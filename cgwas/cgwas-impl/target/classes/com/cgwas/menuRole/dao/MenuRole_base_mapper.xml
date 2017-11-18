@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.menuRole.dao">
+
+	<sql id="columns">
+		id, menu_id, role_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{menu_id}, #{role_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			and menu_id = #{menu_id}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			and role_id = #{role_id}
+		</if>
+	</sql>
+
+	<insert id="saveMenuRole" parameterType="com.cgwas.menuRole.entity.MenuRole" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_menu_role (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveMenuRoleVo" parameterType="com.cgwas.menuRole.entity.MenuRoleVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_menu_role (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteMenuRole">
+		delete from s_menu_role
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteAllMenuRole">
+		delete from s_menu_role
+		where 
+		<if test="status==1">
+			id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+		</if>
+		<if test="status==3">
+			role_id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+		</if>
+		<if test="status==5">
+			menu_id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+		</if>
+	</delete>
+	
+	<delete id="deleteMenuRoleVo">
+		delete from s_menu_role
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleMenuRole">
+		delete from s_menu_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleMenuRoleVo">
+		delete from s_menu_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadMenuRole" resultType="com.cgwas.menuRole.entity.MenuRoleVo">
+		select 
+		<include refid="columns"/>
+		from s_menu_role
+		where id=#{id} 
+	</select>
+	
+	<select id="selectMenuRole" resultType="com.cgwas.menuRole.entity.MenuRoleVo">
+		select 
+		<include refid="columns"/>
+		from s_menu_role
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateMenuRole">
+		update s_menu_role
+		<set>
+			id=#{id}, 
+			menu_id=#{menu_id}, 
+			role_id=#{role_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMenuRoleVo">
+		update s_menu_role
+		<set>
+			id=#{id}, 
+			menu_id=#{menu_id}, 
+			role_id=#{role_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullMenuRole">
+		update s_menu_role
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullMenuRoleVo">
+		update s_menu_role
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleMenuRole">
+		update s_menu_role
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleMenuRoleVo">
+		update s_menu_role
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

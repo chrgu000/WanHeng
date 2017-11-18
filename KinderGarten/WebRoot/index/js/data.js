@@ -1,0 +1,170 @@
+/**
+ * Created by Administrator on 2017/1/25.
+ */
+//足迹——家长端
+var body=[
+    {
+        date:"11:00-13:00",
+        date_small:"2016/12/12",
+        defecation:"是",
+        sleep:"否"
+    },{
+        date:"11:00-13:00",
+        date_small:"2016/12/12",
+        defecation:"是",
+        sleep:"否"
+    }
+];
+//我的宝贝——家长端
+var baby=[
+    {
+        img:"../img/imglist.png"
+    },{
+        img:"../img/imglist.png"
+    },{
+        img:"../img/imglist.png"
+    },{
+        img:"../img/imglist.png"
+    },{
+        img:"../img/imglist.png"
+    },{
+        img:"../img/imglist.png"
+    }
+];
+//照片——家长端
+var img_list=[
+    {
+        img:"img/imglist.png"
+    },{
+        img:"img/imglist.png"
+    },{
+        img:"img/imglist.png"
+    },{
+        img:"img/imglist.png"
+    },{
+        img:"img/imglist.png"
+    },{
+        img:"img/imglist.png"
+    }
+];
+//成长日志——家长端
+var growth=[
+    {
+        date:"2016/12/12",
+        font:"今天宝宝搭积木很快哦。。。"
+    },{
+        date:"2016/12/12",
+        font:"今天宝宝和小朋友闹情绪后来化解了。。。"
+    }
+];
+//园区介绍——家长端
+var classes=[
+    {
+        title:"西溪诚园儿童之家",
+        font:"啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊 啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊啊"
+    },{
+        title:"玉园儿童之家",
+        font:"今天宝宝和小朋友闹情绪后来化解了。。。"
+    }
+];
+//班级风采——家长端
+var class_style=[
+    {
+        title:"【获奖公布】2017玉园台历宝宝评选结果新鲜出炉",
+        date:"2016/12/12"
+    },{
+        title:"【奔跑吧宝贝】玉园亲子大会--暨2017台历宝宝",
+        date:"2016/12/12"
+    }
+    ,{
+        title:"【奔跑吧宝贝】玉园亲子大会--暨2017台历宝宝",
+        date:"2016/12/12"
+    }
+    ,{
+        title:"【奔跑吧宝贝】玉园亲子大会--暨2017台历宝宝",
+        date:"2016/12/12"
+    }
+];
+//教师列表——家长端
+var teacher_list=[
+    {
+        img:"img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"img/baby_photo_small.png",
+        name:"金怡然"
+    }
+];
+
+//教师端
+//我的宝贝——教师端
+var baby_t=[
+    {
+        img:"../img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"../img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"../img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"../img/baby_photo_small.png",
+        name:"金怡然"
+    },{
+        img:"../img/baby_photo_small.png",
+        name:"金怡然"
+    }
+];
+//成长日志——教师端
+var growth_t=[
+    {
+        date:"2016/12/12",
+        font:"今天宝宝搭积木很快哦。。。"
+    },{
+        date:"2016/12/12",
+        font:"今天宝宝和小朋友闹情绪后来化解了。。。"
+    }
+];
+//园区介绍——教师端
+var classes_t=[
+    {
+        title:"西溪诚园儿童之家"
+    },{
+        title:"玉园儿童之家"
+    }
+];
+//班级详情页——教师端
+var class_details=[
+    {
+        font:"万众瞩目的“玉园台历宝宝”评选活动已经落下帷幕活动期间让我认识了玉园可爱的宝宝们据截止统计之日阅读量统计结果，恭喜以上十二位宝宝荣获2017年“玉园台历宝宝”。以上获奖宝贝家庭，请于12月25日前至青咖儿童摄影完成照片拍摄。逾期视自动放弃拍摄。12月13日儿童之家会电话联系获奖家庭，初步确认拍摄时间，请各位家长保持电话畅通。",
+        img:"../img/details.jpg"
+    }
+];
+//工作日记——教师端
+var diary=[
+    {
+        title:"体温情况表"
+    },{
+        title:"午睡情况表"
+    },{
+        title:"主教示范规划表"
+    },{
+        title:"助教参考引导表"
+    },{
+        title:"儿童工作示范确认表"
+    },{
+        title:"会议记录表"
+    },{
+        title:"特别事项"
+    }
+];

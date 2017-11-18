@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.FootprintDao">
+
+	<select id="getCount" resultType="int">
+		select count(*) from kg_footprint where baby_id=#{baby_id} and state=0
+	</select>
+	<update id="updateByBabyId">
+		update kg_footprint set state=#{state} where baby_id=#{baby_id}
+</update>
+	<insert id="addFootprint">
+		insert into
+		kg_footprint(baby_id,teacher_id,garden_id,date,isSiesta,siesta,isShit,state)values(#{baby_id},#{teacher_id},#{garden_id},#{date},#{isSiesta},#{siesta},#{isShit},#{state})
+	</insert>
+	<update id="updateFootprint">
+		update kg_footprint
+		<set>
+			
+			<if test="isSiesta!=null and isSiesta!=''">
+				isSiesta=#{isSiesta},
+</if>
+			<if test="siesta!=null and siesta!=''">
+				siesta=#{siesta},
+</if>
+			<if test="state!=null and state!=''">
+				state=#{state},
+</if>
+			<if test="isShit!=null and isShit!=''">
+				isShit=#{isShit},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_footprint where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getFootprintById" resultType="Footprint">
+		select * from
+		kg_footprint where id=#{id}
+	</select>
+	<select id="getFootprintByPage" resultMap="footprintMaps">
+		select * from kg_footprint f left join kg_baby b on f.baby_id=b.id
+		<where>
+			<if test="username!=null  and username!=''">
+				and b.username like "%"#{username}"%"
+		</if>
+			<if test="baby_id!=null">
+				and f.baby_id=#{baby_id}
+		</if>
+			<if test="garden_id!=null">
+				and f.garden_id=#{garden_id}
+		</if>
+			<if test="teacher_id!=null">
+				and f.baby_id in (select id from kg_baby where
+				teacher_id=#{teacher_id}) 
+		</if>
+		</where>
+		order by f.date desc, f.baby_id asc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Footprint" id="footprintMaps">
+		<association property="baby" column="baby_id" javaType="Baby"
+			select="getBabyById" />
+		<association property="teacher" column="teacher_id"
+			javaType="Teacher" select="getTeacherById" />
+		<association property="garden" column="garden_id"
+			javaType="Garden" select="getGardenById" />
+	</resultMap>
+	<select id="getBabyById" resultType="Baby">
+		select * from kg_baby where
+		id=#{baby_id}
+	</select>
+	<select id="getTeacherById" resultType="Teacher">
+		select * from kg_teacher
+		where id=#{teacher_id}
+	</select>
+	<select id="getGardenById" resultType="Garden">
+		select * from kg_garden
+		where id=#{garden_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_footprint f left join kg_baby b on
+		f.baby_id=b.id
+		<where>
+			<if test="username!=null  and username!=''">
+				and b.username like "%"#{username}"%"
+		</if>
+			<if test="baby_id!=null">
+				and f.baby_id=#{baby_id}
+		</if>
+			<if test="garden_id!=null">
+				and f.garden_id=#{garden_id}
+		</if>
+			<if test="teacher_id!=null">
+				and f.baby_id in (select id from kg_baby where
+				teacher_id=#{teacher_id}) 
+		</if>
+		</where>
+	</select>
+	<select id="getFootprintByGardenId" resultMap="footprintMaps">
+		select * from kg_footprint where garden_id =#{garden_id} order by teacher_id
+		asc,date desc, baby_id asc
+	</select>
+	<select id="getFootprintByTeacherId" resultMap="footprintMaps">
+		select * from kg_footprint
+		<where>
+			<if test="date!=null"> and date=#{date}</if>
+			and teacher_id=#{id}
+		</where>
+		order by date desc, baby_id asc
+	</select>
+	<select id="getFootprintByBabyId" resultMap="footprintMaps">
+		select * from kg_footprint where baby_id=#{id} order by id desc
+	</select>
+	<select id="getFootprintBabyIds" resultType="Footprint">
+		select * from kg_footprint
+		<where>
+			baby_id in
+			<foreach collection="ids" open="(" separator="," close=")"
+				item="id">#{id}</foreach>
+		</where>
+	</select>
+	<select id="getFootprintTeacherIds" resultType="Footprint">
+		select * from kg_footprint
+		<where>
+			teacher_id in
+			<foreach collection="ids" open="(" separator="," close=")"
+				item="id">#{id}</foreach>
+		</where>
+	</select>
+</mapper>

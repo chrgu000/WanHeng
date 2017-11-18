@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userGroup.dao">
+
+	<sql id="columns">
+		id, honor, starts, type, min_integral, max_integral,
+		honor_color,is_delete
+	</sql>
+	<sql id="vals">
+		#{id}, #{honor}, #{starts}, #{type}, #{min_integral},
+		#{max_integral}, #{honor_color},#{is_delete}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="honor != null and honor != ''">
+			and honor = #{honor}
+		</if>
+		<if test="starts != null and starts != ''">
+			and starts = #{starts}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="min_integral != null and min_integral != ''">
+			and min_integral = #{min_integral}
+		</if>
+		<if test="max_integral != null and max_integral != ''">
+			and max_integral = #{max_integral}
+		</if>
+		<if test="honor_color != null and honor_color != ''">
+			and honor_color = #{honor_color}
+		</if>
+	</sql>
+
+	<insert id="saveUserGroup" parameterType="com.cgwas.userGroup.entity.UserGroup"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_group (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserGroupVo" parameterType="com.cgwas.userGroup.entity.UserGroupVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_group (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserGroup">
+		delete from u_user_group
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserGroupVo">
+		delete from u_user_group
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserGroup">
+		delete from u_user_group
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserGroupVo">
+		delete from u_user_group
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserGroup" resultType="com.cgwas.userGroup.entity.UserGroupVo">
+		select
+		<include refid="columns" />
+		from u_user_group
+		where id=#{id}
+	</select>
+
+	<select id="selectUserGroup" resultType="com.cgwas.userGroup.entity.UserGroupVo">
+		select
+		<include refid="columns" />
+		from u_user_group
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserGroup">
+		update u_user_group
+		<set>
+			id=#{id},
+			honor=#{honor},
+			starts=#{starts},
+			type=#{type},
+			min_integral=#{min_integral},
+			max_integral=#{max_integral},
+			honor_color=#{honor_color}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserGroupVo">
+		update u_user_group
+		<set>
+			id=#{id},
+			honor=#{honor},
+			starts=#{starts},
+			type=#{type},
+			min_integral=#{min_integral},
+			max_integral=#{max_integral},
+			honor_color=#{honor_color}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserGroup">
+		update u_user_group
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="honor != null and honor != ''">
+				honor=#{honor},
+			</if>
+			<if test="starts != null and starts != ''">
+				starts=#{starts},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="min_integral != null and min_integral != ''">
+				min_integral=#{min_integral},
+			</if>
+			<if test="max_integral != null and max_integral != ''">
+				max_integral=#{max_integral},
+			</if>
+			<if test="honor_color != null and honor_color != ''">
+				honor_color=#{honor_color}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserGroupVo">
+		update u_user_group
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="honor != null and honor != ''">
+				honor=#{honor},
+			</if>
+			<if test="starts != null and starts != ''">
+				starts=#{starts},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="min_integral != null and min_integral != ''">
+				min_integral=#{min_integral},
+			</if>
+			<if test="max_integral != null and max_integral != ''">
+				max_integral=#{max_integral},
+			</if>
+			<if test="honor_color != null and honor_color != ''">
+				honor_color=#{honor_color}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserGroup">
+		update u_user_group
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="honor != null and honor != ''">
+				honor=#{honor},
+			</if>
+			<if test="starts != null and starts != ''">
+				starts=#{starts},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="min_integral != null and min_integral != ''">
+				min_integral=#{min_integral},
+			</if>
+			<if test="max_integral != null and max_integral != ''">
+				max_integral=#{max_integral},
+			</if>
+			<if test="honor_color != null and honor_color != ''">
+				honor_color=#{honor_color}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserGroupVo">
+		update u_user_group
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="honor != null and honor != ''">
+				honor=#{honor},
+			</if>
+			<if test="starts != null and starts != ''">
+				starts=#{starts},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="min_integral != null and min_integral != ''">
+				min_integral=#{min_integral},
+			</if>
+			<if test="max_integral != null and max_integral != ''">
+				max_integral=#{max_integral},
+			</if>
+			<if test="honor_color != null and honor_color != ''">
+				honor_color=#{honor_color}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 得到用户组列表 -->
+	<select id="getUserGroupList" resultType="com.cgwas.userGroup.entity.UserGroup">
+		select * from u_user_group
+		where is_delete='N' and type='0'
+		<choose>
+			<when test="userGroup.id!=null">
+				and id=#{userGroup.id}
+			</when>
+			<when test="userGroup.honor!=null">
+				and honor like
+				CONCAT('%',#{userGroup.honor},'%')
+			</when>
+			<when test="userGroup.starts!=null">
+				and starts like CONCAT('%',#{userGroup.starts},'%')
+			</when>
+
+			<when test="userGroup.min_integral!=null">
+				and min_integral like
+				CONCAT('%',#{userGroup.min_integral},'%')
+			</when>
+			<when test="userGroup.max_integral!=null">
+				and max_integral like
+				CONCAT('%',#{userGroup.max_integral},'%')
+			</when>
+			<when test="userGroup.honor_color!=null">
+				and honor_color like
+				CONCAT('%',#{userGroup.honor_color},'%')
+			</when>
+
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null and page.start>-1">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到用户组列表(数量) -->
+	<select id="getUserGroupListCount" resultType="java.lang.Long">
+		select COUNT(*)
+		from u_user_group
+		where is_delete='N' and type='0'
+		<choose>
+			<when test="userGroup.id!=null">
+				and id=#{userGroup.id}
+			</when>
+			<when test="userGroup.honor!=null">
+				and honor like
+				CONCAT('%',#{userGroup.honor},'%')
+			</when>
+			<when test="userGroup.starts!=null">
+				and starts like CONCAT('%',#{userGroup.starts},'%')
+			</when>
+	
+			<when test="userGroup.min_integral!=null">
+				and min_integral like
+				CONCAT('%',#{userGroup.min_integral},'%')
+			</when>
+			<when test="userGroup.max_integral!=null">
+				and max_integral like
+				CONCAT('%',#{userGroup.max_integral},'%')
+			</when>
+			<when test="userGroup.honor_color!=null">
+				and honor_color like
+				CONCAT('%',#{userGroup.honor_color},'%')
+			</when>
+	
+		</choose>
+	</select>
+	<!-- 得到用户详细信息 -->
+	<select id="getUserGroupById" resultType="com.cgwas.userGroup.entity.UserGroup">
+		select * from
+		u_user_group
+		where id =#{id}
+	</select>
+	<!-- 更新用户信息 -->
+	<update id="updateUserGroupInfo">
+		update u_user_group
+		<set>
+			<if test="honor != null and honor != ''">
+				honor=#{honor},
+			</if>
+			<if test="starts != null and starts != ''">
+				starts=#{starts},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="min_integral != null and min_integral != ''">
+				min_integral=#{min_integral},
+			</if>
+			<if test="max_integral != null and max_integral != ''">
+				max_integral=#{max_integral},
+			</if>
+			<if test="honor_color != null and honor_color != ''">
+				honor_color=#{honor_color}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<!-- 批量删除用户组 -->
+	<update id="batchDeleteUserGroup">
+		update u_user_group
+		<set>
+			is_delete='Y'
+		</set>
+		where 1=1 and id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</update>
+
+	<!-- 得到管理组列表 -->
+	<select id="getCompanyGroupList" resultType="com.cgwas.userGroup.entity.UserGroup">
+		select * from u_user_group
+		where is_delete='N' and type='1'
+		<choose>
+			<when test="userGroup.id!=null">
+				and id=#{userGroup.id}
+			</when>
+			<when test="userGroup.honor!=null">
+				and honor like
+				CONCAT('%',#{userGroup.honor},'%')
+			</when>
+			<when test="userGroup.starts!=null">
+				and starts like CONCAT('%',#{userGroup.starts},'%')
+			</when>
+
+			<when test="userGroup.min_integral!=null">
+				and min_integral like
+				CONCAT('%',#{userGroup.min_integral},'%')
+			</when>
+			<when test="userGroup.max_integral!=null">
+				and max_integral like
+				CONCAT('%',#{userGroup.max_integral},'%')
+			</when>
+			<when test="userGroup.honor_color!=null">
+				and honor_color like
+				CONCAT('%',#{userGroup.honor_color},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null and page.start>-1">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到管理组列表 -->
+	<select id="getCompanyGroupListCount" resultType="java.lang.Long">
+		select count(*)
+		from u_user_group
+		where is_delete='N' and type='1'
+		<choose>
+			<when test="userGroup.id!=null">
+				and id=#{userGroup.id}
+			</when>
+			<when test="userGroup.honor!=null">
+				and honor like
+				CONCAT('%',#{userGroup.honor},'%')
+			</when>
+			<when test="userGroup.starts!=null">
+				and starts like CONCAT('%',#{userGroup.starts},'%')
+			</when>
+	
+			<when test="userGroup.min_integral!=null">
+				and min_integral like
+				CONCAT('%',#{userGroup.min_integral},'%')
+			</when>
+			<when test="userGroup.max_integral!=null">
+				and max_integral like
+				CONCAT('%',#{userGroup.max_integral},'%')
+			</when>
+			<when test="userGroup.honor_color!=null">
+				and honor_color like
+				CONCAT('%',#{userGroup.honor_color},'%')
+			</when>
+		</choose>
+	</select>
+</mapper>

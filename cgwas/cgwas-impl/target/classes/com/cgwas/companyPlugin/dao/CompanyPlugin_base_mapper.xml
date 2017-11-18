@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.companyPlugin.dao">
+<select id="getPluginId" resultType="java.lang.Long">
+select id from p_company_plugin where plugin_name=#{pluginName} and (company_id=0 or company_id=#{company_id})
+</select>
+	<sql id="columns">
+		id, plugin_name, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{plugin_name}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="plugin_name != null and plugin_name != ''">
+			and plugin_name = #{plugin_name}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyPlugin" parameterType="com.cgwas.companyPlugin.entity.CompanyPlugin" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_plugin (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanyPluginVo" parameterType="com.cgwas.companyPlugin.entity.CompanyPluginVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_plugin (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCompanyPlugin">
+		delete from p_company_plugin
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanyPluginVo">
+		delete from p_company_plugin
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCompanyPlugin">
+		delete from p_company_plugin
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanyPluginVo">
+		delete from p_company_plugin
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCompanyPlugin" resultType="com.cgwas.companyPlugin.entity.CompanyPluginVo">
+		select 
+		<include refid="columns"/>
+		from p_company_plugin
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCompanyPlugin" resultType="com.cgwas.companyPlugin.entity.CompanyPluginVo">
+		select 
+		<include refid="columns"/>
+		from p_company_plugin
+		where  company_id=0 or company_id=#{company_id}
+			</select>
+
+	<update id="updateCompanyPlugin">
+		update p_company_plugin
+		<set>
+			id=#{id}, 
+			plugin_name=#{plugin_name}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCompanyPluginVo">
+		update p_company_plugin
+		<set>
+			id=#{id}, 
+			plugin_name=#{plugin_name}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCompanyPlugin">
+		update p_company_plugin
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="plugin_name != null and plugin_name != ''">
+			plugin_name=#{plugin_name}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCompanyPluginVo">
+		update p_company_plugin
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="plugin_name != null and plugin_name != ''">
+			plugin_name=#{plugin_name}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCompanyPlugin">
+		update p_company_plugin
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="plugin_name != null and plugin_name != ''">
+			plugin_name=#{plugin_name}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCompanyPluginVo">
+		update p_company_plugin
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="plugin_name != null and plugin_name != ''">
+			plugin_name=#{plugin_name}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

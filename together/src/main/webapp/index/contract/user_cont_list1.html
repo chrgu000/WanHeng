@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>我的合同</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body style="background: #f6f6f6">
+<div class="cont">
+    <div class="cont_top">
+        <ul>
+            <li ><a href="user_cont_list.html">履约合同</a></li>
+            <li class="active"><a onclick="getCompactsByStatus(1)">历史合同</a></li>
+        </ul>
+    </div>
+    <div id="com">
+    <div class="cont_address" v-for="compact in data" v-cloak >
+        <div class="cont_address_list">
+            <img src="../img/address_green.png" class="img-responsive">
+            <p><span>{{compact.house.city}}</span><small>{{compact.house.gardenName}} {{compact.house.title}}</small></p>
+            <div class="cont_table">
+                <h5>合同概要 <a class="pull-right" >合同详情></a></h5>
+                <div class="cont_table_center">
+                    <ul>
+                        <li><span>合同编号</span><p>{{compact.compactNum}}</p></li>
+                        <li><span>房号</span><p>{{compact.houseNum}}</p></li>
+                        <li class="cont_li"><span>姓名</span><p>{{compact.name}}</p></li>
+                        <li class="cont_li"><span>电话</span><p>{{compact.tel}}</p></li>
+                        <li class="cont_li"><span>付款方式</span><p>{{compact.payWay.content}}</p></li>
+                        <li class="cont_li"><span>押金</span><p>{{compact.deposit}}元</p></li>
+                        <li class="cont_border"><span>身份证号码</span><p>{{compact.idCardNum}}</p></li>
+                        <li><span>租赁期限</span><p><s>{{compact.startTime}}</s><s>至</s><s>{{compact.endTime}}</s></p></li>
+                        <li  class="cont_li"><span>物业费</span><p>{{compact.condoWay}}</p></li>
+                        <li class="cont_li"><span>水费</span><p>{{compact.waterWay}}</p></li>
+                        <li class="cont_li"><span>电费</span><p>{{compact.powerWay}}</p></li>
+                        <li class="cont_li"><span>燃气费</span><p>{{compact.gasWay}}</p></li>
+                        <li class="cont_border"><span>收款时间</span><p><i v-for="payTime in compact.payTimes">{{payTime}}</i></p></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+</div>
+
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script>
+
+    $(function(){
+        getCompactsByStatus(2);
+    });
+    function getCompactsByStatus(status){
+        $.ajax({
+            url:"../../compact/getCompactsByStatusAndUser.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                status:status
+            },
+            success:function(data){
+                var vm=new Vue({
+                    el:'#com',
+                    data:{
+                        data:data
+                    }
+                });
+                vm.$nextTick(function(){
+                    $(".cont_address_list").click(function(){
+                        $(this).find(".cont_table").toggle();
+                        $(this).siblings(".cont_address_list").find(".cont_table").css("display","none")
+                    })
+                });
+
+            },
+            error : function() {
+            }
+        });
+    }
+</script>
+</body>
+</html>

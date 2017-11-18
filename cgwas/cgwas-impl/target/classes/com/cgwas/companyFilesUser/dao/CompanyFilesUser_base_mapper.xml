@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companyFilesUser.dao">
+
+	<sql id="columns">
+		 id,company_files_id, user_id
+	</sql>
+	<sql id="vals">
+		#{id},  #{company_files_id}, #{user_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="company_files_id != null and company_files_id != ''">
+			and company_files_id = #{company_files_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyFilesUser" parameterType="com.cgwas.companyFilesUser.entity.CompanyFilesUser" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_files_user (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanyFilesUserVo" parameterType="com.cgwas.companyFilesUser.entity.CompanyFilesUserVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_files_user (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<delete id="deleteCompanyFilesUser">
+		delete from p_company_files_user
+		where 1=1 <include refid="conds" /> 
+	</delete>
+	
+	<delete id="deleteCompanyFilesUserAll">
+		delete from p_company_files_user
+		where company_files_id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach> 
+	</delete>
+	
+	<delete id="deleteCompanyFilesUserVo">
+		delete from p_company_files_user
+		where 1=1 <include refid="conds" /> 
+	</delete>
+	
+	<delete id="deleteByExampleCompanyFilesUser">
+		delete from p_company_files_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanyFilesUserVo">
+		delete from p_company_files_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="selectCompanyFilesUserByCheck" resultType="com.cgwas.companyFilesUser.entity.CompanyFilesUserVo">
+		SELECT cfu.id,cfu.user_id,cfu.company_files_id from p_company_files_user cfu
+		LEFT JOIN p_company_files pcf ON cfu.company_files_id=pcf.id
+		WHERE cfu.user_id=#{user_id} AND pcf.parent_id=#{parent_id}
+	</select>
+	
+	<select id="selectCompanyFilesUser" resultType="com.cgwas.companyFilesUser.entity.CompanyFilesUserVo">
+		select 
+		<include refid="columns"/>
+		from p_company_files_user
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+</mapper>

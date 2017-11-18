@@ -1,0 +1,155 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<style>
+[v-cloak] {
+	display: none;
+}
+</style>
+	</head>
+	<body>
+
+		<div class="back">
+			<div class="back_btn" onclick="goBack()">
+				<img src="img/left_icon.png" class="img-responsive" />
+			</div>
+			<div class="back_center">
+				评语
+			</div>
+			<div class="back_right"></div>
+		</div>
+		<div class="evaluation" v-cloak>
+			<form action="../log/updateLog.do" method="post" id="form">
+				<input type="hidden" name="id" v-model="data.id">
+				<ul>
+					<li>
+						<a><span>日期</span><span>{{data.create_time}}</span> </a>
+					</li>
+					<li>
+						<a style="background: none">
+							<div class="pull-left">
+							近期我宝贝学会了
+							</div>
+							<div class="pull-right" style="width: 100%;">
+								<textarea rows="4" placeholder="请输入评语"
+									style="width: 100%; float: left;border: none; background-color:white;  text-indent: 10%;">{{data.living_ability}}</textarea>
+							</div> </a>
+					</li>
+					<li class="no_border" style="border-bottom: 1px solid #e4e4e4">
+						<a>
+						<div class="pull-left">
+							老师夸夸我
+							</div>
+							<p>
+								{{data.content}}
+							</p> 
+							</a>
+					</li>
+					<li class="no_border">
+						<a>
+							<div class="pull-left">
+							爸爸妈妈夸夸我
+							</div>
+							<p>
+								{{data.reply}}
+							</p> <textarea rows="5" name="reply" id="reply" placeholder="爸爸妈妈夸夸我"
+								style="background-color: #f4f4f4; border: 0px solid #e4e4e4">{{data.reply}}</textarea>
+						</a>
+					</li>
+					<li class="no_border" id="submit">
+						<input type="button" value="回 复" onclick="save()">
+					</li>
+				</ul>
+			</form>
+		</div>
+		<script src="js/jquery.min.js">
+</script>
+		<script src="js/vue.min.js">
+</script>
+		<script src="js/data.js">
+</script>
+		<script src="js/style.js">
+</script>
+		<script src="../static/common/jquery.form.js">
+</script>
+		<script src="js/style.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/pop.ups/init.js">
+</script>
+		<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+		<script>
+var id = getQueryString("id");
+var baby_id = getQueryString("baby_id");
+function save() {
+	$("#form").submit();
+}
+$("#form").ajaxForm( {
+	dataType : 'json',
+	beforeSend : function() {
+		//表单提交前做表单验证
+	return check();
+},
+success : function(data) {
+	if (data.hasError) {
+		$.pop.tips(data.errInfo);
+	} else {
+		$.pop.tips(data.errInfo);
+		setTimeout(function() {
+			location.href = "growth.html?id=" + baby_id;
+		}, 500);
+	}
+},
+error : function() {
+}
+});
+$.ajax( {
+	url : "../log/getLogById.do",
+	type : "post",
+	data : {
+		id : id
+	},
+	dataType : "json",
+	success : function(data) {
+		if (data.reply.length > 0) {
+			$("#reply").css("display", "none");
+			$("#submit").css("display", "none");
+		}
+		new Vue( {
+			el : ".evaluation",
+			data : {
+				data : data
+			}
+		});
+	},
+	error : function() {
+	}
+});
+function check() {
+	var reply = $("#reply").val();
+	if (!reply) {
+		$.pop.tips("请输入评语回复");
+		return false;
+	}
+	return true;
+}
+</script>
+	</body>
+</html>

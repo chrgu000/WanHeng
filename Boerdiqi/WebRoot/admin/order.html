@@ -1,0 +1,445 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<!-- <link href="../static/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+<link href="../static/assets/css/bui-min.css" rel="stylesheet" type="text/css" /> -->
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<style>
+/**内容超出 出现滚动条 **/
+.bui-stdmod-body {
+	overflow-x: hidden;
+	overflow-y: auto;
+}
+</style>
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form id="searchForm" class="form-horizontal span24">
+					<div class="row">
+						<div class="control-group span8">
+							<label class="control-label">
+								用户昵称
+							</label>
+							<div class="controls">
+								<input type="text" class="control-text" name="nickname">
+								<input type="text" style="display: none">
+							</div>
+						</div>
+						<div id="" class="control-group span8">
+							<label class="control-label"
+								style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+								订单状态
+							</label>
+							<div class="controls">
+								<select style="height: 33px" v-model="selected" name="status">
+									<option value="">
+										---请选择---
+									</option>
+									<option value="1">
+										待支付
+									</option>
+									<option value="2">
+										已支付
+									</option>
+									<option value="3">
+										待发货
+									</option>
+									<option value="4">
+										已发货
+									</option>
+									<option value="5">
+										待退款
+									</option>
+									<option value="6">
+										已退款
+									</option>
+									<option value="7">
+										已取消
+									</option>
+										<option value="8">
+										已完成
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="span3 offset"
+							style="float: right; margin-right: 10px;">
+							<button type="button" id="btnSearch"
+								class="button button-primary">
+								搜索
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid">
+
+				</div>
+			</div>
+		</div>
+		<div id="content" class="hide">
+			<form id="J_Form" class="form-horizontal" action="" method="post">
+				<input type="hidden" name="id">
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>物流编码
+						</label>
+						<div class="controls">
+							<input name="code" type="text" data-tip="{text : '物流编码'}"
+								data-rules="{required:true}" class="input-normal control-text">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>快递号
+						</label>
+						<div class="controls">
+							<input name="express" type="text" data-tip="{text : '快递号'}"
+								data-rules="{required:true,number:true,min:0}"
+								class="input-normal control-text">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>收件人
+						</label>
+						<div class="controls">
+							<input name="name" type="text" data-tip="{text : '收件人'}"
+								data-rules="{required:true,min:0}"
+								class="input-normal control-text" >
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>邮编
+						</label>
+						<div class="controls">
+							<input name="youbian" type="text" data-tip="{text : '邮编'}"
+								data-rules="{required:true,min:0}"
+								class="input-normal control-text" >
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>联系电话
+						</label>
+						<div class="controls">
+							<input name="tel" type="text" data-tip="{text : '联系电话'}"
+								data-rules="{required:true,min:0}"
+								class="input-normal control-text" >
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							<s>*</s>收获地址
+						</label>
+						<div class="controls">
+							<input name="address" type="text" data-tip="{text : '收获地址'}"
+								data-rules="{required:true,min:0}"
+								class="input-normal control-text" style="width:164px">
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<script type="text/javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript">
+var user_id = getQueryString("user_id");
+BUI.use( [ 'common/search', 'bui/form', 'bui/tooltip'], function(Search, Grid,
+		Data, Form, Tooltip) {
+	var Grid = BUI.Grid;
+	var enumObj1 = {
+		'0' :  "待提交",
+		"1" : "待支付",
+		"2" : "已支付",
+		"3" : "待发货",
+		"4" : "已发货",
+		"5" : "待退款",
+		"6" : "已退款",
+		"7" : "已取消",
+		"8" :"已完成"
+		};
+	var enumObj2 = {
+		"1" : "支付宝",
+		"2" : "微信",
+		"3" : "银行卡",
+	};
+	var columns = [ {
+		title : '订单号',
+		dataIndex : 'order_num',
+		width : 100
+	}, 
+	{
+		title : '订单时间',
+		dataIndex : '',
+		width :160,
+		renderer : function(value, obj) {
+			return  	"下单时间:"+obj.join_time+"<br/>支付时间:"+obj.paytimes+"<br/>快递时间:"+obj.sendtimes;
+		}
+	},
+		{
+		title : '订单状态',
+		dataIndex : 'status',
+		width : 60,
+		renderer : BUI.Grid.Format.enumRenderer(enumObj1)
+	},
+	{
+		title : '实付款',
+		dataIndex : 'total_price',
+		width : 50
+	},
+	{
+		title : '邮费',
+		dataIndex : 'mail',
+		width : 40
+	},
+	{
+		title : '用户昵称',
+		dataIndex : '',
+		width : 60,
+		renderer : function(value, obj) {
+			if (obj.user == null)
+				return null;
+			return obj.user.nickname;
+		}
+	}, 
+	{
+		title : '收件信息',
+		dataIndex : '',
+		width : 160,
+		renderer : function(value, obj) {
+			return obj.name+"<br/>"+  obj.youbian+"<br/>"+obj.tel+"<br/>"+obj.address+"<br/>"+"买家留言:"+obj.message;
+		}
+	}, 
+		{
+		title : '邮编信息',
+		dataIndex : '',
+		width : 120,
+		renderer : function(value, obj) {
+			return  	"物流编码:"+obj.code+"<br/>快递号:"+obj.express;
+		}
+	} ,
+	{
+		title : '支付类型',
+		dataIndex : 'payType',
+		width : 60,
+		renderer : BUI.Grid.Format.enumRenderer(enumObj2)
+	},
+		{
+		title : '操作',
+		dataIndex : '',
+		width : 100,
+		renderer : function(value, obj) {
+			var editStr1 = '<span class="grid-command"   onclick="getOrders('+obj.id+')" title="更多信息">更多信息</span>',
+				 updStr="<span class=\"grid-command btn-edit\">编辑</span>&nbsp;&nbsp;&nbsp;&nbsp;";
+			return editStr1+updStr;
+		}
+	} 
+	];
+	var editing = new Grid.Plugins.DialogEditing( {
+		contentId : 'content',
+		autoSave : true,
+		triggerCls : 'btn-edit',
+		editor : {
+			width : 400,
+			title : '编辑',
+			success : function() {
+				var edtor = this;
+				var form = edtor.get('form');
+				var editType = editing.get('editType');
+				var url = "";
+				if (editType == 'add') {
+				} else if (editType == 'edit') {
+					url = '../grouporder/updateGroupOrder.do';
+				}
+				if (form.isValid()) {
+					form.ajaxSubmit( {
+						url : url,
+						success : function(data) {
+							if (data.hasError) {
+								BUI.Message.Alert(data.errInfo, 'warning');
+								edtor.close();
+								store.load();
+							} else {
+								edtor.close();
+								store.load();
+							}
+						},
+						error : function() {
+						}
+					});
+				}
+			}
+		}
+	})
+	var store = Search.createStore('../grouporder/loadGroupOrder.do', {
+		proxy : {
+			save : {},
+			method : 'POST'
+		},
+		params : {
+			user_id : user_id
+		},
+		pageIndex : 0,
+		pageSize : 5,
+		autoSync : true
+	//保存数据后，自动更新
+			});
+	var gridCfg = Search.createGridCfg(columns, {
+		forceFit : true,
+		tbar : {},
+		loadMask : true, //加载数据时显示屏蔽层
+		plugins : [ editing, BUI.Grid.Plugins.CheckSelection ]
+	// 插件形式引入多选表格
+			});
+	var search = new Search( {
+		store : store,
+		gridCfg : gridCfg
+	});
+	var grid = search.get('grid');
+	editing.on('editorshow', function(ev) {
+		var type = ev.editType;
+		if (type == 'add') {
+			//$("[name='username']").removeAttr("readonly");
+			//	$("[name='role_id']")	.removeAttr("disabled");
+		} else {
+			//	$("[name='username']").attr("readonly","readonly");
+			//	$("[name='role_id']").attr("disabled","disabled");
+		}
+	});
+	grid.on('cellclick', function(ev) {
+		var sender = $(ev.domTarget);
+		if (sender.hasClass('btn-del')) {
+			var record = ev.record;
+			delItems( [ record ]);
+		}
+	});
+});
+var dialog;
+var data1;
+var grid;
+
+function getOrders(group_order_id) {
+	$.ajax( {
+		url : "../grouporder/getOrdersByGroupOrderId.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			"group_order_id" : group_order_id
+		},
+		success : function(data) {
+		BUI.use(['bui/overlay','bui/grid','bui/data'],function(Overlay,Grid,Data){
+          var Store = Data.Store,
+           columns = [
+         {
+			title : '产品名称',
+			dataIndex : '',
+			elCls : 'center',
+			width :150,
+			renderer : function(value, obj) {
+				return  	obj.product.name;
+		}
+	 },
+	{ title : '商品图片',
+		dataIndex : '',
+		elCls : 'center',
+		width : 80,
+		renderer : function(value, obj) {
+			var delStr = "<img src='../"
+					+ obj.product.imgUrl
+					+ "' style='width:60px;height:60px'>";
+			return delStr;
+		}
+	}, 
+    {title : '产品数量',
+		dataIndex : 'num',
+		elCls : 'center',
+		width : 80
+	}, 
+    {title : '产品属性',
+		dataIndex : '',
+		elCls : 'center',
+		width : 180,
+		renderer : function(value, obj) {
+			return obj.skuinfo.attr_titles;
+		}
+	},
+	  {title : '产品原价',dataIndex : '',elCls : 'center',width:100
+		,renderer : function(value, obj) {
+			return obj.skuinfo.original_price;
+		}},
+	  {title : '产品现价',dataIndex : '',elCls : 'center',width:100
+			,renderer : function(value, obj) {
+			return obj.skuinfo.favourable_price;
+		}},
+      {title : '产品编码',dataIndex : '',elCls : 'center',width:100,
+			renderer : function(value, obj) {
+			return obj.skuinfo.code;
+		}
+			}
+          ];
+        var store = new Store({
+            data :data,
+            autoLoad:true
+          }),
+          grid = new Grid.Grid({
+            forceFit: true, // 列宽按百分比自适应
+            columns : columns,
+            store : store
+          });
+       dialog= new Overlay.Dialog({
+            title:'订单详情',
+            width:850,
+            height:400,
+            children : [grid],
+            childContainer : '.bui-stdmod-body',
+            success:function () {
+        	  this.close();
+            }
+          });
+		dialog.show();
+      });
+		}
+	});
+}
+</script>
+		<body>
+</html>

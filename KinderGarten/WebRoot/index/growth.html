@@ -1,0 +1,70 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>蒙台梭利</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+     <style>
+[v-cloak] {
+	display: none;
+}
+</style>
+</head>
+<body>
+
+<div class="back">
+    <div class="back_btn" onclick="goBack()"><img src="img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center">成长</div>
+    <div class="back_right"><a></a></div>
+</div>
+<div class="growth" v-cloak>
+     <ul>
+        <li v-for="list in data"><a :href="'evaluation.html?id='+list.id+'&baby_id='+list.baby_id">{{list.create_time}}<small>{{list.content}}</small></a></li>
+    </ul>
+</div>
+<div id="foot">
+    <ul>
+        <li><a href="pic_list.html"><img src="img/picture_photo.png" class="img-responsive"><span>照片</span></a></li>
+        <li><a href="growth.html"><img src="img/chengzhang.png" class="img-responsive"><span>成长</span></a></li>
+        <li><a href="archives.html"><img src="img/User.png" class="img-responsive"><span>我</span></a></li>
+    </ul>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/vue.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/style.js"></script>
+<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+<script>
+ $(function(){
+		$.ajax({
+				url:"../log/getLogByBabyId1.do",
+				type:"post",
+				data:{},
+				dataType:"json",
+				success:function(data){
+					 vm=new Vue({
+						el:".growth",
+						data:{
+				            data:data
+				        }
+					});
+				},error:function(){}
+			});
+	});
+</script>
+</body>
+</html>

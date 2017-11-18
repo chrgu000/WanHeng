@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.ShareHouseDao">
+	<resultMap id="shareHouseMap" type="ShareHouse">
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+	</resultMap>
+	<insert id="save">
+		insert into
+		to_share_house(content,create_time,modified_time,num,delflag) 	values(#{content},#{createTime},#{modifiedTime},#{num},#{delflag})
+	</insert>
+	<update id="update">
+		update to_share_house
+		<set>
+			<if test="content!=null and content!=''">
+				content=#{content},
+</if>
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				modified_time=#{modifiedTime},
+			</if>
+			<if test="num!=null and num!=''">
+				num=#{num},
+			</if>
+			<if test="delflag!=null and delflag!=''">
+			delflag=#{delflag},
+		</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		update   to_share_house set delflag=1  where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+
+	<select id="getById" resultMap="shareHouseMap">
+		select * from to_share_house
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="shareHouseMap">
+		select * from to_share_house where delflag=2
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_share_house where delflag=2
+	</select>
+
+	<select id="getAllShareHouse" resultType="ShareHouse">
+	 select * from to_share_house where delflag=2 order by num ASC
+	</select>
+</mapper>

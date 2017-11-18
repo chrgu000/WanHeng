@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.TicketDao">
+	<select id="findAllTicket" resultType="Ticket">
+		select * from jxc_ticket
+	</select>
+	<select id="findAllTicketByPage" resultMap="ticketMaps">
+		select * from jxc_ticket
+		<where>
+			<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+				and title_id=#{title_id}
+			</if>
+		 
+			<if test="isUse!=null&amp;&amp;!isUse.equals('')">
+				and isUse =#{isUse}
+			</if>
+		</where>
+	order by endDate desc	 limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Ticket" id="ticketMaps">
+	<association property="title" column="title_id" javaType="Title" select="findTitleById"></association>
+	<association property="user" column="user_id" javaType="User"  select="findUserById"></association>
+	</resultMap>
+	<select id="findTitleById" resultType="Title">
+	select * from jxc_title where id=#{title_id}
+	</select>
+	<select id="findUserById" resultType="User">
+	select * from jxc_user where id=#{user_id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_ticket
+		<where>
+		<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+					and title_id=#{title_id}
+			</if>
+			 
+			<if test="isUse!=null&amp;&amp;!isUse.equals('')">
+				and isUse =#{isUse}
+			</if>
+		</where>
+	</select>
+ 
+	<select id="findTicketById" resultType="Ticket">
+		select * from jxc_ticket
+		where id=#{id}
+	</select>
+	<insert id="addTicket">
+		insert into jxc_ticket(price,title_id,endDate,content,user_id,isUse)values(#{price},#{title_id},#{endDate},#{content},#{user_id},0)
+	</insert>
+	<update id="updateTicket" parameterType="Ticket">
+		update jxc_ticket
+		<set>
+			<if test="price!=null&amp;&amp;!price.equals('')">
+				price=#{price},
+			</if>
+			<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+				title_id=#{title_id},
+			</if>
+				<if test="endDate!=null&amp;&amp;!endDate.equals('')">
+				endDate=#{endDate},
+			</if>
+				<if test="content!=null&amp;&amp;!content.equals('')">
+				content=#{content},
+			</if>
+				<if test="user_id!=null&amp;&amp;!user_id.equals('')">
+				user_id=#{user_id},
+			</if>
+				<if test="isUse!=null&amp;&amp;!isUse.equals('')">
+				isUse=#{isUse},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteTicketById">
+		delete from jxc_ticket where id=#{id}
+	</delete>
+</mapper>

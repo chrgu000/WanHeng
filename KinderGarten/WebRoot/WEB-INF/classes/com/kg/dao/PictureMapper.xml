@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.PictureDao">
+	<insert id="addPicture">
+		insert into
+		kg_picture(path,type_id,baby_id,create_time,content)values(#{path},#{type_id},#{baby_id},#{create_time},#{content})
+	</insert>
+	<update id="updatePicture">
+		update kg_picture
+		<set>
+			<if test="path!=null and path!=''">
+				path=#{path},
+</if>
+			<if test="type_id!=null and type_id!=''">
+				type_id=#{type_id},
+</if>
+			<if test="baby_id!=null and baby_id!=''">
+				baby_id=#{baby_id},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteStyleByIds">
+	delete from kg_style_pic where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteByIds">
+		delete from kg_picture where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getPictureById" resultType="Picture">
+		select * from kg_picture
+		where id=#{id}
+	</select>
+	<select id="getPictureByPage" resultMap="pictureMaps">
+		select * from kg_picture
+		<where>
+			<if test="baby_id!=null and baby_id!=''">
+				and baby_id=#{baby_id}
+		</if>
+			<if test="type_id!=null and type_id!=''">
+				and type_id=#{type_id}
+		</if>
+		</where>
+		order by type_id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Picture" id="pictureMaps">
+		<association property="baby" column="baby_id" javaType="Baby"
+			select="getBabyById" />
+		<association property="pictype" column="type_id" javaType="PicType"
+			select="getPicTypeById"></association>
+	</resultMap>
+	<select id="getBabyById" resultType="Baby">
+		select * from kg_baby where
+		id=#{Baby_id}
+	</select>
+	<select id="getPicTypeById" resultType="PicType">
+		select * from kg_pic_type where id=#{type_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_picture
+		<where>
+			<if test="baby_id!=null and baby_id!=''">
+				and baby_id=#{baby_id}
+		</if>
+			<if test="type_id!=null and type_id!=''">
+				and type_id=#{type_id}
+		</if>
+		</where>
+	</select>
+	<select id="getPictureByBabyIds" resultType="Picture">
+	  select * from kg_picture <where> baby_id in <foreach collection="ids" open="("  separator=","  close=")" item="id">#{id}</foreach></where>
+	</select>
+	<select id="getPicVo" resultType="int">
+	  select count(*) from kg_picture p left join kg_pic_type t on p.type_id=t.id where p.baby_id=#{baby_id} and t.type=#{type}
+	</select>
+    <select id="getTotalPicNum" resultType="int">
+      select count(*) from kg_picture where baby_id=#{baby_id}
+    </select>
+    <select id="getPicturesByBabyId" resultType="Picture">
+    select * from kg_picture where baby_id=#{baby_id}
+    </select>
+    <select id="getPicturesByTypeId" resultType="Picture">
+    select * from kg_picture <where>
+    <if test="type_id!=null">and type_id=#{type_id}</if>
+    and  baby_id=#{baby_id}
+    </where>
+    </select>
+    <insert id="addBabyPicture">
+    insert into kg_picture(path,type_id,baby_id,create_time,content,min_path)values(#{path},#{type_id},#{baby_id},#{create_time},#{content},#{min_path})
+    </insert>
+    <select id="getStylePictureByPage" resultType="StylePic">
+    select * from kg_style_pic where style_id=#{style_id}
+		order by id desc limit #{begin},#{pageSize}
+    </select>
+    <select id="getStyleRows" resultType="int">
+    select count(*) from kg_style_pic where style_id=#{style_id}
+    </select>
+    <select id="getPictureByIds" resultType="Picture"> 
+    select * from kg_picture where id in 
+    <foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+    </select>
+    <select id="getStylePictureByIds"  resultType="StylePic">
+	select * from kg_style_pic where id in <foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+</mapper>

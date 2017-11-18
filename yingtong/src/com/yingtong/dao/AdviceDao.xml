@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.AdviceDao">
+	<insert id="addAdvice">
+		insert into yt_advice(advice,time,adviser,tel)
+		values(#{advice},#{time},#{adviser},#{tel})
+	</insert>
+	<select id="findAdviceByPage" resultType="Advice">
+		select * from yt_advice
+		<where>
+			<if test="adviser!=null&amp;&amp;!adviser.equals('')">
+				and adviser like "%"#{adviser}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+		</where>
+		order by time desc
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows"  resultType="int">
+	 select count(*) from yt_advice	<where>
+			<if test="adviser!=null&amp;&amp;!adviser.equals('')">
+				and adviser like "%"#{adviser}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+		</where>
+	</select>
+	<delete id="deleteAdvice">
+	delete from yt_advice where id=#{id}
+	</delete>
+</mapper>

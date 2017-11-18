@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.AddressDao">
+	<insert id="save">
+		insert into
+		dq_address(user_id,username,tel,province,city,area,addr,isDefaults)values(#{user_id},#{username},#{tel},#{province},#{city},#{area},#{addr},#{isDefaults})
+	</insert>
+	<update id="update">
+		update dq_address
+		<set>
+			<if test="username!=null and username!=''">
+				username=#{username},
+</if>
+			<if test="tel!=null and tel!=''">
+				tel=#{tel},
+</if>
+			<if test="province!=null and province!=''">
+				province=#{province},
+</if>
+			<if test="city!=null and city!=''">
+				city=#{city},
+</if>
+			<if test="area!=null and area!=''">
+				area=#{area},
+</if>
+			<if test="addr!=null and addr!=''">
+				addr=#{addr},
+</if>
+			<if test="isDefault!=null and isDefault!=''">
+				isDefault=#{isDefault},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from dq_address where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="Address">
+		select * from dq_address
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="Address">
+		select * from dq_address
+		<where>
+		<if test="user_id!=null">
+		user_id=#{user_id}
+		</if>
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_address
+		<where>
+		<if test="user_id!=null">
+		user_id=#{user_id}
+		</if>
+		</where>
+	</select>
+</mapper>

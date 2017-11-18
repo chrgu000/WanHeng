@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.labelTag.dao">
+
+	<sql id="columns">
+		id, label_name, project_id, weight
+	</sql>
+	<sql id="vals">
+		#{id}, #{label_name}, #{project_id}, #{weight}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="label_name != null and label_name != ''">
+			and label_name = #{label_name}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="weight != null and weight != ''">
+			and weight = #{weight}
+		</if>
+	</sql>
+
+	<insert id="saveLabelTag" parameterType="com.cgwas.labelTag.entity.LabelTag" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_label_tag (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveLabelTagVo" parameterType="com.cgwas.labelTag.entity.LabelTagVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_label_tag (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteLabelTag">
+		delete from p_label_tag
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteLabelTagVo">
+		delete from p_label_tag
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleLabelTag">
+		delete from p_label_tag
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleLabelTagVo">
+		delete from p_label_tag
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadLabelTag" resultType="com.cgwas.labelTag.entity.LabelTagVo">
+		select 
+		<include refid="columns"/>
+		from p_label_tag
+		where id=#{id} 
+	</select>
+	
+	<select id="selectLabelTag" resultType="com.cgwas.labelTag.entity.LabelTagVo">
+		select 
+		<include refid="columns"/>
+		from p_label_tag
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateLabelTag">
+		update p_label_tag
+		<set>
+			id=#{id}, 
+			label_name=#{label_name}, 
+			project_id=#{project_id}, 
+			weight=#{weight}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateLabelTagVo">
+		update p_label_tag
+		<set>
+			id=#{id}, 
+			label_name=#{label_name}, 
+			project_id=#{project_id}, 
+			weight=#{weight}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullLabelTag">
+		update p_label_tag
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="label_name != null and label_name != ''">
+			label_name=#{label_name}, 
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+		</if>
+		<if test="weight != null and weight != ''">
+			weight=#{weight}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullLabelTagVo">
+		update p_label_tag
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="label_name != null and label_name != ''">
+			label_name=#{label_name}, 
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+		</if>
+		<if test="weight != null and weight != ''">
+			weight=#{weight}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleLabelTag">
+		update p_label_tag
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="label_name != null and label_name != ''">
+			label_name=#{label_name}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+			</if>
+			<if test="weight != null and weight != ''">
+			weight=#{weight}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleLabelTagVo">
+		update p_label_tag
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="label_name != null and label_name != ''">
+			label_name=#{label_name}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+			</if>
+			<if test="weight != null and weight != ''">
+			weight=#{weight}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

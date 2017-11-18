@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+  <title>蒙台梭利</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/teacher_style.css">
+    <style type="text/css">
+[v-cloak] {
+    display: none;
+}
+</style>
+</head>
+<body style="background: #f5f4f9">
+<div class="back" style="background: #fff">
+    <div class="back_btn" onclick="goBack()"><img src="../img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center" >工作日记</div>
+    <div class="back_right"></div>
+</div>
+<div class="diary" v-cloak>
+  <ul  >
+      <li v-for="list in data" ><a :href="'diary_pic_list.html?diary_type_id='+list.id">{{list.type}}</a></li>
+  </ul>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/style.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script src="../js/teacher_cookie.js">
+</script>
+<script>
+$(function(){
+		$.ajax({
+			url:"../../diary/getAllDiaryType.do",
+			type:"post",
+			data:{},
+			dataType:"json",
+			success:function(data){
+				new Vue({
+			        el:'.diary',
+			        data:{
+			            data:data
+			        }
+			    });
+			},error:function(){}
+		});
+});
+</script>
+</body>
+</html>

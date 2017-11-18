@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun-->
+<mapper namespace="com.cgwas.screenwriter.dao">
+	<sql id="columnsAs">
+		t1.id, t1.screenwriter_name, t1.user_id, t1.head_pic_path
+	</sql>
+
+	<select id="selectScreenwriterPage" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		p_screenwriter t1
+		join
+		(SELECT
+		id
+		from
+		p_screenwriter
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectScreenwriterCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from p_screenwriter
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

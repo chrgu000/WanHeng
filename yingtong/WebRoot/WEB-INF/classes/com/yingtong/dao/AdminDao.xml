@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.AdminDao">
+	<insert id="addAdmin">
+		insert into yt_admin(username,password,power_id) values
+		(#{username},#{password},#{power_id})
+	</insert>
+	<update id="updateAdmin">
+		update yt_admin
+		<set>
+			<if test="password!=null and password!=''">
+				password=#{password},
+			</if>
+			<if test="power_id!=null and power_id!=''">
+				power_id=#{power_id},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<delete id="deleteAdminById">
+		delete from yt_admin where id=#{id}
+	</delete>
+
+	<select id="login" resultType="Admin">
+		select id,username,password,power_id from
+		yt_admin where username= #{username} and password=#{password}
+	</select>
+
+	<select id="findAdminByUsername" resultMap="AdminMap">
+		select * from yt_admin where username=#{username}
+	</select>
+<resultMap type="Admin" id="AdminMap">
+<association property="power" column="power_id" javaType="Power"  select="findPowerById" ></association>
+</resultMap>
+<select id="findPowerById"  resultType="Power">
+select * from yt_power where id=#{power_id}
+</select>
+	<select id="findAllAdmin" resultType="Admin">
+		select * from yt_admin
+		order by id
+	</select>
+
+	<select id="findRows" resultType="int">
+		select count(*) from yt_admin
+	</select>
+
+	<select id="findAllAdminByPage" resultMap="AdminMaps">
+		select * from yt_admin
+		limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Admin" id="AdminMaps">
+	<association property="power" column="power_id" javaType="Power" select="findPowerById"></association>
+	</resultMap>
+<select id="findAdminById" resultType="Admin">
+select * from yt_admin where id=#{id}
+</select>
+</mapper>

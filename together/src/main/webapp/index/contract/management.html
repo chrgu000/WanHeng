@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>收租管理</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="com" v-cloak>
+<div class="form contract management">
+    <div class="address">
+        <img src="../img/address.png" class="img-responsive">
+        <p><span>{{compact.house.city}}</span><small>{{compact.house.gardenName}} {{compact.house.title}}</small></p>
+    </div>
+    <div class="address m_title">
+        <h5 class="pull-left">合同概要</h5>
+        <a class="pull-right" :href="'management_bj.html?id='+compact.id"><img src="img/write.png" class="img-responsive"></a>
+    </div>
+    <label class="yellow">
+        <span>合同编号</span>
+        <input type="text" v-model="compact.compactNum"   readonly>
+    </label>
+    <label>
+        <span>房号</span>
+        <input type="text" v-model="compact.houseNum" readonly>
+    </label>
+    <label>
+        <span>姓名</span>
+        <input type="text" v-model="compact.name" placeholder="" readonly>
+    </label>
+    <label>
+        <span>联系电话</span>
+        <input type="text" placeholder="" v-model="compact.tel" readonly>
+    </label>
+    <label>
+        <span>身份证号</span>
+        <input type="text" placeholder="" v-model="compact.idCardNum" readonly>
+    </label>
+    <label>
+        <span>租赁期限</span>
+        <input type="text" placeholder="" style="width:80px" v-model="compact.startTime" readonly><span style="width:30px;margin-right: 10px">至</span>
+        <input type="text" placeholder="" style="width:80px" v-model="compact.endTime" readonly >
+    </label>
+    <label>
+        <span>付款方式</span>
+        <input type="text" placeholder="" v-model="compact.payWay.content" readonly>
+    </label>
+    <label>
+        <span>押金</span>
+        <input type="text" placeholder="" v-model="compact.deposit" readonly>
+    </label>
+    <label>
+        <span>物业费</span>
+        <input type="text" placeholder="" v-model="compact.condoWay" readonly>
+    </label>
+    <label>
+        <span>水费</span>
+        <input type="text" placeholder="代缴"  v-model="compact.waterWay"  readonly>
+    </label>
+    <label>
+        <span>电费</span>
+        <input type="text" placeholder="代缴" v-model="compact.powerWay"  readonly>
+    </label>
+    <label>
+        <span>燃气费</span>
+        <input type="text" placeholder="代缴" v-model="compact.gasWay"  readonly>
+    </label>
+    <label class="yellow">
+        <span  style="width: 100%; font-size: 0.7rem;">房租收款时间</span>
+    </label>
+    <table class="table">
+        <thead>
+           <tr>
+               <td>缴费时间</td>
+               <td>缴费金额</td>
+               <td>状态</td>
+           </tr>
+        </thead>
+        <tbody>
+        <tr v-for="payTime in compact.payTimes">
+            <td>{{payTime}}</td>
+            <td>{{compact.rent}}</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+           <!--<tr>
+               <td>2012-12-12</td>
+               <td>5000</td>
+               <td><a class="active">一键通知</a></td>
+           </tr>
+           <tr>
+               <td>2012-12-12</td>
+               <td>5000</td>
+               <td><a>一键通知</a></td>
+           </tr>-->
+        </tbody>
+    </table>
+    <template v-if="compact.condoWay=='房东缴'">
+    <label class="yellow">
+        <span style="width: 100%; font-size: 0.7rem;">物业费缴纳时间（半年付/年付）</span>
+    </label>
+    <table class="table">
+        <thead>
+        <tr>
+            <td>缴费时间</td>
+            <td>缴费金额</td>
+            <td>状态</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="condo in compact.condos">
+            <td>{{condo.joinTime}}</td>
+            <td>{{condo.price}}</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+        <!--<tr>
+            <td>2012-12-12</td>
+            <td>5000</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+        <tr>
+            <td>2012-12-12</td>
+            <td>5000</td>
+            <td><a>一键通知</a></td>
+        </tr>-->
+        </tbody>
+    </table>
+    </template>
+    <template v-if="compact.powerWay=='房东缴'">
+        <label class="yellow">
+            <span style="width: 100%; font-size: 0.7rem;">电费缴纳时间（半年付/年付）</span>
+        </label>
+        <table class="table">
+            <thead>
+            <tr>
+                <td>缴费时间</td>
+                <td>缴费金额</td>
+                <td>状态</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="power in compact.powers">
+                <td>{{power.joinTime}}</td>
+                <td>{{power.price}}</td>
+                <td><a class="active">一键通知</a></td>
+            </tr>
+            <!--<tr>
+                <td>2012-12-12</td>
+                <td>5000</td>
+                <td><a class="active">一键通知</a></td>
+            </tr>
+            <tr>
+                <td>2012-12-12</td>
+                <td>5000</td>
+                <td><a>一键通知</a></td>
+            </tr>-->
+            </tbody>
+        </table>
+    </template><template v-if="compact.gasWay=='房东缴'">
+    <label class="yellow">
+        <span style="width: 100%; font-size: 0.7rem;">天然气费缴纳时间（半年付/年付）</span>
+    </label>
+    <table class="table">
+        <thead>
+        <tr>
+            <td>缴费时间</td>
+            <td>缴费金额</td>
+            <td>状态</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="gas in compact.gases">
+            <td>{{gas.joinTime}}</td>
+            <td>{{gas.price}}</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+        <!--<tr>
+            <td>2012-12-12</td>
+            <td>5000</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+        <tr>
+            <td>2012-12-12</td>
+            <td>5000</td>
+            <td><a>一键通知</a></td>
+        </tr>-->
+        </tbody>
+    </table>
+</template>
+
+    <template v-if="compact.waterWay='房东缴'">
+    <label class="yellow">
+        <span style="width: 100%;  font-size: 0.7rem;">水费</span>
+    </label>
+    <table class="table">
+        <thead>
+        <tr>
+            <td>缴费时间</td>
+            <td>缴费金额</td>
+            <td>状态</td>
+        </tr>
+        </thead>
+        <tbody>
+        <tr v-for="water in compact.waters">
+        <td>{{water.joinTime}}</td>
+        <td>{{water.price}}</td>
+        <td><a class="active">一键通知</a></td>
+        </tr>
+        <!--<tr>
+            <td>2012-12-12</td>
+            <td>1234</td>
+            <td>5000</td>
+            <td><a class="active">一键通知</a></td>
+        </tr>
+        <tr>
+            <td>2012-12-12</td>
+            <td>1234</td>
+            <td>5000</td>
+            <td><a>一键通知</a></td>
+        </tr>-->
+        </tbody>
+    </table>
+    </template>
+    <div class="management_foot">
+        <a><span>合计应付</span><span>{{compact.totalPrice}}</span></a>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="js/jquery.area.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script type="text/javascript" language="javascript"
+        src="../../static/common/getQueryString.js">
+</script>
+<script type="text/javascript">
+    var id = getQueryString("id");
+    var vm=new Vue({
+        el:'#com',
+        data:{
+            compact:null
+        }
+    });
+$(function(){
+    $.ajax({
+        url:"../../compact/getCompactById.do",
+        type:"post",
+        dataType:"json",
+        data:{
+           id:id
+        },
+        success:function(data){
+            vm.compact=data;
+            var number=data.payWay.number;
+            var rent=data.rent;
+            $("#totalPrice").text(number*rent+data.power+data.gas+data.condo+data.water);
+        },
+        error : function() {
+        }
+    });
+});
+    function onlyRead(){
+        var inputs=document.getElementsByTagName("input");
+        for(var i=0;i<inputs.length;i++){
+            inputs[i].setAttribute("readOnly",true);
+        }
+    }
+</script>
+</body>
+</html>

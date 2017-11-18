@@ -1,0 +1,264 @@
+<html>
+	<head>
+		<title>配置权限</title>
+	
+<link rel="stylesheet" type="text/css"
+			href="script/jquery_treeview/jquery.treeview.css">
+		<link type="text/css" rel="stylesheet"
+			href="style/blue/pageCommon.css" />
+		<link type="text/css" rel="stylesheet" href="style/blue/file.css" />
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+	<script language="javascript" src="script/jquery.js">
+</script>
+<script type="text/javascript"
+			src="script/jquery_treeview/jquery.treeview.js">
+</script>
+		<script type="text/javascript">
+$(function() {
+	//为所有的复选框绑定单击事件
+	var role_id = getQueryString("role_id");
+	$("#role_id").val(role_id);
+	$
+			.ajax( {
+				url : "../module/getTopModules.do",
+				data : {
+					"role_id" : role_id
+				},
+				dataType : "json",
+				type : "post",
+				async : true,
+				success : function(data) {
+					$("#role_name").text(data.role.name);
+					var moduleIds = data.moduleIds;
+					var modules = data.modules;
+				     setTimeout(function(){
+					for ( var i = 0; i < modules.length; i++) {
+						var obj = modules[i];
+						var children = obj.children;
+						for ( var j = 0; j < moduleIds.length; j++) {
+							if (obj.mid == moduleIds[j]) {
+								$("#cb_" + obj.mid).attr("checked", "checked");
+							}
+						}
+						for ( var k = 0; k < children.length; k++) {
+							var child = children[k];
+							var children1 = child.children;
+							for ( var j = 0; j < moduleIds.length; j++) {
+								if (child.mid == moduleIds[j]) {
+									$("#cb_" + child.mid).attr("checked",
+											"checked");
+								}
+							}
+							for ( var m = 0; m < children1.length; m++) {
+								var child1 = children1[m];
+								for ( var n = 0; n < moduleIds.length; n++) {
+									if (child1.mid == moduleIds[n]) {
+										$("#cb_" + child1.mid).attr("checked",
+												"checked");
+									}
+								}
+							}
+						}
+					}
+					},100);
+					var str = "";
+					for ( var i = 0; i < modules.length; i++) {
+						var obj = modules[i];
+						var children = obj.children;
+						str += "<li><input id='cb_"
+								+ obj.mid
+								+ "' value='"
+								+ obj.mid
+								+ "' type='checkbox' name='moduleIds'><label for='cb_"
+								+ obj.mid + "'><span class='folder' id='"
+								+ obj.mid + "'>" + obj.name + "</span></label>";
+						str += "<ul>";
+						for ( var k = 0; k < children.length; k++) {
+							var child = children[k];
+							var children1 = child.children;
+							str += "<li><input id='cb_"
+									+ child.mid
+									+ "' value='"
+									+ child.mid
+									+ "' type='checkbox' name='moduleIds'><label for='cb_"
+									+ child.mid + "'><span class='folder' id='"
+									+ child.mid + "'>" + child.name
+									+ "</span></label>";
+							str += "<ul>";
+							for ( var m = 0; m < children1.length; m++) {
+								var child1 = children1[m];
+								str += "<li><input id='cb_"
+										+ child1.mid
+										+ "' value='"
+										+ child1.mid
+										+ "' type='checkbox' name='moduleIds'><label for='cb_"
+										+ child1.mid
+										+ "'><span class='folder' id='"
+										+ child1.mid + "'>" + child1.name
+										+ "</span></label>";
+								str += "</li>";
+							}
+							str += "</ul>";
+							str += "</li>";
+						}
+						str += "</ul>";
+						str += "</li>";
+					}
+					$("#privilegeTree").html(str);
+					$("#privilegeTree").treeview();
+				},
+				error : function() {
+				}
+			});
+	setTimeout(function() {
+		$('input[name="moduleIds"]').click(function() {
+			//当选中某个权限时，同时选中其下级权限，当取消某个权限时，同时取消其下级权限
+				$(this).siblings('ul').find('input').attr('checked',
+						this.checked);
+				//当选中某个权限时，同时选中其直接上级权限
+				if (this.checked) {
+					$(this).parents('li').children('input').attr('checked',
+							true);
+				} else {
+					//当取消某个权限时，如果同级权限都没有选中，则取消其上级权限
+					var size = $(this).parent('li').siblings('li').children(
+							'input:checked').size();
+					if (size == 0) {
+						$(this).parent().parent().siblings('input').attr(
+								'checked', false);
+					}
+				}
+			});
+	},1000);
+});
+</script>
+	</head>
+	<body>
+		<!--显示表单内容-->
+		<div id=MainArea>
+			<form action="../module/setModules.do" method="post" id="regForm">
+				<input type="hidden" name="role_id" id="role_id" />
+				<div class="ItemBlock_Title1">
+					<!-- 信息说明 -->
+					<div class="ItemBlock_Title1">
+						<img border="0" width="4" height="7"
+							src="style/blue/images/item_point.gif" />
+						正在为
+						<span id="role_name"></span>配置权限
+					</div>
+				</div>
+
+				<!-- 表单内容显示 -->
+				<div class="ItemBlockBorder">
+					<div class="ItemBlock">
+						<table cellpadding="0" cellspacing="0" class="mainForm">
+							<!--表头-->
+							<thead>
+								<tr align="LEFT" valign="MIDDLE" id="TableTitle">
+									<td width="300px" style="padding-left: 7px;">
+										<!-- 如果把全选元素的id指定为selectAll，并且有函数selectAll()，就会有错。因为有一种用法：可以直接用id引用元素 -->
+										<input type="CHECKBOX" id="cbSelectAll"
+											onclick="$('input[name=moduleIds]').attr('checked',this.checked)" />
+										<label for="cbSelectAll">
+											全选
+										</label>
+									</td>
+								</tr>
+							</thead>
+							<!--显示数据列表-->
+							<tbody id="TableData">
+								<tr class="TableDetail1">
+									<!-- 显示权限树 -->
+									<td>
+										<ul id="privilegeTree">
+										</ul>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<!-- 表单操作 -->
+				<div id="InputDetailBar">
+					<input type="image" src="style/images/save.png" id="tj" />
+					<a href="javascript:history.go(-1);"><img
+							src="style/images/goBack.png" /> </a>
+				</div>
+			</form>
+		</div>
+		<div class="Description">
+			说明：
+			<br />
+			1，选中一个权限时：
+			<br />
+			&nbsp;&nbsp;&nbsp;&nbsp; a，应该选中 他的所有直系上级。
+			<br />
+			&nbsp;&nbsp;&nbsp;&nbsp; b，应该选中他的所有直系下级。
+			<br />
+			2，取消选择一个权限时：
+			<br />
+			&nbsp;&nbsp;&nbsp;&nbsp; a，应该取消选择 他的所有直系下级。
+			<br />
+			&nbsp;&nbsp;&nbsp;&nbsp; b，如果同级的权限都是未选择状态，就应该取消选中他的直接上级，并递归向上做这个操作。
+			<br />
+
+			3，全选/取消全选。
+			<br />
+			4，默认选中当前角色已有的权限。
+			<br />
+		</div>
+		 
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+ 
+<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.form.js"></script>
+		<script type="text/javascript">
+$(document).ready(
+		function() {
+			$("#regForm").ajaxForm(
+					{
+						//定义返回JSON数据，还包括xml和script格式
+						dataType : 'json',
+						beforeSend : function() {
+							//表单提交前做表单验证
+							return check();
+						},
+						success : function(data) {
+							if (data.hasError == false) {
+								window.location.href = "role.html";
+							} else {
+								alert(data.errInfo, 'warning');
+							}
+							fullMask.hide();
+						},
+						error : function(XMLHttpRequest, textStatus,
+								errorThrown) {
+							alert("系统繁忙，请稍后" + XMLHttpRequest.status + ","
+									+ XMLHttpRequest.readyState + ","
+									+ textStatus, 'warning');
+							fullMask.hide();
+						}
+					});
+		});
+function check() {
+var length=	$("input[type='checkbox']:checked").length;
+	if (length==0) {
+		alert("请选择权限");
+		return false;
+	}
+	return true;
+}
+</script>
+	</body>
+</html>

@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.ProductDao">
+	<insert id="save" keyProperty="id" useGeneratedKeys="true">
+		insert into
+		dq_product
+		(name,details,imgUrl,small_type_id,big_type_id,standard_id,isOnline,mail,nums,f_price,o_price,join_time,delflag,num)
+		values(#{name},#{details},#{imgUrl},#{small_type_id},#{big_type_id},#{standard_id},#{isOnline},#{mail},#{nums},#{f_price},#{o_price},#{join_time},#{delflag},#{num})
+	</insert>
+	<update id="update">
+		update dq_product
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+			<if test="details!=null and details!=''">
+				details=#{details},
+</if>
+			<if test="imgUrl!=null and imgUrl!=''">
+				imgUrl=#{imgUrl},
+</if>
+			<if test="small_type_id!=null and small_type_id!=''">
+				small_type_id=#{small_type_id},
+</if>
+			<if test="big_type_id!=null and big_type_id!=''">
+				big_type_id=#{big_type_id},
+</if>
+			 <if test="standard_id!=null">
+				standard_id=#{standard_id},
+</if>
+			<if test="isOnline!=null and isOnline!=''">
+				isOnline=#{isOnline},
+</if>
+			<if test="mail!=null and mail!=''">
+				mail=#{mail},
+</if>
+			<if test="nums!=null and nums!=''">
+				nums=#{nums},
+</if>
+<if test="f_price!=null and f_price!=''">
+				f_price=#{f_price},
+</if>
+<if test="o_price!=null and o_price!=''">
+				o_price=#{o_price},
+</if>
+<if test="num!=null and num!=''">
+				num=#{num},
+</if>
+<if test="delflag!=null and delflag!=''">
+				delflag=#{delflag},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_product where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="ProductMap">
+		select * from dq_product
+		where
+		id=#{id}
+	</select>
+	<resultMap type="Product" id="ProductMap">
+	<association property="shopnums" column="id" javaType="int" select="getShopNumsByProductId"/>
+	</resultMap>
+	<select id="getAllByPage" resultMap="ProductMaps">
+		select * from dq_product
+		<where>
+		 <if test="name!=null and name!=''">
+		and name like "%"#{name}"%"
+		</if>
+		<if test="big_type_id!=null">
+		 and big_type_id=#{big_type_id}
+		</if>
+		<if test="small_type_id!=null">
+		 and small_type_id=#{small_type_id}
+		</if>
+		<if test="standard_id!=null">
+		 and standard_id=#{standard_id}
+		</if>
+		<if test="isOnline!=null">
+		 and isOnline=#{isOnline}
+		</if>
+		<if test="status!=null and status!=''">
+		 and status=#{status}
+		</if>
+		and delflag=1
+		</where>
+		
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getSmallTypeById" resultType="SmallType">
+	  select * from dq_small_type where id=#{small_type_id}
+	</select>
+   <select id="getBigTypeById" resultType="BigType">
+    select * from dq_big_type where id=#{big_type_id}
+   </select>
+	<resultMap type="Product" id="ProductMaps">
+	<id column="id" property="id"/>
+	 <association property="smalltype" column="small_type_id" javaType="SmallType" select="getSmallTypeById"/>
+	 <association property="bigtype" column="big_type_id" javaType="BigType" select="getBigTypeById"/>
+	 <association property="shopnums" column="id" javaType="int" select="getShopNumsByProductId"/>
+	 <association property="standard" column="standard_id" javaType="Standard" select="getStandardById"/>
+	</resultMap>
+	<select id="getStandardById" resultType="Standard">
+	 select * from dq_standard where id=#{standard_id}
+	</select>
+	<select id="getShopNumsByProductId" resultType="int">
+	  select sum(number) from dq_shopcar_product where product_id=#{id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_product
+		<where>
+		<if test="name!=null and name!=''">
+		and name like "%"#{name}"%"
+		</if>
+		<if test="big_type_id!=null">
+		 and big_type_id=#{big_type_id}
+		</if>
+		<if test="small_type_id!=null">
+		 and small_type_id=#{small_type_id}
+		</if>
+		<if test="standard_id!=null">
+		 and standard_id=#{standard_id}
+		</if>
+		<if test="isOnline!=null">
+		 and isOnline=#{isOnline}
+		</if>
+		<if test="status!=null and status!=''">
+		 and status=#{status}
+		</if>
+			and delflag=1
+		</where>
+	</select>
+	<update id="updateByIds">
+	update dq_product set delflag=2 where id in 	
+	<foreach collection="ids" open="(" close=")" separator=","
+	   item="id">#{id}
+	</foreach>
+	</update>
+</mapper>

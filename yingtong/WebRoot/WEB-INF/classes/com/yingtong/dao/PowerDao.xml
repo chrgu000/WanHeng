@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.PowerDao">
+	<select id="findAllPower" resultType="Power">
+		select * from yt_power
+	</select>
+	<select id="findPowerById" resultType="Power">
+	select * from yt_power where id=#{id}
+	</select>
+	<insert id="addPower">
+		insert into yt_power(name) values(#name)
+	</insert>
+	<delete id="deletePowerById">
+		delete from yt_power where id=#{id}
+	</delete>
+
+</mapper>

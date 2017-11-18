@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="../pic_css/bootstrap.min.css">
+		<link rel="stylesheet" href="../pic_css/photoswipe.css">
+		<link rel="stylesheet" href="../pic_css/style.css">
+		<link href="../css/date.min.css" rel="stylesheet" type="text/css" />
+	</head>
+	<body>
+		<div class="back">
+			<div class="back_btn">
+				<a href="diary.html"> <img src="../img/left_icon.png"
+						class="img-responsive" /> </a>
+			</div>
+			   <div class="back_center" >工作日记</div>
+			<img src="../img/time.png" class="img-responsive kbtn"
+				style="width: 17px; float: left; margin: 12px 0;" id="date">
+			<div id="datePlugin"></div>
+		</div>
+		<div id="MainContent" style="padding:0px">
+			<ul id="Gallery" class="gallery">
+				<li v-for="list in data">
+					<div class="delete">
+						<span class="choose1"></span>
+					<span class="choose2" :title="list.id"></span>
+					</div>
+					<a :href="'../..'+list.path"> <img v-lazy="'../..'+list.min_path"
+							:data-src="'../..'+list.min_path" :alt="list.content" /> </a>
+				</li>
+			</ul>
+		</div>
+		<div class="sum">
+			<div class="sum_btn">
+				<input type="button" id="in_num" class="in_num" value="0">
+				<span>完成</span>
+			</div>
+		</div>
+		<div class="delete_btn">
+					  <a onclick="deleteDiarys()">删除<input type="button" class="in_num" id="in_num2" value="0" style="background: none; border: none;margin-bottom: 3px;">张照片</a>
+			<a class="close_btn">取消</a>
+		</div>
+		<div id="d" style="display: none">
+			<p
+				style="width: 100%; float: left; text-align: center; margin-top: -50%;">
+				当前没有数据，请上传~
+			</p>
+		</div>
+		<div class="add_pic">
+			<a :href="'diary_updata.html?diary_type_id='+data"><img
+					src="../img/pic.png" class="img-responsive"> </a>
+			<div class="back_right"
+				style="width: 50%; text-align: right; position: relative;">
+				<img src="../img/delete.png" class="img-responsive"
+					style="position: absolute; left: 41%; margin: 0; top: 8px; width: 28px; height: auto; margin: 3px auto;">
+				<span
+					style="position: absolute; right: 0px; line-height: 38px; display: none; width: 100%; text-align: center; top: 6px; background: rgb(255, 255, 255);">取消</span>
+			</div>
+		</div>
+		<script type="text/javascript" src="../photo_js/jquery.min.js">
+</script>
+		<script type="text/javascript" src="../photo_js/klass.min.js">
+</script>
+		<script type="text/javascript" charset="utf-8"
+			src="../photo_js/code.photoswipe-3.0.5.js">
+</script>
+		<script type="text/javascript" charset="utf-8"
+			src="../photo_js/jquery.transit.js">
+</script>
+		<script type="text/javascript" charset="utf-8"
+			src="../photo_js/hammer.js">
+</script>
+		<script type="text/javascript" charset="utf-8"
+			src="../photo_js/jquery.hammer.js">
+</script>
+		<script type="text/javascript" src="../photo_js/vue.min.js">
+</script>
+		<script type="text/javascript" src="../photo_js/data.js">
+</script>
+		<script type="text/javascript" src="../js/iscroll.js">
+</script>
+		<script type="text/javascript" src="../js/date2.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script>
+function deleteDiarys() {
+	var ids = "";
+	$(".choose2").each(function() {
+		if ($(this).css("display") == "block") {
+			ids += $(this).attr("title") + ",";
+		}
+	});
+	if (ids.length > 0) {
+		$.ajax( {
+			url : "../../diary/deleteDiarys.do",
+			type : "post",
+			data : {
+				ids : ids
+			},
+			dataType : "json",
+			success : function(data) {
+				if (data.hasError) {
+					$.pop.tips(data.errorInfo);
+				} else {
+					$.pop.tips("删除成功!");
+					setTimeout(function() {
+						location.reload();
+					}, 1000);
+				}
+			},
+			error : function() {
+			}
+
+		});
+	} else {
+		$.pop.tips("请选择工作日记!");
+	}
+
+}
+var id = getQueryString("diary_type_id");
+var vm;
+$(function() {
+	new Vue( {
+		el : ".add_pic",
+		data : {
+			data : id
+		}
+	});
+	vm = new Vue( {
+		el : '.gallery',
+		data : {
+			data : null
+		}
+	});
+});
+function findDiary(create_time) {
+	var diary_type_id = getQueryString("diary_type_id");
+	$
+			.ajax( {
+				url : "../../diary/findDiary.do",
+				type : "post",
+				data : {
+					diary_type_id : diary_type_id,
+					create_time : create_time
+				},
+				dataType : "json",
+				success : function(data) {
+					if (data.length > 0) {
+						$("#d").css("display", "none");
+					} else {
+						$("#d").css("display", "block");
+					}
+					
+					vm.data = data;
+					setTimeout(function() {
+						  
+$(".delete").click(function () {
+        $(this).find(".choose2").toggle();
+    });
+    $(".choose1").click(function(){
+        var j=$("#in_num").val();
+        var i= parseInt(j);
+        i=i+1;
+        $("#in_num").val(i);
+        $("#in_num2").val(i);
+    });
+    $(".choose2").click(function(){
+        var j=$("#in_num").val();
+        var i= parseInt(j);
+        i=i-1;
+        $("#in_num").val(i);
+        $("#in_num2").val(i);
+    });
+						$("#Gallery a").photoSwipe( {
+							captionAndToolbarAutoHideDelay : 0,
+							captionAndToolbarFlipPosition : true,
+							imageScaleMethod : 'fitNoUpscale',
+							fadeInSpeed : '100',
+							slideSpeed : '100'
+						});
+//						var imgContainer = document.getElementById('Gallery');
+//						var imgs = imgContainer.querySelectorAll('[data-src]');
+//						var title = imgContainer
+//								.querySelectorAll('[data-title]');
+//						var imgHeightDomMapping = {};
+//						for ( var i = 0; i < imgs.length; i++) {
+//							imgHeightDomMapping[i] = imgs[i]
+//						}
+//						imgContainer.addEventListener('scroll', function() {
+//							showImage()
+//						});
+//						function showImage() {
+//							var currentHeight = imgContainer.clientHeight
+//									+ imgContainer.scrollTop; // 滚动区域的高度
+//							for ( var i = 0; i < Object
+//									.keys(imgHeightDomMapping).length; i++) {
+//								if (currentHeight > imgHeightDomMapping[i].offsetTop
+//										+ imgHeightDomMapping[i].clientHeight
+//										/ 2) { // 判断当前图片是否已经显示
+//									//将图片dom的 `src` 改为 `data-src` 的内容
+//									console.info(imgHeightDomMapping[i]);
+//									imgHeightDomMapping[i].src = imgHeightDomMapping[i]
+//											.getAttribute('data-src')
+//								}
+//							}
+//						}
+//						showImage(); // 主动调用一次 加载首页的
+					}, 500)
+						
+				},
+				error : function() {
+				}
+			});
+	$('#date').date();
+}
+$(function() {
+	findDiary(null);
+	  $(".nav_top_right").click(function () {
+        $(".hide_nav").slideToggle();
+    });
+    $(".back_right").click(function () {
+        $(".delete").toggle();
+        $(".sum").toggle();
+        $(this).find("span").toggle();
+       if($(this).find("span").css("display")=="none"){
+    	   $(".add_pic").css("display","block");
+       }else{
+    	   $(".add_pic").css("display","none");
+       };
+        $(".choose2").hide();
+        $("#in_num").val(0);
+        $("#in_num2").val(0);
+        $(".gallery li").toggleClass("relative")
+    });
+    $(".close_btn").click(function () {
+    	$(".add_pic").css("display","block");
+        $(".delete_btn").hide();
+    });
+    $(".sum_btn").click(function () {
+        $(".delete_btn").slideToggle()
+    });
+})
+</script>
+
+		<script>
+$(".body .kbtn").click(function() {
+	$(this).css("width", "100%");
+	$(this).css("border", "1")
+})
+$('#date').date()
+$(document).ready(function() {
+	//        放大轮播图
+	});
+</script>
+		<script>
+var img_w = $(".gallery li").outerWidth(true);
+var body_h = $(window).height();
+var top_h = $(".nav_top").outerHeight(true);
+var h = body_h - top_h;
+$("#Gallery").height(h - 120);
+$(".gallery li").height(img_w);
+
+//懒加载
+
+</script>
+	<script type="text/javascript" src="../js/vue-lazyload.js"> </script>
+		<script>
+	Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: '../img/404.png',
+  loading: '../img/load.gif',
+  attempt: 1
+})
+</script>
+</script>
+	</body>
+</html>

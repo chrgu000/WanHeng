@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.taskCheck.dao">
+
+	<sql id="columns">
+		tid, task_type, audit_order, is_parent_project, task_id, user_id, project_id, submit_time, num
+	</sql>
+	<sql id="vals">
+		#{tid}, #{task_type}, #{audit_order}, #{is_parent_project}, #{task_id}, #{user_id}, #{project_id}, #{submit_time}, #{num}
+	</sql>
+	<sql id="conds">
+		<if test="tid != null and tid != ''">
+			and tid = #{tid}
+		</if>
+		<if test="task_type != null and task_type != ''">
+			and task_type = #{task_type}
+		</if>
+		<if test="audit_order != null and audit_order != ''">
+			and audit_order = #{audit_order}
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			and is_parent_project = #{is_parent_project}
+		</if>
+		<if test="task_id != null and task_id != ''">
+			and task_id = #{task_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="submit_time != null">
+			and submit_time = #{submit_time}
+		</if>
+		<if test="num != null and num != ''">
+			and num = #{num}
+		</if>
+	</sql>
+
+	<insert id="saveTaskCheck" parameterType="com.cgwas.taskCheck.entity.TaskCheck" useGeneratedKeys="true" keyProperty="tid">
+		<selectKey keyProperty="tid" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into a_task_check (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveTaskCheckVo" parameterType="com.cgwas.taskCheck.entity.TaskCheckVo" useGeneratedKeys="true" keyProperty="tid">
+		<selectKey keyProperty="tid" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into a_task_check (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteTaskCheck">
+		delete from a_task_check
+		where tid=#{tid} 
+	</delete>
+	
+	<delete id="deleteTaskCheckVo">
+		delete from a_task_check
+		where tid=#{tid} 
+	</delete>
+
+	<delete id="deleteByExampleTaskCheck">
+		delete from a_task_check
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleTaskCheckVo">
+		delete from a_task_check
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadTaskCheck" resultType="com.cgwas.taskCheck.entity.TaskCheckVo">
+		select 
+		<include refid="columns"/>
+		from a_task_check
+		where tid=#{tid} 
+	</select>
+	
+	<select id="selectTaskCheck" resultType="com.cgwas.taskCheck.entity.TaskCheckVo">
+		select 
+		<include refid="columns"/>
+		from a_task_check
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateTaskCheck">
+		update a_task_check
+		<set>
+			tid=#{tid}, 
+			task_type=#{task_type}, 
+			audit_order=#{audit_order}, 
+			is_parent_project=#{is_parent_project}, 
+			task_id=#{task_id}, 
+			user_id=#{user_id}, 
+			project_id=#{project_id}, 
+			submit_time=#{submit_time}, 
+			num=#{num}
+		</set>
+		where tid=#{tid} 
+	</update>
+	
+	<update id="updateTaskCheckVo">
+		update a_task_check
+		<set>
+			tid=#{tid}, 
+			task_type=#{task_type}, 
+			audit_order=#{audit_order}, 
+			is_parent_project=#{is_parent_project}, 
+			task_id=#{task_id}, 
+			user_id=#{user_id}, 
+			project_id=#{project_id}, 
+			submit_time=#{submit_time}, 
+			num=#{num}
+		</set>
+		where tid=#{tid} 
+	</update>
+	
+
+	<update id="updateIgnoreNullTaskCheck">
+		update a_task_check
+		<set>
+		<if test="tid != null and tid != ''">
+			tid=#{tid}, 
+		</if>
+		<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+		</if>
+		<if test="audit_order != null and audit_order != ''">
+			audit_order=#{audit_order}, 
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+		</if>
+		<if test="task_id != null and task_id != ''">
+			task_id=#{task_id}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+		</if>
+		<if test="submit_time != null">
+			submit_time=#{submit_time}, 
+		</if>
+		<if test="num != null and num != ''">
+			num=#{num}
+		</if>
+		</set>
+		where tid=#{tid} 
+	</update>
+	
+	<update id="updateIgnoreNullTaskCheckVo">
+		update a_task_check
+		<set>
+		<if test="tid != null and tid != ''">
+			tid=#{tid}, 
+		</if>
+		<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+		</if>
+		<if test="audit_order != null and audit_order != ''">
+			audit_order=#{audit_order}, 
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+		</if>
+		<if test="task_id != null and task_id != ''">
+			task_id=#{task_id}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+		</if>
+		<if test="submit_time != null">
+			submit_time=#{submit_time}, 
+		</if>
+		<if test="num != null and num != ''">
+			num=#{num}
+		</if>
+		</set>
+		where tid=#{tid} 
+	</update>
+
+	<update id="updateByExampleTaskCheck">
+		update a_task_check
+		<set>
+			<if test="tid != null and tid != ''">
+			tid=#{tid}, 
+			</if>
+			<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+			</if>
+			<if test="audit_order != null and audit_order != ''">
+			audit_order=#{audit_order}, 
+			</if>
+			<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+			</if>
+			<if test="task_id != null and task_id != ''">
+			task_id=#{task_id}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+			</if>
+			<if test="submit_time != null">
+			submit_time=#{submit_time}, 
+			</if>
+			<if test="num != null and num != ''">
+			num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleTaskCheckVo">
+		update a_task_check
+		<set>
+			<if test="tid != null and tid != ''">
+			tid=#{tid}, 
+			</if>
+			<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+			</if>
+			<if test="audit_order != null and audit_order != ''">
+			audit_order=#{audit_order}, 
+			</if>
+			<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+			</if>
+			<if test="task_id != null and task_id != ''">
+			task_id=#{task_id}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}, 
+			</if>
+			<if test="submit_time != null">
+			submit_time=#{submit_time}, 
+			</if>
+			<if test="num != null and num != ''">
+			num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

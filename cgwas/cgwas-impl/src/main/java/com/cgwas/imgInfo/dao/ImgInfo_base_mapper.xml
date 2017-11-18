@@ -1,0 +1,242 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.imgInfo.dao">
+
+	<sql id="columns">
+		id, img_title, img_url, img_type, for_id, create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{img_title}, #{img_url}, #{img_type}, #{for_id},
+		#{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="img_title != null and img_title != ''">
+			and img_title = #{img_title}
+		</if>
+		<if test="img_url != null and img_url != ''">
+			and img_url = #{img_url}
+		</if>
+		<if test="img_type != null and img_type != ''">
+			and img_type = #{img_type}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and for_id = #{for_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveImgInfo" parameterType="com.cgwas.imgInfo.entity.ImgInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_img_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveImgInfoVo" parameterType="com.cgwas.imgInfo.entity.ImgInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_img_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteImgInfo">
+		delete from s_img_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteImgInfoVo">
+		delete from s_img_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleImgInfo">
+		delete from s_img_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleImgInfoVo">
+		delete from s_img_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadImgInfo" resultType="com.cgwas.imgInfo.entity.ImgInfoVo">
+		select
+		<include refid="columns" />
+		from s_img_info
+		where id=#{id}
+	</select>
+
+	<select id="selectImgInfo" resultType="com.cgwas.imgInfo.entity.ImgInfoVo">
+		select
+		<include refid="columns" />
+		from s_img_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateImgInfo">
+		update s_img_info
+		<set>
+			id=#{id},
+			img_title=#{img_title},
+			img_url=#{img_url},
+			img_type=#{img_type},
+			for_id=#{for_id},
+			create_time=#{create_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateImgInfoVo">
+		update s_img_info
+		<set>
+			id=#{id},
+			img_title=#{img_title},
+			img_url=#{img_url},
+			img_type=#{img_type},
+			for_id=#{for_id},
+			create_time=#{create_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullImgInfo">
+		update s_img_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="img_title != null and img_title != ''">
+				img_title=#{img_title},
+			</if>
+			<if test="img_url != null and img_url != ''">
+				img_url=#{img_url},
+			</if>
+			<if test="img_type != null and img_type != ''">
+				img_type=#{img_type},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullImgInfoVo">
+		update s_img_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="img_title != null and img_title != ''">
+				img_title=#{img_title},
+			</if>
+			<if test="img_url != null and img_url != ''">
+				img_url=#{img_url},
+			</if>
+			<if test="img_type != null and img_type != ''">
+				img_type=#{img_type},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleImgInfo">
+		update s_img_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="img_title != null and img_title != ''">
+				img_title=#{img_title},
+			</if>
+			<if test="img_url != null and img_url != ''">
+				img_url=#{img_url},
+			</if>
+			<if test="img_type != null and img_type != ''">
+				img_type=#{img_type},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleImgInfoVo">
+		update s_img_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="img_title != null and img_title != ''">
+				img_title=#{img_title},
+			</if>
+			<if test="img_url != null and img_url != ''">
+				img_url=#{img_url},
+			</if>
+			<if test="img_type != null and img_type != ''">
+				img_type=#{img_type},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据类型和id获取图片 -->
+	<select id="getImgInfoById" resultType="com.cgwas.imgInfo.entity.ImgInfo">
+		SELECT * from s_img_info
+		WHERE img_type = #{img_type} and for_id = #{for_id}
+	</select>
+	<!-- 根据类型和id获取图片(批量) -->
+	<select id="getImgInfoByIds" resultType="com.cgwas.imgInfo.entity.ImgInfo">
+		SELECT * from s_img_info
+		WHERE img_type = #{imgInfo.img_type} and for_id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</select>
+	
+</mapper>

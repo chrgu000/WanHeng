@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.ArticleDao">
+	 <select id="findAllArticles" resultMap="articlesMap">
+	 select * from yt_article 
+	 </select>
+	 	 <select id="findArticlesByTitleId" resultMap="articlesMaps">
+	 select * from yt_article  where title_id=#{title_id}
+	 </select>
+	  <resultMap type="Article" id="articlesMaps">
+	 <association property="title" column="title_id" javaType="Title" select="findTitleById"></association>
+	 </resultMap>
+	 <resultMap type="Article" id="articlesMap">
+	 <association property="title" column="title_id" javaType="Title" select="findTitleById"></association>
+	 </resultMap>
+	 <select id="findTitleById" resultType="Title">
+	 select * from yt_title where id=#{title_id}
+	 </select>
+	<select id="findArticleById" resultType="Article">
+	select * from yt_article where id=#{id}
+	</select>
+	 <insert id="addArticle" >
+	 insert into yt_article(titles,content,title_id) values(#{titles},#{content},#{title_id})
+	 </insert>
+	 <update id="updateArticle">
+	 update yt_article <set>
+	 <if test="titles!=null&amp;&amp;!titles.equals('')">
+	 titles=#{titles},
+	 </if>
+	 <if test="content!=null&amp;&amp;!content.equals('')">
+	 content=#{content},
+	 </if>
+<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+	 title_id=#{title_id},
+	 </if>
+	 </set>
+	 where id=#{id}
+	 </update>
+	 <delete id="deleteArticleById">
+	 delete from yt_article where id=#{id}
+	 </delete>
+</mapper>

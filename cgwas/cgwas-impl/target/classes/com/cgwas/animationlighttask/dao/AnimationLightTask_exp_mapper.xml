@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun -->
+<mapper namespace="com.cgwas.animationlighttask.dao">
+	<sql id="columnsAs">
+		t1.id, t1.class_id, t1.project_id,
+		t1.is_parent_poject,t1.timeliness,
+		t1.pattern_number, t1.cart, t1.time,
+		t1.publish_type_id,
+		t1.making_requirement, t1.reference_material,
+		t1.plan_time,
+		t1.actual_working_hours, t1.price, t1.begin_time,
+		t1.end_time,
+		t1.wight, t1.remark, t1.commit_path, t1.extraction_path,
+		t1.degree_id,
+		t1.stage, t1.task_status, t1.user_id, t1.creater_id,
+		t1.create_time,
+		t1.modified_time, t1.check_status,
+		t1.company_id,t1.frameRateContent,t1.company_stage,t1.company_status
+	</sql>
+	<select id="getDetails" resultMap="taskMaps">
+		select t1.* from p_animation_light_task t1 where t1.id=#{task_id}
+	</select>
+	<select id="getClazzById" resultType="com.cgwas.clazz.entity.Clazz">
+		select * from p_clazz where
+		id=#{class_id}
+	</select>
+	<resultMap type="com.cgwas.animationlighttask.entity.AnimationLightTaskVo"
+		id="taskMaps">
+		<id column="id" property="id" />
+		<association property="clazz" column="class_id"
+			javaType="com.cgwas.clazz.entity.Clazz" select="getClazzById" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<select id="getAnimationLightTaskSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select *
+		from p_animation_light_task_search
+	</select>
+	<select id="getUserById" resultType="com.cgwas.user.entity.User">
+		select * from u_user where
+		id=#{user_id}
+	</select>
+	<select id="getDegreeTypeById" resultType="com.cgwas.degree.entity.Degree">
+		select * from p_degree
+		where id=#{degree_id}
+	</select>
+	<resultMap type="com.cgwas.animationlighttask.entity.AnimationLightTaskVo"
+		id="animationLightTaskMaps">
+		<id column="id" property="id" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<!-- <association property="pointUser" column="user_id" -->
+		<!-- javaType="com.cgwas.user.entity.User" select="getUserById" /> -->
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<select id="selectAnimationLightTaskPage" resultMap="animationLightTaskMaps">
+		select t1.* from p_animation_light_task t1
+		<where>
+			t1.class_id=#{psearch.clazz_id}
+			<if test="psearch.project_id!=null">
+				and t1.project_id=#{psearch.project_id}
+			</if>
+			<if test="psearch.flag==1">
+				and t1.is_parent_poject=1
+			</if>
+			<if test="psearch.flag==0">
+				and t1.is_parent_poject=0
+			</if>
+			<if
+				test="psearch.field=='cart' and psearch.search!=null and psearch.search!=''">
+				and t1.pattern_number like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_status' and psearch.search!=null and psearch.search!=''">
+				and t1.task_status like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.project_id==null and (psearch.search==null or psearch.search=='') ">
+				<if test="map.company_id!=null">
+					and t1.company_id=#{map.company_id} and t1.stage is not null
+				</if>
+				<if test="map.company_id==null">
+					<if
+						test="map.companyIds.size()==0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+						and (t1.publish_type_id=1 and t1.stage='发布中' OR
+						(t1.publish_type_id=3 AND
+						t1.user_id=#{psearch.user_id} and
+						t1.stage='发布中')) or (t1.stage!='发布中' and t1.stage is not null  and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务222222 -->
+						and t1.stage='发布中' AND (t1.publish_type_id=1 OR
+						(t1.publish_type_id=2 and t1.company_id
+						in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						))or ((t1.stage!='发布中' and t1.stage is not null or t1.task_status='指派中')and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()==0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						and t1.stage='发布中' and t1.publish_type_id=1
+						or(t1.task_status!='指派中' and t1.stage is not null
+						<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							and (
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							and t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							and t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						) or((t1.stage!='发布中'  and t1.stage is not null or t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						<!-- 当前操作者既是公司员工又是团队成员:可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务以及团队所参与项目的内部任务和指派任务 -->
+						<!-- 可以看到团队所参与项目的所有非发布中任务 777777777 -->
+						and ((t1.company_id in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						and t1.publish_type_id=2 and stage='发布中') or (t1.stage is not null and t1.task_status!='指派中' and 
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							(
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							or (t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							or( t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						))
+						or (t1.publish_type_id=1 and t1.stage is not null and t1.stage='发布中') or
+						((t1.stage!='发布中' and t1.stage is not null or t1.task_status='指派中') and 
+						t1.user_id=#{psearch.user_id})
+					</if>
+				</if>
+			</if>
+		</where>
+		<if test="psearch.field=='cart' and  psearch.sort=='asc'">
+			order by to_pinyin( t1.pattern_number) asc
+		</if>
+		<if test="psearch.field=='cart' and psearch.sort=='desc'">
+			order by to_pinyin( t1.pattern_number) desc
+		</if>
+		<if test="psearch.field=='begin_time' and  psearch.sort=='asc'">
+			order by t1.begin_time asc
+		</if>
+		<if test="psearch.field=='begin_time' and psearch.sort=='desc'">
+			order by t1.begin_time desc
+		</if>
+		<if test="psearch.field=='task_status' and psearch.sort=='asc'">
+			order by to_pinyin( t1.task_status) asc
+		</if>
+		<if test="psearch.field=='task_status' and psearch.sort=='desc'">
+			order by to_pinyin( t1.task_status) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+	<select id="selectAnimationLightTaskCount" resultType="java.lang.Long">
+		select count(distinct t1.id) from p_animation_light_task t1
+		<where>
+			t1.class_id=#{psearch.clazz_id}
+			<if test="psearch.project_id!=null">
+				and t1.project_id=#{psearch.project_id}
+			</if>
+			<if test="psearch.flag==1">
+				and t1.is_parent_poject=1
+			</if>
+			<if test="psearch.flag==0">
+				and t1.is_parent_poject=0
+			</if>
+			<if
+				test="psearch.field=='cart' and psearch.search!=null and psearch.search!=''">
+				and t1.pattern_number like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_status' and psearch.search!=null and psearch.search!=''">
+				and t1.task_status like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.project_id==null and (psearch.search==null or psearch.search=='') ">
+				<if test="map.company_id!=null">
+					and t1.company_id=#{map.company_id} and t1.stage is not null
+				</if>
+				<if test="map.company_id==null">
+					<if
+						test="map.companyIds.size()==0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+						and (t1.publish_type_id=1 and t1.stage='发布中' OR
+						(t1.publish_type_id=3 AND
+						t1.user_id=#{psearch.user_id} and
+						t1.stage='发布中')) or (t1.stage!='发布中' and t1.stage is not null  and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务222222 -->
+						and t1.stage='发布中' AND (t1.publish_type_id=1 OR
+						(t1.publish_type_id=2 and t1.company_id
+						in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						))or ((t1.stage!='发布中' and t1.stage is not null or t1.task_status='指派中')and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()==0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						and t1.stage='发布中' and t1.publish_type_id=1
+						or(t1.task_status!='指派中' and t1.stage is not null
+						<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							and (
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							and t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							and t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						) or((t1.stage!='发布中'  and t1.stage is not null or t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						<!-- 当前操作者既是公司员工又是团队成员:可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务以及团队所参与项目的内部任务和指派任务 -->
+						<!-- 可以看到团队所参与项目的所有非发布中任务 777777777 -->
+						and ((t1.company_id in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						and t1.publish_type_id=2 and stage='发布中') or (t1.stage is not null and t1.task_status!='指派中' and 
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							(
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							or (t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							or( t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						))
+						or (t1.publish_type_id=1 and t1.stage is not null and t1.stage='发布中') or
+						((t1.stage!='发布中' and t1.stage is not null or t1.task_status='指派中') and 
+						t1.user_id=#{psearch.user_id})
+					</if>
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getSoftwaresById" resultType="com.cgwas.companySoftware.entity.CompanySoftwareVo">
+		select p1.* from
+		p_company_software p1 left join p_company_software_model p2
+		on
+		p1.id=p2.company_software_id where p2.for_id=#{id} and
+		p2.model_type='a_task'
+	</select>
+	<resultMap type="com.cgwas.animationlighttask.entity.AnimationLightTaskVo"
+		id="animationlighttaskMap">
+		<id column="id" property="id" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.user.entity.User" select="getMakerById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<select id="getAnimationLightTaskById" resultMap="animationlighttaskMap">
+		select
+		*
+		from
+		p_animation_light_task t1 where id=#{id}
+	</select>
+</mapper>

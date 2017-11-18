@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.imgInfo.dao">
+	<sql id="columnsAs">
+		t1.id, t1.img_title, t1.img_url, t1.img_type, t1.for_id, t1.create_time
+	</sql>
+
+	<select id="selectImgInfoPage" resultType="com.cgwas.imgInfo.entity.ImgInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		s_img_info t1
+		join
+		(SELECT
+		id
+		from
+		s_img_info
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectImgInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from s_img_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

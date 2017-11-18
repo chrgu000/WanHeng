@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.degree.dao">
+
+	<sql id="columns">
+		id, content, degree_of_difficulty
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{degree_of_difficulty}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="degree_of_difficulty != null and degree_of_difficulty != ''">
+			and degree_of_difficulty = #{degree_of_difficulty}
+		</if>
+	</sql>
+
+	<insert id="saveDegree" parameterType="com.cgwas.degree.entity.Degree" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_degree (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveDegreeVo" parameterType="com.cgwas.degree.entity.DegreeVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_degree (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteDegree">
+		delete from p_degree
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteDegreeVo">
+		delete from p_degree
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleDegree">
+		delete from p_degree
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleDegreeVo">
+		delete from p_degree
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadDegree" resultType="com.cgwas.degree.entity.DegreeVo">
+		select 
+		<include refid="columns"/>
+		from p_degree
+		where id=#{id} 
+	</select>
+	
+	<select id="selectDegree" resultType="com.cgwas.degree.entity.DegreeVo">
+		select 
+		<include refid="columns"/>
+		from p_degree
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateDegree">
+		update p_degree
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			degree_of_difficulty=#{degree_of_difficulty}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateDegreeVo">
+		update p_degree
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			degree_of_difficulty=#{degree_of_difficulty}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullDegree">
+		update p_degree
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="degree_of_difficulty != null and degree_of_difficulty != ''">
+			degree_of_difficulty=#{degree_of_difficulty}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullDegreeVo">
+		update p_degree
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="degree_of_difficulty != null and degree_of_difficulty != ''">
+			degree_of_difficulty=#{degree_of_difficulty}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleDegree">
+		update p_degree
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="degree_of_difficulty != null and degree_of_difficulty != ''">
+			degree_of_difficulty=#{degree_of_difficulty}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleDegreeVo">
+		update p_degree
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="degree_of_difficulty != null and degree_of_difficulty != ''">
+			degree_of_difficulty=#{degree_of_difficulty}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

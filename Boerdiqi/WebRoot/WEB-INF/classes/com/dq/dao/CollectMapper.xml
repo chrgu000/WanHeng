@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.CollectDao">
+	<select id="getCollects" resultMap="CollectMaps">
+	select * from dq_collect where user_id=#{user_id}
+	</select>
+	<resultMap type="Collect" id="CollectMaps">
+	<association property="product" column="product_id"  javaType="Product" select="getProductById" />
+	</resultMap>
+	<select id="getProductById" resultType="Product">
+	select * from dq_product where id=#{product_id}
+	</select>
+</mapper>

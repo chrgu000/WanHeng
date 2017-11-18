@@ -1,0 +1,854 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun -->
+<mapper namespace="com.cgwas.project.dao">
+	<select id="getProjectTotal" resultType="java.lang.Long">
+		select count(*) from
+		p_project where company_id=#{company_id}
+	</select>
+	<select id="getMinPublishDate" resultType="java.util.Date">
+		SELECT MIN(modified_time)
+		FROM (SELECT modified_time FROM
+		p_animation_light_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+
+		</where>
+		UNION SELECT modified_time FROM p_model_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+		</where>
+		) a
+	</select>
+	<select id="getTotal" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM (SELECT * FROM p_model_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		UNION SELECT * FROM p_animation_light_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		) a
+	</select>
+	<select id="getModelTaskMakerNums" resultType="java.lang.Integer">
+		SELECT count(user_id) FROM p_model_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getAnimationTaskMakerNums" resultType="java.lang.Integer">
+		SELECT count(user_id) FROM p_animation_light_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getTotalUndistributed" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM (SELECT * FROM p_model_task
+		<where>
+			(stage='发布中' or stage is null) and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		UNION SELECT * FROM p_animation_light_task
+		<where>
+			(stage='发布中' or stage is null) and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		) a
+	</select>
+	<select id="getTotalRunning" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM (SELECT * FROM p_model_task
+		<where>
+			stage='进行中' and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		UNION SELECT * FROM p_animation_light_task
+		<where>
+			stage='进行中' and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		) a
+	</select>
+	<select id="getTotalFinished" resultType="java.lang.Integer">
+		SELECT COUNT(*) FROM (SELECT * FROM p_model_task
+		<where>
+			(stage='待评价' or stage='已完成' or company_stage='待评价' or
+			company_status='已完成') and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		UNION SELECT * FROM p_animation_light_task
+		<where>
+			(stage='待评价' or stage='已完成' or company_stage='待评价' or
+			company_status='已完成') and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="beginDate!=null">
+				and modified_time>=#{beginDate} and
+				modified_time&lt;#{endDate}
+			</if>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+		) a
+	</select>
+	<select id="getModelTaskFinishedTotal" resultType="java.lang.Integer">
+		select count(*) from p_model_task
+		<where>
+			(stage='待评价' or stage='已完成' or company_stage='已完成' or
+			company_stage='待评价') and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getModelTaskTotal" resultType="java.lang.Integer">
+		select count(*) from p_model_task
+		<where>
+			project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getAnimationTaskFinishedTotal" resultType="java.lang.Integer">
+		select count(*) from p_animation_light_task
+		<where>
+			(stage='待评价' or stage='已完成' or company_stage='已完成' or
+			company_stage='待评价') and class_id=2 and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getanimationTaskTotal" resultType="java.lang.Integer">
+
+		select count(*) from p_animation_light_task
+		<where>
+			class_id=2
+			and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getLightTaskFinishedTotal" resultType="java.lang.Integer">
+		select count(*) from p_animation_light_task
+		<where>
+			(stage='待评价' or stage='已完成' or company_stage='已完成' or
+			company_stage='待评价') and class_id=3 and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+	<select id="getLightTaskTotal" resultType="java.lang.Integer">
+		select count(*) from p_animation_light_task
+		<where>
+			class_id=3 and project_id in
+			<foreach collection="ids" open="(" close=")" separator=","
+				item="id">#{id}</foreach>
+			<if test="is_parent==1">
+				and is_parent_poject=1
+			</if>
+			<if test="is_parent==0">
+				and is_parent_poject=0
+			</if>
+		</where>
+	</select>
+
+	<select id="getParentSubProjects" resultType="com.cgwas.subproject.entity.SubProject">
+		select id,is_parent,name,introduce,cover_path from p_sub_project where
+		project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getSubProjects" resultType="com.cgwas.subproject.entity.SubProject">
+		select id,is_parent,name,introduce,cover_path from p_sub_project where
+		sub_parent_project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<sql id="columnsAs">
+		t1.id, t1.name , t1.project_no, t1.project_status_id,
+		t1.project_type_id, t1.cover_path,t1.color, t1.introduce, t1.total,
+		t1.frame_rate, t1.resolution, t1.project_folder, t1.budget,
+		t1.begin_time, t1.end_time, t1.bullet_films, t1.creater_name,
+		t1.user_id, t1.company_id, t1.create_time, t1.modified_time
+	</sql>
+	<resultMap type="com.cgwas.project.entity.ProjectVo" id="projectDetailsMap">
+		<id property="id" column="id" />
+		<association property="company" column="company_id"
+			javaType="com.cgwas.company.entity.Company" select="getCompanyById" />
+		<association property="projectStatus" column="project_status_id"
+			javaType="com.cgwas.projectStatus.entity.ProjectStatusVo" select="getProjectStatusVoById" />
+		<collection property="directors" column="id" javaType="arrayList"
+			ofType="com.cgwas.director.entity.DirectorVo" select="getDirectorsById"></collection>
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById"></collection>
+	</resultMap>
+
+	<select id="getProjectDetails" resultMap="projectDetailsMap">
+		select
+		*
+		from p_project
+		where id=#{project_id}
+	</select>
+	<resultMap type="com.cgwas.project.entity.ProjectVo" id="projectVoMap">
+		<id property="id" column="id" />
+		<association property="company" column="company_id"
+			javaType="com.cgwas.company.entity.Company" select="getCompanyById" />
+		<association property="projectStatus" column="project_status_id"
+			javaType="com.cgwas.projectStatus.entity.ProjectStatusVo" select="getProjectStatusVoById"></association>
+		<association property="projectType" column="project_type_id"
+			javaType="com.cgwas.projectType.entity.ProjectTypeVo" select="getProjectTypeVoById"></association>
+		<collection property="companySoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+		<collection property="directors" column="id" javaType="arrayList"
+			ofType="com.cgwas.director.entity.DirectorVo" select="getDirectorsById"></collection>
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById"></collection>
+	</resultMap>
+	<select id="getCompanyById" resultType="com.cgwas.company.entity.Company">
+		select id,company_name
+		from u_company where id=#{company_id}
+	</select>
+	<select id="getPrincipalsById1" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select p1.* from
+		p_principal p1 left join p_project_principal p2 on
+		p1.id=p2.principal_id where p2.project_id=#{id} and
+		p2.is_parent_project=0
+	</select>
+	<select id="getPrincipalsById" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select p1.* from
+		p_principal p1 left join p_project_principal p2 on
+		p1.id=p2.principal_id where p2.project_id=#{id} and
+		p2.is_parent_project=1
+	</select>
+	<select id="getDirectorsById" resultType="com.cgwas.director.entity.DirectorVo">
+		select p1.* from
+		p_director p1 left join p_project_director p2 on
+		p1.id=p2.director_id
+		where p2.project_id=#{id} and p2.is_parent_project=1
+	</select>
+	<select id="getSoftwaresById" resultType="com.cgwas.companySoftware.entity.CompanySoftwareVo">
+		select p1.* from
+		p_company_software p1 left join p_company_software_model p2
+		on
+		p1.id=p2.company_software_id where p2.for_id=#{id} and
+		p2.model_type='project'
+	</select>
+	<select id="getProjectStatusVoById" resultType="com.cgwas.projectStatus.entity.ProjectStatusVo">
+		select * from
+		p_project_status where id=#{project_status_id}
+	</select>
+	<select id="getProjectTypeVoById" resultType="com.cgwas.projectType.entity.ProjectTypeVo">
+		select * from
+		p_project_type where id=#{project_type_id}
+	</select>
+	<select id="getDataList" resultMap="projectVoMap">
+		select distinct t1.*,p1.content,p2.content,u.username
+		FROM
+		p_project t1
+		LEFT JOIN p_project_type p1 ON t1.project_type_id=p1.id
+		LEFT JOIN
+		p_project_status p2 ON t1.project_status_id=p2.id
+		LEFT JOIN
+		p_company_software_model p3 ON t1.id=p3.for_id
+		LEFT JOIN
+		p_company_software p4 ON p3.company_software_id=p4.id
+		LEFT JOIN u_user
+		u ON
+		t1.user_id=u.id
+		LEFT JOIN p_project_director p6 ON
+		t1.id=p6.project_id
+		LEFT JOIN p_director p7 ON p6.director_id=p7.id
+		<where>
+			p3.model_type='project' and t1.company_id=#{psearch.company_id}
+			<if
+				test="psearch.field=='name' and psearch.search!=null and psearch.search!=''">
+				and t1.name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='project_no' and psearch.search!=null and psearch.search!=''">
+				and t1.project_no like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_type' and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_status' and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='total' and psearch.search!=null and psearch.search!=''">
+				and t1.total=#{psearch.search}
+			</if>
+			<if
+				test="psearch.field=='software_name' and psearch.search!=null and psearch.search!=''">
+				and p4.software_name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='title' and psearch.search!=null and psearch.search!=''">
+				and t1.resolution like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='username' and psearch.search!=null and psearch.search!=''">
+				and u.username like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='director_name' and psearch.search!=null and psearch.search!=''">
+				and p7.director_name like "%"#{psearch.search}"%"
+			</if>
+		</where>
+		<if test="psearch.field=='name' and psearch.sort=='asc'">
+			order by to_pinyin(t1.name) asc
+		</if>
+		<if test="psearch.field=='name' and psearch.sort=='desc'">
+			order by to_pinyin(t1.name) desc
+		</if>
+		<if test="psearch.field=='project_no' and psearch.sort=='asc'">
+			order by to_pinyin(t1.project_no) asc
+		</if>
+		<if test="psearch.field=='project_no' and psearch.sort=='desc'">
+			order by to_pinyin(t1.project_no) desc
+		</if>
+		<if test="psearch.field=='content_type' and psearch.sort=='asc'">
+			order by to_pinyin(p1.content) asc
+		</if>
+		<if test="psearch.field=='content_type' and psearch.sort=='desc'">
+			order by to_pinyin(p1.content) desc
+		</if>
+		<if test="psearch.field=='content_status' and  psearch.sort=='asc'">
+			order by to_pinyin(p2.content) asc
+		</if>
+		<if test="psearch.field=='content_status' and psearch.sort=='desc'">
+			order by to_pinyin(p2.content) desc
+		</if>
+		<if test="psearch.field=='begin_time' and  psearch.sort=='asc'">
+			order by t1.begin_time asc
+		</if>
+		<if test="psearch.field=='begin_time' and psearch.sort=='desc'">
+			order by t1.begin_time desc
+		</if>
+		<if test="psearch.field=='total' and psearch.sort=='asc'">
+			order by t1.total asc
+		</if>
+		<if test="psearch.field=='total' and psearch.sort=='desc'">
+			order by t1.total desc
+		</if>
+		<if test="psearch.field=='title' and psearch.sort=='asc'">
+			order by to_pinyin(t1.resolution) asc
+		</if>
+		<if test="psearch.field=='title' and psearch.sort=='desc'">
+			order by to_pinyin(t1.resolution) desc
+		</if>
+		<if test="psearch.field=='username' and psearch.sort=='asc'">
+			order by to_pinyin(u.username) asc
+		</if>
+		<if test="psearch.field=='username' and psearch.sort=='desc'">
+			order by to_pinyin(u.username) desc
+		</if>
+	</select>
+	<resultMap type="com.cgwas.subproject.entity.SubProjectVo"
+		id="projectVoMaps2">
+		<id property="id" column="id" />
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById1"></collection>
+	</resultMap>
+	<select id="getSubProjectsById2" resultMap="projectVoMaps2">
+		select
+		id,name,begin_time,end_time from p_sub_project where
+		sub_parent_project_id=#{id}
+	</select>
+	<resultMap type="com.cgwas.subproject.entity.SubProjectVo"
+		id="projectVoMaps1">
+		<id property="id" column="id" />
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById1"></collection>
+		<collection property="subProjects" column="id" javaType="arrayList"
+			ofType="com.cgwas.subproject.entity.SubProjectVo" select="getSubProjectsById2"></collection>
+	</resultMap>
+	<select id="getSubProjectsById1" resultMap="projectVoMaps1">
+		select
+		id,name,begin_time,end_time from p_sub_project where
+		sub_parent_project_id=#{id}
+	</select>
+	<resultMap type="com.cgwas.subproject.entity.SubProjectVo"
+		id="subProjectVoMaps">
+		<id property="id" column="id" />
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById1"></collection>
+		<collection property="subProjects" column="id" javaType="arrayList"
+			ofType="com.cgwas.subproject.entity.SubProjectVo" select="getSubProjectsById1"></collection>
+	</resultMap>
+
+	<select id="selectProjectPage3" resultMap="subProjectVoMaps">
+		select id,name,begin_time,end_time from p_sub_project
+		<where>
+			<if test="psearch.flag==1">
+				project_id=#{id}
+			</if>
+			<if test="psearch.flag==0">
+				sub_parent_project_id=#{id}
+			</if>
+		</where>
+		limit #{firstrownum}, #{limit}
+	</select>
+	<select id="selectProjectCount3" resultType="java.lang.Long">
+		select count(*) from p_sub_project
+		<where>
+			<if test="psearch.flag==1">
+				project_id=#{id}
+			</if>
+			<if test="psearch.flag==0">
+				sub_parent_project_id=#{id}
+			</if>
+		</where>
+	</select>
+	<select id="selectProjectPage" resultMap="projectVoMap">
+		select distinct t1.*,p1.content,p2.content,u.username
+		FROM
+		p_project t1
+		LEFT JOIN p_project_type p1 ON t1.project_type_id=p1.id
+		LEFT JOIN
+		p_project_status p2 ON t1.project_status_id=p2.id
+		LEFT JOIN
+		p_company_software_model p3 ON t1.id=p3.for_id
+		LEFT JOIN
+		p_company_software p4 ON p3.company_software_id=p4.id
+		LEFT JOIN u_user
+		u ON
+		t1.user_id=u.id
+		LEFT JOIN p_project_director p6 ON
+		t1.id=p6.project_id
+		LEFT JOIN p_director p7 ON p6.director_id=p7.id
+		<where>
+			p3.model_type='project' and t1.company_id=#{psearch.company_id}
+			<if
+				test="psearch.field=='name' and psearch.search!=null and psearch.search!=''">
+				and t1.name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='project_no' and psearch.search!=null and psearch.search!=''">
+				and t1.project_no like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_type' and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_status' and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='total' and psearch.search!=null and psearch.search!=''">
+				and t1.total=#{psearch.search}
+			</if>
+			<if
+				test="psearch.field=='software_name' and psearch.search!=null and psearch.search!=''">
+				and p4.software_name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='title' and psearch.search!=null and psearch.search!=''">
+				and t1.resolution like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='username' and psearch.search!=null and psearch.search!=''">
+				and u.username like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='director_name' and psearch.search!=null and psearch.search!=''">
+				and p7.director_name like "%"#{psearch.search}"%"
+			</if>
+		</where>
+		<if test="psearch.field=='name' and psearch.sort=='asc'">
+			order by to_pinyin(t1.name) asc
+		</if>
+		<if test="psearch.field=='name' and psearch.sort=='desc'">
+			order by to_pinyin(t1.name) desc
+		</if>
+		<if test="psearch.field=='project_no' and psearch.sort=='asc'">
+			order by to_pinyin(t1.project_no) asc
+		</if>
+		<if test="psearch.field=='project_no' and psearch.sort=='desc'">
+			order by to_pinyin(t1.project_no) desc
+		</if>
+		<if test="psearch.field=='content_type' and psearch.sort=='asc'">
+			order by to_pinyin(p1.content) asc
+		</if>
+		<if test="psearch.field=='content_type' and psearch.sort=='desc'">
+			order by to_pinyin(p1.content) desc
+		</if>
+		<if test="psearch.field=='content_status' and  psearch.sort=='asc'">
+			order by to_pinyin(p2.content) asc
+		</if>
+		<if test="psearch.field=='content_status' and psearch.sort=='desc'">
+			order by to_pinyin(p2.content) desc
+		</if>
+		<if test="psearch.field=='begin_time' and  psearch.sort=='asc'">
+			order by t1.begin_time asc
+		</if>
+		<if test="psearch.field=='begin_time' and psearch.sort=='desc'">
+			order by t1.begin_time desc
+		</if>
+		<if test="psearch.field=='total' and psearch.sort=='asc'">
+			order by t1.total asc
+		</if>
+		<if test="psearch.field=='total' and psearch.sort=='desc'">
+			order by t1.total desc
+		</if>
+		<if test="psearch.field=='title' and psearch.sort=='asc'">
+			order by to_pinyin(t1.resolution) asc
+		</if>
+		<if test="psearch.field=='title' and psearch.sort=='desc'">
+			order by to_pinyin(t1.resolution) desc
+		</if>
+		<if test="psearch.field=='username' and psearch.sort=='asc'">
+			order by to_pinyin(u.username) asc
+		</if>
+		<if test="psearch.field=='username' and psearch.sort=='desc'">
+			order by to_pinyin(u.username) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectProjectCount" resultType="java.lang.Long">
+		select count(DISTINCT t1.id)
+		FROM p_project t1
+		LEFT JOIN p_project_type
+		p1 ON t1.project_type_id=p1.id
+		LEFT JOIN p_project_status p2 ON
+		t1.project_status_id=p2.id
+		LEFT JOIN p_company_software_model p3 ON
+		t1.id=p3.for_id
+		LEFT JOIN p_company_software p4 ON
+		p3.company_software_id=p4.id
+		LEFT JOIN u_user u ON t1.user_id=u.id
+		LEFT
+		JOIN
+		p_project_director p6 ON t1.id=p6.project_id
+		LEFT JOIN p_director
+		p7 ON
+		p6.director_id=p7.id
+		<where>
+			p3.model_type='project' and t1.company_id=#{psearch.company_id}
+			<if
+				test="psearch.field=='name' and psearch.search!=null and psearch.search!=''">
+				and t1.name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='project_no' and psearch.search!=null and psearch.search!=''">
+				and t1.project_no like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_type' and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='content_status' and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='total' and psearch.search!=null and psearch.search!=''">
+				and t1.total=#{psearch.search}
+			</if>
+			<if
+				test="psearch.field=='software_name' and psearch.search!=null and psearch.search!=''">
+				and p4.software_name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='title' and psearch.search!=null and psearch.search!=''">
+				and t1.resolution like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='username' and psearch.search!=null and psearch.search!=''">
+				and u.username like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='director_name' and psearch.search!=null and psearch.search!=''">
+				and p7.director_name like "%"#{psearch.search}"%"
+			</if>
+		</where>
+	</select>
+	<select id="selectProjectPage1" resultType="com.cgwas.project.entity.ProjectVo">
+		select p.* from p_project p left join p_project_label l on
+		p.id=l.project_id
+		<where>
+			p.show_img is not null
+			<if test="psearch.type=='old'">
+				and p.project_status_id=5
+			</if>
+			<if test="psearch.type=='3D'">
+				and p.project_status_id!=5
+			</if>
+			<if test="psearch.label_id!='' and psearch.label_id!=null">
+				and l.label_id=#{psearch.label_id}
+			</if>
+			<if test="psearch.name!='' and psearch.name!=null">
+				and p.name like "%"#{psearch.name}"%"
+			</if>
+		</where>
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectProjectCount1" resultType="java.lang.Long">
+		select count(p.id) from p_project p left join p_project_label l on
+		p.id=l.project_id
+		<where>
+			p.show_img is not null
+			<if test="psearch.type=='old'">
+				and p.project_status_id=5
+			</if>
+			<if test="psearch.type=='3D'">
+				and p.project_status_id!=5
+			</if>
+			<if test="psearch.label_id!='' and psearch.label_id!=null">
+				and l.label_id=#{psearch.label_id}
+			</if>
+			<if test="psearch.name!='' and psearch.name!=null">
+				and p.name like "%"#{psearch.name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="getPluginsById" resultType="com.cgwas.companyPlugin.entity.CompanyPluginVo">
+		select p1.* from
+		p_company_plugin p1 left join p_company_plugin_model p2
+		on
+		p1.id=p2.company_plugin_id where p2.project_id=#{id}
+	</select>
+	<resultMap type="com.cgwas.project.entity.ProjectVo" id="projectMap">
+		<id property="id" column="id" />
+		<association property="projectStatus" column="project_status_id"
+			javaType="com.cgwas.projectStatus.entity.ProjectStatusVo" select="getProjectStatusVoById"></association>
+		<association property="projectType" column="project_type_id"
+			javaType="com.cgwas.projectType.entity.ProjectTypeVo" select="getProjectTypeVoById"></association>
+		<collection property="companySoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+		<collection property="companyPlugins" column="id" javaType="arrayList"
+			ofType="com.cgwas.companyPlugin.entity.CompanyPluginVo" select="getPluginsById"></collection>
+		<collection property="directors" column="id" javaType="arrayList"
+			ofType="com.cgwas.director.entity.DirectorVo" select="getDirectorsById"></collection>
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById"></collection>
+		<collection property="screenwriters" column="id" javaType="arrayList"
+			ofType="com.cgwas.screenwriter.entity.ScreenwriterVo" select="getScreenwriterBySId"></collection>
+		<collection property="labelTags" column="id" javaType="arrayList"
+			ofType="com.cgwas.labelTag.entity.LabelTag" select="getLabelsById"></collection>
+	</resultMap>
+	<select id="getLabelsById" resultType="com.cgwas.labelTag.entity.LabelTag">
+		select l.* from p_label_tag l left join p_project_label p on l.id=p.label_id
+		where p.project_id=#{id}
+	</select>
+	<select id="getScreenwriterBySId" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+		select p1.* from
+		p_screenwriter p1 left join p_project_screenwriter p2 on
+		p1.id=p2.screenwriter_id where p2.project_id=#{id} and
+		p2.is_parent_project=1
+	</select>
+	<select id="getProjectById" resultMap="projectMap">
+		select
+		*
+		from p_project
+		where id=#{id}
+	</select>
+	<select id="getProjectByIds" resultMap="projectVoMap">
+		select
+		<include refid="columnsAs" />
+		FROM p_project t1 where t1.id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<!-- 根据用户Id 得到项目(导演) -->
+	<select id="getProjectByUserIdsDirector" resultType="com.cgwas.project.entity.UserProject">
+		SELECT
+		b.`name`,
+		b.begin_time,
+		b.end_time,
+		b.project_status_id,
+		c.content,
+		b.creater_name,
+		'导演' as 'position'
+		FROM
+		p_project_director AS a
+		LEFT JOIN
+		p_project AS b ON a.project_id = b.id
+		LEFT JOIN p_project_status AS c
+		ON b.project_status_id = c.id
+		WHERE
+		a.director_id = #{userId}
+	</select>
+	<!-- 根据用户Id 得到项目(负责人) -->
+	<select id="getProjectByUserIdsPrincipal" resultType="com.cgwas.project.entity.UserProject">
+		SELECT
+		b.`name`,
+		b.begin_time,
+		b.end_time,
+		b.project_status_id,
+		c.content,
+		b.creater_name,
+		'负责人' AS 'position'
+		FROM
+		p_project_principal AS a
+		LEFT
+		JOIN p_project AS b ON a.project_id = b.id
+		LEFT JOIN p_project_status
+		AS c ON b.project_status_id = c.id
+		WHERE
+		a.principal_id = #{userId}
+	</select>
+	<!-- 根据用户Id 得到项目(编剧) -->
+	<select id="getProjectByUserIdscreenwriter" resultType="com.cgwas.project.entity.UserProject">
+		SELECT
+		b.`name`,
+		b.begin_time,
+		b.end_time,
+		b.project_status_id,
+		c.content,
+		b.creater_name,
+		'编剧' AS 'position'
+		FROM
+		p_project_screenwriter AS a
+		LEFT
+		JOIN p_project AS b ON a.project_id = b.id
+		LEFT JOIN p_project_status
+		AS c ON b.project_status_id = c.id
+		WHERE
+		a.screenwriter_id = #{userId}
+	</select>
+</mapper>

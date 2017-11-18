@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.AddressDao">
+	<select id="findAllAdressByPageTitleAddrId" resultType="Address">
+		select *
+		from yt_address where titleAddr_id=#{titleAddr_id}  order by num  desc
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="findAddressById" resultType="Address">
+		select * from yt_address
+		where id=#{id}
+	</select>
+	<select id="findRowsByTitleAddrId" resultType="int">
+		select count(*)
+		from yt_address where titleAddr_id=#{titleAddr_id}
+	</select>
+	<select id="findAllAddressByTitleAddrId" resultType="Address">
+		select * from yt_address where titleAddr_id=#{titleAddr_id}
+	</select>
+	<insert id="addAddress">
+		insert into
+		yt_address(addName,address,tel,businessHour,num,titleAddr_id)
+		values(#{addName},#{address},#{tel},#{businessHour},#{num},#{titleAddr_id})
+	</insert>
+	<update id="updateAddress">
+		update yt_address
+		<set>
+			<if test="addName!=null&amp;&amp;!addName.equals('')">
+				addName=#{addName},
+			</if>
+			<if test="address!=null&amp;&amp;!address.equals('')">
+				address=#{address},
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				tel=#{tel},
+			</if>
+			<if test="businessHour!=null&amp;&amp;!businessHour.equals('')">
+				businessHour=#{businessHour},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+			<if test="titleAddr_id!=null&amp;&amp;!titleAddr_id.equals('')">
+				titleAddr_id=#{titleAddr_id},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteAddressById">
+		delete from yt_address where id=#{id}
+	</delete>
+</mapper>

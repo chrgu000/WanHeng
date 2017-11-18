@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.gRolePrivilege.dao">
+
+	<sql id="columns">
+		id, privilege_id, role_id, company_file_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{privilege_id}, #{role_id}, #{company_file_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			and privilege_id = #{privilege_id}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			and role_id = #{role_id}
+		</if>
+		<if test="company_file_id != null and company_file_id != ''">
+			and company_file_id = #{company_file_id}
+		</if>
+	</sql>
+
+	<insert id="saveGRolePrivilege" parameterType="com.cgwas.gRolePrivilege.entity.GRolePrivilege" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_g_role_privilege (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveGRolePrivilegeVo" parameterType="com.cgwas.gRolePrivilege.entity.GRolePrivilegeVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_g_role_privilege (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteGRolePrivilege">
+		delete from p_g_role_privilege
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteGRolePrivilegeVo">
+		delete from p_g_role_privilege
+		where role_id=#{role_id} 
+	</delete>
+
+	<delete id="deleteByExampleGRolePrivilege">
+		delete from p_g_role_privilege
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleGRolePrivilegeVo">
+		delete from p_g_role_privilege
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadGRolePrivilege" resultType="com.cgwas.gRolePrivilege.entity.GRolePrivilegeVo">
+		select 
+		<include refid="columns"/>
+		from p_g_role_privilege
+		where id=#{id} 
+	</select>
+	
+	<select id="selectGRolePrivilege" resultType="com.cgwas.gRolePrivilege.entity.GRolePrivilegeVo">
+		select 
+		<include refid="columns"/>
+		from p_g_role_privilege
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateGRolePrivilege">
+		update p_g_role_privilege
+		<set>
+			id=#{id}, 
+			privilege_id=#{privilege_id}, 
+			role_id=#{role_id}, 
+			company_file_id=#{company_file_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateGRolePrivilegeVo">
+		update p_g_role_privilege
+		<set>
+			id=#{id}, 
+			privilege_id=#{privilege_id}, 
+			role_id=#{role_id}, 
+			company_file_id=#{company_file_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullGRolePrivilege">
+		update p_g_role_privilege
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+		</if>
+		<if test="company_file_id != null and company_file_id != ''">
+			company_file_id=#{company_file_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullGRolePrivilegeVo">
+		update p_g_role_privilege
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+		</if>
+		<if test="company_file_id != null and company_file_id != ''">
+			company_file_id=#{company_file_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleGRolePrivilege">
+		update p_g_role_privilege
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+			</if>
+			<if test="company_file_id != null and company_file_id != ''">
+			company_file_id=#{company_file_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleGRolePrivilegeVo">
+		update p_g_role_privilege
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+			</if>
+			<if test="company_file_id != null and company_file_id != ''">
+			company_file_id=#{company_file_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

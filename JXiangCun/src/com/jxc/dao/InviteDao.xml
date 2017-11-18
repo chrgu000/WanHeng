@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.InviteDao">
+	<select id="findInvitesByInvite" resultMap="InviteMaps">
+		select j.*,o.* from jxc_inviter i left join jxc_invite j on i.id=j.invite_id left join jxc_order o on j.order_id=o.id left join jxc_product p on o.product_id=p.id 
+		where o.user_id=#{user_id} and o.product_id=#{product_id} 
+		</select>
+		<resultMap type="Invite" id="InviteMaps">
+		<association property="product" column="product_id" javaType="Product" select="findProductById"/>
+		<association property="user" column="user_id" javaType="User" select="findUserById"/>
+		<association property="inviter" column="invite_id" javaType="Inviter" select="findInviterById"/>
+		</resultMap>
+		<select id="findInviterByInvite" resultType="Inviter">
+		select * from jxc_invite i left join jxc_order o on i.order_id=o.id left join jxc_inviter j on i.invite_id=j.id where j.open_id=#{open_id}
+		</select>
+		<select id="findProductById" resultType="Product">
+		select * from jxc_product where id=#{product_id}
+		</select>
+		<select id="findUserById" resultType="User">
+		select * from jxc_user where id=#{user_id}
+		</select>
+		<select id="findInviterById" resultType="Inviter">
+		select * from jxc_inviter where id=#{invite_id}
+		</select>
+		<insert id="addInviter" useGeneratedKeys="true" keyProperty="id">
+		insert into jxc_inviter(open_id,nickname,url) values(#{open_id},#{nickname},#{url})
+		</insert>
+		<insert id="addInvite">
+			insert into jxc_invite(order_id,invite_id,createDate) values(#{order_id},#{invite_id},#{createDate})
+		</insert>
+</mapper>

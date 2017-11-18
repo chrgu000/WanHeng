@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.groupUser.dao">
+	<sql id="columnsAs">
+		t1.id, t1.is_parent_project, t1.num, t1.user_id, t1.role_id, t1.project_id
+	</sql>
+
+	<select id="selectGroupUserPage" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		p_group_user t1
+		join
+		(SELECT
+		id
+		from
+		p_group_user
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectGroupUserCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from p_group_user
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.userPrivilege.dao">
+	<sql id="columnsAs">
+		t1.id, t1.privilege_id, t1.user_id
+	</sql>
+	
+	<select id="selectUserPrivilegePage" resultType="com.cgwas.userPrivilege.entity.UserPrivilegeVo">
+		SELECT uu.id user_id,uu.username user_name,uui.`name` name from u_user uu
+		LEFT JOIN u_user_info uui ON uui.user_id=uu.id
+		LEFT JOIN u_user_privilege uup ON uup.user_id=uu.id
+		where uup.privilege_id is not null AND uup.user_id is not null
+		<if test="user_name != null">
+			AND uu.username=#{user_name}
+		</if>
+		<if test="user_name != null">
+			AND uu.username=#{user_name}
+		</if>
+		GROUP BY uu.id,uui.id
+		ORDER BY uu.id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectUserPrivilegeCount" resultType="java.lang.Long">
+		SELECT COUNT(1) FROM 
+		(SELECT count(uu.id) from u_user uu
+		LEFT JOIN u_user_info uui ON uui.user_id=uu.id
+		LEFT JOIN u_user_privilege uup ON uup.user_id=uu.id
+		where uup.privilege_id is not null AND uup.user_id is not null
+		<if test="user_name != null">
+			AND uu.username=#{user_name}
+		</if>
+		<if test="user_name != null">
+			AND uu.username=#{user_name}
+		</if>
+		GROUP BY uu.id,uui.id
+		) t
+	</select>
+	
+
+</mapper>

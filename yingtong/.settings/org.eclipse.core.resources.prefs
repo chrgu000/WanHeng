@@ -1,0 +1,16 @@
+#Wed Sep 28 16:48:26 CST 2016
+eclipse.preferences.version=1
+encoding//WebRoot/WEB-INF/apiclient_cert=UTF-8
+encoding//WebRoot/index/header.jsp=UTF-8
+encoding//WebRoot/index/index.jsp=UTF-8
+encoding//WebRoot/index/js/js.js=UTF-8
+encoding//WebRoot/mobile=UTF-8
+encoding//WebRoot/mobile/css/weixinshow.css=UTF-8
+encoding//WebRoot/mobile/js/js.js=UTF-8
+encoding//src/com/yingtong/config/AlipayConfig.java=UTF-8
+encoding//src/com/yingtong/dao/mobile/js/js.js=UTF-8
+encoding//src/com/yingtong/dao/mobile/submit.jsp=UTF-8
+encoding//src/com/yingtong/dao/mobile/xiangtou.jsp=UTF-8
+encoding//src/com/yingtong/util/AlipaySubmit.java=UTF-8
+encoding//src/com/yingtong/util/CommonUtil.java=UTF-8
+encoding/yingtong.sql=UTF-8

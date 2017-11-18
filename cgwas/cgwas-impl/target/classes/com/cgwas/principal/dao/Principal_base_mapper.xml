@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.principal.dao">
+<select id="getPrincipalByName" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select
+		<include refid="columns" />
+		from p_principal
+		where principal_name=#{name}
+	</select>
+	<select id="getPrincipalByUserId" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select
+		<include refid="columns" />
+		from p_principal
+		where user_id=#{id}
+	</select>
+	<sql id="columns">
+		id, principal_name, user_id, head_pic_path
+	</sql>
+	<sql id="vals">
+		#{id}, #{principal_name}, #{user_id}, #{head_pic_path}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="principal_name != null and principal_name != ''">
+			and principal_name = #{principal_name}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			and head_pic_path = #{head_pic_path}
+		</if>
+	</sql>
+
+	<insert id="savePrincipal" parameterType="com.cgwas.principal.entity.Principal" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_principal (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="savePrincipalVo" parameterType="com.cgwas.principal.entity.PrincipalVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_principal (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deletePrincipal">
+		delete from p_principal
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deletePrincipalVo">
+		delete from p_principal
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExamplePrincipal">
+		delete from p_principal
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExamplePrincipalVo">
+		delete from p_principal
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadPrincipal" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select 
+		<include refid="columns"/>
+		from p_principal
+		where id=#{id} 
+	</select>
+	
+	<select id="selectPrincipal" resultType="com.cgwas.principal.entity.PrincipalVo">
+		select 
+		<include refid="columns"/>
+		from p_principal
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updatePrincipal">
+		update p_principal
+		<set>
+			id=#{id}, 
+			principal_name=#{principal_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updatePrincipalVo">
+		update p_principal
+		<set>
+			id=#{id}, 
+			principal_name=#{principal_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullPrincipal">
+		update p_principal
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="principal_name != null and principal_name != ''">
+			principal_name=#{principal_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullPrincipalVo">
+		update p_principal
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="principal_name != null and principal_name != ''">
+			principal_name=#{principal_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExamplePrincipal">
+		update p_principal
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="principal_name != null and principal_name != ''">
+			principal_name=#{principal_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExamplePrincipalVo">
+		update p_principal
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="principal_name != null and principal_name != ''">
+			principal_name=#{principal_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

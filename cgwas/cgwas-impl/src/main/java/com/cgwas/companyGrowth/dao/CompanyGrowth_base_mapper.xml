@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.companyGrowth.dao">
+
+	<sql id="columns">
+		id, contribute, flat, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{contribute}, #{flat}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="contribute != null and contribute != ''">
+			and contribute = #{contribute}
+		</if>
+		<if test="flat != null and flat != ''">
+			and flat = #{flat}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyGrowth" parameterType="com.cgwas.companyGrowth.entity.CompanyGrowth"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_growth (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCompanyGrowthVo" parameterType="com.cgwas.companyGrowth.entity.CompanyGrowthVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_growth (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCompanyGrowth">
+		delete from u_company_growth
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCompanyGrowthVo">
+		delete from u_company_growth
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCompanyGrowth">
+		delete from u_company_growth
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCompanyGrowthVo">
+		delete from u_company_growth
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCompanyGrowth" resultType="com.cgwas.companyGrowth.entity.CompanyGrowthVo">
+		select
+		<include refid="columns" />
+		from u_company_growth
+		where id=#{id}
+	</select>
+
+	<select id="selectCompanyGrowth" resultType="com.cgwas.companyGrowth.entity.CompanyGrowthVo">
+		select
+		<include refid="columns" />
+		from u_company_growth
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompanyGrowth">
+		update u_company_growth
+		<set>
+			id=#{id},
+			contribute=#{contribute},
+			flat=#{flat},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateCompanyGrowthVo">
+		update u_company_growth
+		<set>
+			id=#{id},
+			contribute=#{contribute},
+			flat=#{flat},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullCompanyGrowth">
+		update u_company_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullCompanyGrowthVo">
+		update u_company_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCompanyGrowth">
+		update u_company_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCompanyGrowthVo">
+		update u_company_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 奖罚公司积分 -->
+	<update id="reduceOrAddGrowthCompany">
+		update u_company_growth
+		<set>
+			<if test="flat != null and flat != 0">
+				flat=flat+#{flat},
+			</if>
+			<if test="flat != null and flat ==0">
+				flat=0,
+			</if>
+			<if test="contribute != null and contribute != '0'.toString()">
+				contribute=contribute+#{contribute}
+			</if>
+			<if test="contribute != null and contribute == '0'.toString()">
+				contribute=0
+			</if>
+		</set>
+		where company_id=#{company_id}
+	</update>
+	<!-- 清空公司积分 -->
+	<update id="clearGrowthCompany">
+		update u_company_growth
+		<set>
+			flat=0,contribute=0,
+		</set>
+		where company_id=#{company_id}
+	</update>
+	<!-- 根据公司id得到公司成长信息  -->
+	<select id="getCompanyGrowthByCompanyId" resultType="com.cgwas.companyGrowth.entity.CompanyGrowth">
+		select * from u_company_growth  WHERE company_id = #{company_id} LIMIT 0,1
+	</select>
+</mapper>

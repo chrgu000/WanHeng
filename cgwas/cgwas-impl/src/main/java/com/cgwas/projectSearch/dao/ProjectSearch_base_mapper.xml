@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.projectSearch.dao">
+
+	<sql id="columns">
+		id, content, field, sort, search
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{field}, #{sort}, #{search}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="field != null and field != ''">
+			and field = #{field}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+		<if test="search != null and search != ''">
+			and search = #{search}
+		</if>
+	</sql>
+
+	<insert id="saveProjectSearch" parameterType="com.cgwas.projectSearch.entity.ProjectSearch" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_search (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveProjectSearchVo" parameterType="com.cgwas.projectSearch.entity.ProjectSearchVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_search (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteProjectSearch">
+		delete from p_project_search
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteProjectSearchVo">
+		delete from p_project_search
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleProjectSearch">
+		delete from p_project_search
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleProjectSearchVo">
+		delete from p_project_search
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadProjectSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearchVo">
+		select 
+		<include refid="columns"/>
+		from p_project_search
+		where id=#{id} 
+	</select>
+	
+	<select id="selectProjectSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearchVo">
+		select 
+		<include refid="columns"/>
+		from p_project_search
+	</select>
+
+	<update id="updateProjectSearch">
+		update p_project_search
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			field=#{field}, 
+			sort=#{sort}, 
+			search=#{search}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateProjectSearchVo">
+		update p_project_search
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			field=#{field}, 
+			sort=#{sort}, 
+			search=#{search}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullProjectSearch">
+		update p_project_search
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="field != null and field != ''">
+			field=#{field}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="search != null and search != ''">
+			search=#{search}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullProjectSearchVo">
+		update p_project_search
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="field != null and field != ''">
+			field=#{field}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="search != null and search != ''">
+			search=#{search}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleProjectSearch">
+		update p_project_search
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="field != null and field != ''">
+			field=#{field}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="search != null and search != ''">
+			search=#{search}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleProjectSearchVo">
+		update p_project_search
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="field != null and field != ''">
+			field=#{field}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="search != null and search != ''">
+			search=#{search}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

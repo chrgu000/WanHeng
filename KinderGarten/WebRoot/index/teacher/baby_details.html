@@ -1,0 +1,213 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<style type="text/css">
+[v-cloak] {
+	display: none;
+}
+</style>
+	</head>
+	<body>
+		<div class="back">
+			<div class="back_btn" onclick="goBack()">
+				<img src="../img/left_icon.png" class="img-responsive" />
+			</div>
+			<div class="back_center" id="username2"></div>
+			<div class="back_right">
+				<a href="#" onclick="save()"></a>
+			</div>
+		</div>
+<div  class="archives" >
+		<div class="baby_photo"  v-cloak style="background: none" >
+			<div v-if="data" class="photo_title" style="border-radius: 12%">
+				<img :src="'../..' +data.header_pic_path" id="img" 
+					class="img-responsive" style="width:100%;height:100%">
+			</div>
+			<div class="name" id="username"></div>
+			<small id="garden"></small>
+			<ul>
+				<li>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							宝宝生日
+						</div>
+						<div class="pull-right">
+							{{data.birth_date}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background: none; border-bottom: none">
+						<div class="pull-left">
+							过敏史/病史
+						</div>
+						<div class="" style="clear: both; float: left">
+							{{data.content}}
+						</div> </a>
+				</li>
+			</ul>
+			<ul class="active">
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							父亲
+						</div>
+						<div class="pull-right">
+							{{data.father_name}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							父亲电话
+						</div>
+						<div class="pull-right">
+							{{data.father_tel}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							母亲
+						</div>
+						<div class="pull-right">
+							{{data.mother_name}}
+						</div> </a>
+
+				</li>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							母亲电话
+						</div>
+						<div class="pull-right">
+							{{data.mother_tel}}
+						</div> </a>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							紧急联系人
+						</div>
+						<div class="pull-right">
+							{{data.emergency_contact_name}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background: none">
+						<div class="pull-left">
+							紧急联系人电话
+						</div>
+						<div class="pull-right">
+							{{data.emergency_contact_tel}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background: none; border-bottom: none">
+						<div class="pull-left">
+							我的简介
+						</div>
+						<div class="" style="clear: both; float: left">
+							{{data.introduce}}
+						</div> </a>
+				</li>
+				<li>
+					&nbsp;
+
+				</li>
+				<li>
+					&nbsp;
+
+				</li>
+			</ul>
+		</div>
+		<div id="foot" v-cloak>
+			<ul class="footer">
+				<li>
+					<a :href="'pic_list.html?id='+data.id"><img
+							src="../img/picture_photo_t.png" class="img-responsive"><span>照片</span>
+					</a>
+				</li>
+				<li>
+					<a :href="'growth.html?id='+data.id"><img
+							src="../img/doc_t.png" class="img-responsive"><span>成长</span>
+					</a>
+				</li>
+			</ul>
+		</div>
+		</div>
+		<script src="../js/jquery.min.js">
+</script>
+		<script src="../js/vue.min.js">
+</script>
+		<script src="../js/data.js">
+</script>
+		<script src="../js/style.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript">
+$(function() {
+	var id = getQueryString("id");
+	$.ajax( {
+		url : "../../baby/getBaby.do",
+		data : {
+			"id" : id
+		},
+		dataType : "json",
+		type : "post",
+		async : true,
+		success : function(data) {
+			if (data.sex == "男") {
+				$("#username").addClass("boy");
+			}
+			new Vue( {
+				el : '#foot',
+				data : {
+					data : data
+				}
+			});
+			new Vue( {
+				el : ".baby_photo",
+				data : {
+					data : data
+				}
+			})
+			$("#username").html(data.username+"<span>"+"("+data.small_name+")"+"</span>");
+			$("#username2").html(data.username);
+			$("#garden").html(data.garden.name);
+			$("#introduce").html(data.introduce);
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			BUI.Message.Alert("系统繁忙，请稍后" + XMLHttpRequest.status + ","
+					+ XMLHttpRequest.readyState + "," + textStatus, 'warning');
+			loadMask.hide();
+		}
+	});
+
+})
+</script>
+	</body>
+</html>

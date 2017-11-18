@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.gRole.dao">
+	<sql id="columnsAs">
+		t1.id, t1.role_name, t1.for_id, t1.is_parent_poject, t1.project_id, t1.num
+	</sql>
+
+	<select id="selectGRolePage" resultType="com.cgwas.gRole.entity.GRoleVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		p_g_role t1
+		join
+		(SELECT
+		id
+		from
+		p_g_role
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectGRoleCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from p_g_role
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

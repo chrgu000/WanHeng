@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.RoleDao">
+	<resultMap id="roleMap" type="Role">
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+	</resultMap>
+	<insert id="save">
+		insert into
+		to_role(name,create_time,modified_time) 	values(#{name},#{createTime},#{modifiedTime})
+	</insert>
+	<update id="update">
+		update to_role
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				modified_time=#{modifiedTime},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from to_role where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteRoleModule">
+	 delete from to_role_module where role_id in 
+	       <foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="roleMap">
+		select * from to_role
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="roleMap">
+		select * from to_role
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_role
+	</select>
+	<select id="getRoleByName" resultType="Role">
+	 select * from to_role where name=#{name}
+	</select>
+	<select id="getAllRole" resultType="Role">
+	 select * from to_role
+	</select>
+</mapper>

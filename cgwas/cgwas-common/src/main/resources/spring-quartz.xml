@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<!-- 启动触发器的配置开始 -->
+	<bean name="startQuartz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="myJobTrigger" />
+				<ref bean="payN02031QuartzTrigger" />
+				<ref bean="payN31010QuartzTrigger" />
+			</list>
+		</property>
+	</bean>
+
+
+	<bean id="myJobTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="myJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0 0/6 * * ?</value>
+			<!-- <value>0/10 * * * * ?</value> -->
+		</property>
+	</bean>
+
+	<bean id="payN02031QuartzTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="payN02031QuartzDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value> 
+			<!--<value>0 0/5 * * * ?</value> -->
+		</property>
+	</bean>
+
+	<bean id="payN31010QuartzTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="payN31010QuartzDetail" />
+		</property>
+		<property name="cronExpression">
+			<value>0 0/1 * * * ?</value> 
+			<!--<value>0 0/5 * * * ?</value> -->
+		</property>
+	</bean>
+
+	<!-- job的配置开始 -->
+	<bean id="myJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="myJob" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+
+
+	<bean id="payN02031QuartzDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="payN02031Quartz" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+
+
+	<bean id="payN31010QuartzDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="payN31010Quartz" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+	<!-- job的配置结束 -->
+
+	<!-- 工作的bean -->
+	<bean id="payN02031Quartz" class="com.cgwas.util.withdraw.PayN02031Quartz"></bean>
+	<bean id="payN31010Quartz" class="com.cgwas.util.withdraw.PayN31010Quartz"></bean>
+</beans>

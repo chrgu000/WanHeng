@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.StandardDao">
+	<insert id="save">
+		insert into
+		dq_standard(name) values (#{name})
+	</insert>
+	<update id="update">
+		update dq_standard
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+            </if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_standard where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="SmallType">
+		select * from dq_standard where id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="Standard">
+		select * from dq_standard  limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_standard
+	</select>
+	<select id="getAllStandard" resultType="Standard">
+	  select * from dq_standard
+	</select>
+</mapper>

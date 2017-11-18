@@ -1,0 +1,557 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../../assets/code/demo.css" rel="stylesheet">
+		<link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css"
+			rel="stylesheet">
+		<link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css"
+			rel="stylesheet">
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form id="searchForm" class="form-horizontal span24">
+					<div class="row">
+						<div class="control-group span8">
+							<label class="control-label">
+								商品名称
+							</label>
+							<div class="controls">
+								<input type="text" class="control-text" name="name">
+								<input type="text" style="display: none">
+							</div>
+						</div>
+						<div class="control-group span8">
+							<label class="control-label"
+								style="width: 50px; margin-left: 0px; padding-left: 0px; float: left">
+								大类型
+							</label>
+							<div class="controls">
+								<select style="height: 33px" id="bigtype" name="big_type_id"
+									onchange="getSmallType(this.value)">
+								</select>
+							</div>
+						</div>
+						<div class="control-group span8">
+							<label class="control-label"
+								style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+								小类型
+							</label>
+							<div class="controls">
+								<select style="height: 33px" id="smalltype" name="small_type_id">
+									<option value="">
+										---请选择---
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="control-group span8">
+							<label class="control-label">
+								<s>*</s>是否上架
+							</label>
+							<div class="controls" style="padding-top: 5px">
+								<div style="float: left">
+									<input name="isOnline" type="radio"
+										data-rules="{required:true}" value="0">
+									未上架
+								</div>
+								<div style="float: left">
+									<input name="isOnline" type="radio"
+										data-rules="{required:true}" value="1">
+									已上架
+								</div>
+							</div>
+						</div>
+						<div class="control-group span8">
+							<label class="control-label"
+								style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+								类型
+							</label>
+							<div class="controls">
+								<select style="height: 33px" id="standard" name="standard_id">
+									<option value="">
+										---请选择---
+									</option>
+								</select>
+							</div>
+						</div>
+						<div class="span3 offset"
+							style="float: right; margin-right: 10px;">
+							<button type="button" id="btnSearch"
+								class="button button-primary">
+								搜索
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid"></div>
+			</div>
+		</div>
+		<div id="content" style="display: none">
+			<form id="form" class="form-horizontal">
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							销量
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text" id="nums"
+								name="nums" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							购物车存量
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								name="shopnums" id="shopnums" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							邮费
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text" id="mail"
+								name="mail" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							商品添加时间
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								name="join_time" id="join_time" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				  <div class="row">
+		          <div class="control-group span15">
+		            <label class="control-label">商品描述：</label>
+		            <div class="controls control-row4">
+		              <textarea class="input-large"  name="details" type="text" readonly="readonly"></textarea>
+		            </div>
+		          </div>
+        </div>
+			</form>
+		</div>
+		<script type="text/javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript">
+var big_type_id = getQueryString("big_type_id");
+var small_type_id = getQueryString("small_type_id");
+var standard_id = getQueryString("standard_id");
+$(function() {
+	if (standard_id != null) {
+		setTimeout(function() {
+			$("#standard").val(standard_id);
+			$("#standard").attr("disabled", "disabled");
+		}, 300);
+	} else {
+		$("#standard").removeAttr("disabled");
+	}
+	if (small_type_id != null) {
+		$.ajax( {
+			url : "../smalltype/getSmallTypeById.do",
+			dataType : "json",
+			type : "post",
+			data : {
+				id : small_type_id
+			},
+			success : function(data) {
+				getSmallType(data.big_type_id);
+				setTimeout(function() {
+					$("#bigtype").val(data.big_type_id);
+					$("#bigtype").attr("disabled", "disabled");
+					$("#smalltype").val(data.id);
+					$("#smalltype").attr("disabled", "disabled");
+				}, 300);
+			},
+			error : function() {
+			}
+		});
+	} else {
+		$("#smalltype").removeAttr("disabled");
+	}
+	if (big_type_id != null) {
+		setTimeout(function() {
+			$("#bigtype").val(big_type_id);
+			$("#bigtype").attr("disabled", "disabled");
+		}, 300);
+		$.ajax( {
+			url : "../smalltype/getSmallTypeByBigTypeId.do",
+			dataType : "json",
+			type : "post",
+			data : {
+				big_type_id : big_type_id
+			},
+			success : function(data) {
+				$('#smalltype').html("");
+				$("#smalltype").append("<option value=''>---请选择---</option>");
+				for ( var i = 0; i < data.length; i++) {
+					var obj = data[i];
+					$("#smalltype").append(
+							"<option value='" + obj.id + "'>" + obj.name
+									+ "</option>");
+				}
+			},
+			error : function() {
+			}
+		});
+	} else {
+		$("#bigtype").removeAttr("disabled");
+	}
+
+});
+
+var store;
+BUI
+		.use(
+				[ 'common/search', 'common/page' ],
+				function(Search, Grid, Data, Form, Tooltip) {
+					var Grid = BUI.Grid;
+					var Grid = BUI.Grid;
+					var enumObj1 = {
+						"0" : "未上架",
+						"1" : "已上架"
+					};
+					var columns = [
+							{
+								title : '商品名称',
+								dataIndex : 'name',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '商品图片',
+								dataIndex : '',
+								elCls : 'center',
+								width : 80,
+								renderer : function(value, obj) {
+									var delStr = "<img src='../"
+											+ obj.imgUrl
+											+ "' style='width:100px;height:100px'>";
+									return delStr;
+								}
+							},
+							{
+								title : '大类型',
+								dataIndex : '',
+								elCls : 'center',
+								width : 50,
+								renderer : function(value, obj) {
+									if (obj.bigtype == null)
+										return null;
+									return obj.bigtype.name;
+								}
+							},
+							{
+								title : '小类型',
+								dataIndex : '',
+								elCls : 'center',
+								width : 50,
+								renderer : function(value, obj) {
+									if (obj.smalltype == null)
+										return null;
+									return obj.smalltype.name;
+								}
+							},
+							{
+								title : '类型',
+								dataIndex : '',
+								elCls : 'center',
+								width : 50,
+								renderer : function(value, obj) {
+									if (obj.standard == null)
+										return null;
+									return obj.standard.name;
+								}
+							},
+							{
+								title : '排序值',
+								dataIndex : 'num',
+								elCls : 'center',
+								width : 40
+							},
+							{
+								title : '是否上架',
+								dataIndex : 'isOnline',
+								width : 50,
+								elCls : 'center',
+								renderer : BUI.Grid.Format
+										.enumRenderer(enumObj1)
+							},
+							{
+								title : '操作',
+								dataIndex : '',
+								width : 100,
+								renderer : function(value, obj) {
+									var delStr = '<span class="grid-command btn-del" title="删除店铺信息">删除</span>', 
+									editStr2 = Search
+											.createLink( { //链接使用 此方式
+												id : 'edit' + obj.id,
+												title : '查看图片',
+												text : '查看图片',
+												href : '../admin/picture.html?product_id=' + obj.id,
+											}),
+											editStr3 = '<span class="grid-command"   onclick="getMoreInfo('+obj.id+')" title="更多信息">更多信息</span>';
+									return delStr + editStr2+editStr3;
+								}
+							} ];
+					store = Search.createStore('../product/loadProduct.do', {
+						proxy : {
+							save : {},
+							method : 'POST'
+						},
+						params : {
+							b_type_id : big_type_id,
+							s_type_id : small_type_id,
+							st_id : standard_id
+						},
+						pageIndex : 0,
+						pageSize : 10,
+						autoSync : true
+					//保存数据后，自动更新
+							});
+					var gridCfg = Search
+							.createGridCfg(
+									columns,
+									{
+										forceFit : true,
+										tbar : {
+											items : [
+													{
+														text : '<i class="icon-plus"></i>新建',
+														btnCls : 'button button-small page-action btnAdd',
+														handler : addFunction
+													},
+													{
+														text : '<i class="icon-edit"></i>编辑',
+														btnCls : 'button button-small page-action btnUpd',
+														handler : updFunction
+													},
+													{
+														text : '<i class="icon-remove"></i>删除',
+														btnCls : 'button button-small',
+														handler : delFunction
+													} ]
+										},
+										loadMask : true, //加载数据时显示屏蔽层
+										plugins : [ BUI.Grid.Plugins.CheckSelection ]
+									// 插件形式引入多选表格
+									});
+					var search = new Search( {
+						store : store,
+						gridCfg : gridCfg
+					});
+					var grid = search.get('grid');
+					function addFunction() {
+						$(".btnAdd").attr("title", "新增");
+						$(".btnAdd").attr("data-href",
+								"../admin/product_sku.html");
+					}
+					function updFunction() {
+						var selections = grid.getSelection();
+						var ids = [];
+						BUI.each(selections, function(selections) {
+							ids.push(selections.id);
+						});
+						if (ids.length > 1) {
+							BUI.Message.Alert('只能选择一条记录', 'warning');
+						} else if (ids.length <= 0) {
+							BUI.Message.Alert('请选择要编辑的记录', 'warning');
+						} else {
+							$(".btnUpd").addClass("page-action grid-command");
+							$(".btnUpd").attr("title", "编辑");
+							$(".btnUpd").attr(
+									"data-href",
+									"../admin/product_sku.html?a=m&itemID="
+											+ selections[0].id);
+						}
+					}
+					function delFunction() {
+						var selections = grid.getSelection();
+						delItems(selections);
+					}
+					function delItems(items) {
+						var ids = [];
+						BUI.each(items, function(item) {
+							ids.push(item.id);
+						});
+						if (ids.length) {
+							BUI.Message.Confirm('确定要删除选中记录吗?', function() {
+								$.ajax( {
+									url : '../product/deleteProduct.do',
+									dataType : "json",
+									data : {
+										"ids" : ids.toString()
+									},
+									type : "post",
+									async : true,
+									success : function(data) {
+										if (data.hasError == false) {
+											store.load();
+										} else {
+											BUI.Message.Alert(data.errInfo,
+													'warning');
+										}
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrow) {
+										BUI.Message.Alert('系统繁忙,请稍候'
+												+ XMLHttpRequest.status + ","
+												+ XMLHttpRequest.readyState,
+												+"," + textStatus, 'warning')
+									}
+								});
+							}, 'questions');
+						} else {
+							BUI.Message.Alert('请选择记录', function() {
+							}, 'warning');
+						}
+					}
+					grid.on('cellclick', function(ev) {
+						var sender = $(ev.domTarget);
+						if (sender.hasClass('btn-del')) {
+							var record = ev.record;
+							delItems( [ record ]);
+						}
+					});
+				});
+$(function() {
+	$.ajax( {
+		url : "../smalltype/getAllType.do",
+		dataType : "json",
+		type : "post",
+		data : {},
+		success : function(data) {
+			$('#bigtype').html("");
+			$('#big_type').html("");
+			$("#bigtype").append("<option value=''>---请选择---</option>");
+			$("#big_type").append("<option value=''>---请选择---</option>");
+			for ( var i = 0; i < data.length; i++) {
+				var obj = data[i];
+				$("#bigtype").append(
+						"<option value='" + obj.id + "'>" + obj.name
+								+ "</option>");
+				$("#big_type").append(
+						"<option value='" + obj.id + "'>" + obj.name
+								+ "</option>");
+			}
+		},
+		error : function() {
+		}
+	});
+
+	$.ajax( {
+		url : "../standard/getAllStandard.do",
+		dataType : "json",
+		type : "post",
+		data : {},
+		success : function(data) {
+			$('#standard').html("");
+			$("#standard").append("<option value=''>---请选择---</option>");
+			for ( var i = 0; i < data.length; i++) {
+				var obj = data[i];
+				$("#standard").append(
+						"<option value='" + obj.id + "'>" + obj.name
+								+ "</option>");
+			}
+		},
+		error : function() {
+		}
+	});
+});
+function getSmallType(big_type_id) {
+	$.ajax( {
+		url : "../smalltype/getSmallTypeByBigTypeId.do",
+		dataType : "json",
+		type : "post",
+		data : {
+			big_type_id : big_type_id
+		},
+		success : function(data) {
+			$('#smalltype').html("");
+			$("#smalltype").append("<option value=''>---请选择---</option>");
+			for ( var i = 0; i < data.length; i++) {
+				var obj = data[i];
+				$("#smalltype").append(
+						"<option value='" + obj.id + "'>" + obj.name
+								+ "</option>");
+			}
+		},
+		error : function() {
+		}
+	});
+
+}
+
+  var dialog;
+function getMoreInfo(product_id){
+	$.ajax( {
+		url : "../product/getProductById.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			"product_id" : product_id
+		},
+		success : function(data) {
+			var form = $('form')[1];
+             BUI.FormHelper.setFields(form,data);
+                dialog.show();
+},
+error:function(){}
+});
+}
+          BUI.use(['bui/overlay','bui/form'],function(Overlay,Form){
+		    dialog= new Overlay.Dialog({
+            title:'更多信息',
+            width:500,
+            height:360,
+            //配置DOM容器的编号
+            contentId:'content',
+            success:function () {
+              alert('确认');
+              this.close();
+            }
+          });
+      });
+</script>
+		<body>
+</html>
+

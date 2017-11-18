@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.LogDao">
+	<insert id="addLog" useGeneratedKeys="true" keyProperty="id">
+		insert into
+kg_log(content,create_time,living_ability,learning_ability,communication_ability,baby_id,teacher_id,state,flag)values(#{content},#{create_time},#{living_ability},#{learning_ability},#{communication_ability},#{baby_id},#{teacher_id},#{state},#{flag})
+	</insert>
+	<update id="updateLog">
+		update kg_log
+		<set>
+		<if test="create_time!=null and create_time!=''">
+				create_time=#{create_time},
+</if>
+			<if test="content!=null and content!=''">
+				content=#{content},
+</if>
+			<if test="reply!=null and reply!=''">
+				reply=#{reply},
+</if>
+			<if test="living_ability!=null and living_ability!=''">
+				living_ability=#{living_ability},
+</if>
+			<if test="learning_ability!=null and learning_ability!=''">
+				learning_ability=#{learning_ability},
+</if>
+			<if test="communication_ability!=null and communication_ability!=''">
+				communication_ability=#{communication_ability},
+</if>
+			<if test="state!=null">
+				state=#{state},
+</if>
+<if test="flag!=null">
+				flag=#{flag},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_log where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getLogById" resultType="Log">
+		select * from kg_log where
+		id=#{id}
+	</select>
+	<select id="getLogByPage" resultMap="logMaps">
+		select * from kg_log 
+	<where>
+	<if test="baby_id!=null">
+	 and baby_id=#{baby_id}
+	</if>
+	<if test="teacher_id!=null">
+	 and teacher_id=#{teacher_id}
+	</if>
+	<if test="state!=null">
+	 and state=#{state}
+	</if>
+	</where>
+		order	by create_time desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Log" id="logMaps">
+		<association property="teacher" column="teacher_id"
+			javaType="Teacher" select="getTeacherById" />
+		<association property="baby" column="baby_id" javaType="Baby"
+			select="getBabyById" />
+	</resultMap>
+	<select id="getBabyById" resultType="Baby">
+		select * from kg_baby where
+		id=#{baby_id}
+	</select>
+	<select id="getTeacherById" resultType="Teacher">
+		select * from kg_teacher where id=#{teacher_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_log
+		<where>
+	<if test="baby_id!=null">
+	 and baby_id=#{baby_id}
+	</if>
+	<if test="teacher_id!=null">
+	 and teacher_id=#{teacher_id}
+	</if>
+	<if test="state!=null">
+	 and state=#{state}
+	</if>
+	</where>
+	</select>
+	<select id="getLogByTeacherIds" resultType="Log">
+	  select * from kg_log <where> teacher_id in <foreach collection="ids" open="("  separator=","  close=")" item="id">#{id}</foreach> order by create_time desc</where>
+	</select>
+	<select id="getLogByBabyIds" resultType="Log">
+	  select * from kg_log <where> baby_id in <foreach collection="ids" open="("  separator=","  close=")" item="id">#{id}</foreach>order by create_time desc</where>
+	</select>
+	<select id="getLogsByBabyId" resultType="Log">
+	select * from kg_log where baby_id=#{baby_id} order by create_time desc
+	</select>
+	<select id="getLogsByBabyId1" resultType="Log">
+	select * from kg_log where baby_id=#{baby_id} and state=1 order by create_time desc
+	</select>
+</mapper>

@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>数据统计</title>
+<link href="../admin/css/base.css" type="text/css" rel="stylesheet" />
+<link href="../admin/css/tab.css" type="text/css" rel="stylesheet" />
+<link href="../admin/css/item.css" type="text/css" rel="stylesheet" />
+<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet" type="text/css" />
+<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+[v-cloak] {
+    display: none;
+}
+</style>
+</head>
+<body style="background:#fff;">
+    <div id="app"  style="padding-top:50px;  float:left; width:95%; padding-left:30px;" v-cloak>
+        <div id="list_wrap" class="rel" style="margin-top:17px; line-height:24px;">
+        	<ul style="overflow:hidden; text-align:center;">
+            	<li style="float:left; width:100%; margin-bottom:15px;">
+                	<p style="text-align:left; font-size:14px; line-height:36px; padding:0 10px;"><b>交易统计:</b></p>
+                    <table style="width:100%" class="order_table">
+                        <tr style="background:#ededed; line-height:26px;">
+                            <th style="width:25%; border:1px solid #d7d7d7;">总交易笔数</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">总交易额</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">今日新增交易笔数</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">今日新增交易额</th>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #d7d7d7;">{{j }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{k }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{l }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{m }}</td>
+                        </tr>
+                    </table>
+                </li>
+            	<li style="float:right; width:100%; margin-bottom:15px;">
+                	<p style="text-align:left; font-size:14px; line-height:36px; padding:0 10px;"><b>订单统计:</b></p>
+                    <table style="width:100%" class="order_table">
+                        <tr style="background:#ededed; line-height:26px;">
+                            <th style="width:25%; border:1px solid #d7d7d7;">总订单数</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">今日新增订单</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">已发货订单</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">待发货订单</th>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #d7d7d7;">{{n }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{o }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{p }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{q }}</td>
+                        </tr>
+                    </table>
+                </li>
+            	<li style="float:right; width:100%; margin-bottom:15px;">
+                	<p style="text-align:left; font-size:14px; line-height:36px; padding:0 10px;"><b>退款统计:</b></p>
+                    <table style="width:100%;" class="order_table">
+                        <tr style="background:#ededed; line-height:26px;">
+                            <th style="width:25%; border:1px solid #d7d7d7;">已退款总额</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">已退款笔数</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">待退款金额</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">待退款笔数</th>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #d7d7d7;">{{t }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{u }}</td>
+                            <td style="border:1px solid #d7d7d7; color:red"><a data-href="orders.html?type=5" class="page-action grid-command" style="border:0px solid #d7d7d7; color:red" title="待退款">{{v }}</a></td>
+                            <td style="border:1px solid #d7d7d7; color:red"><a data-href="orders.html?type=5" class="page-action grid-command" style="border:0px solid #d7d7d7; color:red" title="待退款">{{w }}</a></td>
+                        </tr>
+                    </table>
+                </li>
+                	<li style="float:right; width:100%; margin-bottom:15px;">
+                	<p style="text-align:left; font-size:14px; line-height:36px; padding:0 10px;"><b>积分订单统计:</b></p>
+                    <table style="width:100%" class="order_table">
+                        <tr style="background:#ededed; line-height:26px;">
+                            <th style="width:25%; border:1px solid #d7d7d7;">总积分订单数</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">今日新增积分订单</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">已发货积分订单</th>
+                            <th style="width:25%; border:1px solid #d7d7d7;">待发货积分订单</th>
+                        </tr>
+                        <tr>
+                            <td style="border:1px solid #d7d7d7;">{{x }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{y }}</td>
+                            <td style="border:1px solid #d7d7d7;">{{z}}</td>
+                            <td style="border:1px solid #d7d7d7;">{{a }}</td>
+                        </tr>
+                    </table>
+                </li>
+            </ul>
+    	</div>
+  	</div>
+<script type="text/javascript" language="javascript" src="../static/common/jquery.min-2.1.3.js"></script>
+<script type="text/javascript" src="../static/assets/js/bui-min.js"></script>
+<script type="text/javascript" src="../static/assets/js/config-min.js"></script>
+<script type="text/javascript" src="../static/assets/js/common/page-min.js"></script>
+<script type="text/javascript" src="../static/vue/vue.min.js"></script>
+<script type="text/javascript">
+var vm = null;
+var Mask = BUI.Mask;
+
+var loadMask = new Mask.LoadMask({
+    el : 'body',
+    msg : 'loading。。。'
+});
+loadMask.show();
+$(document).ready(function(){
+	$.ajax({
+		url : "../grouporder/loadCount.do",
+		dataType : "json",
+		type : "post",
+		async: true,
+		success : function(data) {
+			loadMask.hide();
+			if (data.hasError == false) {
+				vm = new Vue({
+				  el: '#app',
+				  data: data.object
+				});
+			}else {
+				BUI.Message.Alert(data.errInfo,'warning');
+				 
+			}
+		},
+		error : function(XMLHttpRequest, textStatus, errorThrown) {
+			loadMask.hide();
+			BUI.Message.Alert("系统繁忙，请稍后"+XMLHttpRequest.status+","+XMLHttpRequest.readyState+","+textStatus,'warning');
+		}
+	});
+});
+</script>
+</body>
+</html>

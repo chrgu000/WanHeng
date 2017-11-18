@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.space.dao">
+
+	<sql id="columns">
+		id, space_title, space_size, space_price, space_type, space_content, effective_size, unit, create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{space_title}, #{space_size}, #{space_price}, #{space_type}, #{space_content}, #{effective_size}, #{unit}, #{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="space_title != null and space_title != ''">
+			and space_title = #{space_title}
+		</if>
+		<if test="space_size != null and space_size != ''">
+			and space_size = #{space_size}
+		</if>
+		<if test="space_price != null and space_price != ''">
+			and space_price = #{space_price}
+		</if>
+		<if test="space_type != null and space_type != ''">
+			and space_type = #{space_type}
+		</if>
+		<if test="space_content != null and space_content != ''">
+			and space_content = #{space_content}
+		</if>
+		<if test="effective_size != null and effective_size != ''">
+			and effective_size = #{effective_size}
+		</if>
+		<if test="unit != null and unit != ''">
+			and unit = #{unit}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveSpace" parameterType="com.cgwas.space.entity.Space" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_space (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveSpaceVo" parameterType="com.cgwas.space.entity.SpaceVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_space (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteSpace">
+		delete from z_space
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteSpaceVo">
+		delete from z_space
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleSpace">
+		delete from z_space
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleSpaceVo">
+		delete from z_space
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadSpace" resultType="com.cgwas.space.entity.SpaceVo">
+		select 
+		<include refid="columns"/>
+		from z_space
+		where id=#{id} 
+	</select>
+	
+	<select id="selectSpace" resultType="com.cgwas.space.entity.SpaceVo">
+		SELECT z.id,0+cast(z.space_price as CHAR) space_price,z.space_size,0+cast(z.space_price * 0.8 as CHAR) discount_price,z.unit from z_space z
+		WHERE 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateSpace">
+		update z_space
+		<set>
+			id=#{id}, 
+			space_title=#{space_title}, 
+			space_size=#{space_size}, 
+			space_price=#{space_price}, 
+			space_type=#{space_type}, 
+			space_content=#{space_content}, 
+			effective_size=#{effective_size}, 
+			unit=#{unit}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateSpaceVo">
+		update z_space
+		<set>
+			id=#{id}, 
+			space_title=#{space_title}, 
+			space_size=#{space_size}, 
+			space_price=#{space_price}, 
+			space_type=#{space_type}, 
+			space_content=#{space_content}, 
+			effective_size=#{effective_size}, 
+			unit=#{unit}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullSpace">
+		update z_space
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="space_title != null and space_title != ''">
+			space_title=#{space_title}, 
+		</if>
+		<if test="space_size != null and space_size != ''">
+			space_size=#{space_size}, 
+		</if>
+		<if test="space_price != null and space_price != ''">
+			space_price=#{space_price}, 
+		</if>
+		<if test="space_type != null and space_type != ''">
+			space_type=#{space_type}, 
+		</if>
+		<if test="space_content != null and space_content != ''">
+			space_content=#{space_content}, 
+		</if>
+		<if test="effective_size != null and effective_size != ''">
+			effective_size=#{effective_size}, 
+		</if>
+		<if test="unit != null and unit != ''">
+			unit=#{unit}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullSpaceVo">
+		update z_space
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="space_title != null and space_title != ''">
+			space_title=#{space_title}, 
+		</if>
+		<if test="space_size != null and space_size != ''">
+			space_size=#{space_size}, 
+		</if>
+		<if test="space_price != null and space_price != ''">
+			space_price=#{space_price}, 
+		</if>
+		<if test="space_type != null and space_type != ''">
+			space_type=#{space_type}, 
+		</if>
+		<if test="space_content != null and space_content != ''">
+			space_content=#{space_content}, 
+		</if>
+		<if test="effective_size != null and effective_size != ''">
+			effective_size=#{effective_size}, 
+		</if>
+		<if test="unit != null and unit != ''">
+			unit=#{unit}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleSpace">
+		update z_space
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="space_title != null and space_title != ''">
+			space_title=#{space_title}, 
+			</if>
+			<if test="space_size != null and space_size != ''">
+			space_size=#{space_size}, 
+			</if>
+			<if test="space_price != null and space_price != ''">
+			space_price=#{space_price}, 
+			</if>
+			<if test="space_type != null and space_type != ''">
+			space_type=#{space_type}, 
+			</if>
+			<if test="space_content != null and space_content != ''">
+			space_content=#{space_content}, 
+			</if>
+			<if test="effective_size != null and effective_size != ''">
+			effective_size=#{effective_size}, 
+			</if>
+			<if test="unit != null and unit != ''">
+			unit=#{unit}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleSpaceVo">
+		update z_space
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="space_title != null and space_title != ''">
+			space_title=#{space_title}, 
+			</if>
+			<if test="space_size != null and space_size != ''">
+			space_size=#{space_size}, 
+			</if>
+			<if test="space_price != null and space_price != ''">
+			space_price=#{space_price}, 
+			</if>
+			<if test="space_type != null and space_type != ''">
+			space_type=#{space_type}, 
+			</if>
+			<if test="space_content != null and space_content != ''">
+			space_content=#{space_content}, 
+			</if>
+			<if test="effective_size != null and effective_size != ''">
+			effective_size=#{effective_size}, 
+			</if>
+			<if test="unit != null and unit != ''">
+			unit=#{unit}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

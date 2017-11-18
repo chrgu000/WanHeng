@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>整租</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" type="text/css" href="../css/webuploader.css">
+    <link rel="stylesheet" type="text/css" href="../css/diyUpload.css">
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div>
+<div class="form">
+    <div class="form_pic">
+        <div id="box">
+            <div id="test"></div>
+            <div class="parentFileBox" style="width: 375px;" >
+                    <ul class="fileBoxUl"  v-cloak >
+                <li v-for="picture in pictures" :id="'fileBox_WU_FILE_'+picture.id" class="diyUploadHover">
+                    <div class="viewThumb">
+                        <img :src="picture.data" :id="picture.id" class="img"></div>
+                    <div class="diyCancel"></div>
+                    <div class="diySuccess"></div>
+                    <div class="diyFileName">{{picture.imgUrl}}</div>
+                    <div class="diyBar">
+                        <div class="diyProgress"></div>
+                        <div class="diyProgressText">0%</div>
+                    </div>
+                </li>
+            </ul>
+            </div>
+        </div>
+    </div>
+    <label>
+        <span>小区</span>
+        <input type="text" id="garden"placeholder="请输入小区姓名">
+    </label>
+    <section class="express-area">
+        <a id="expressArea" href="javascript:void(0)">
+            <dl>
+                <dt>区域</dt>
+                <dd id="addr">省 > 市 > 区/县</dd>
+            </dl>
+        </a>
+    </section>
+    <!--选择地区弹层-->
+    <section id="areaLayer" class="express-area-box">
+        <header>
+            <h3>选择地区</h3>
+            <a id="backUp" class="back" href="javascript:void(0)" title="返回"></a>
+            <a id="closeArea" class="close" href="javascript:void(0)" title="关闭"></a>
+        </header>
+        <article id="areaBox">
+            <ul id="areaList" class="area-list"></ul>
+        </article>
+    </section>
+    <!--遮罩层-->
+    <div id="areaMask" class="mask"></div>
+    <label>
+        <span>详细地址</span>
+        <input type="text" id="address"  placeholder="">
+    </label>
+    <label class="label_three">
+        <span>面积</span>
+        <input type="text" id="acreage" placeholder="">
+        <span>平米</span>
+    </label>
+
+    <label class="door_model">
+        <span>户型</span>
+        <input type="text" name="sn1" id="room"maxlength="1" >  <!-
+        -><input type="text"name="sn2" id="office" maxlength="1"><!-
+        -><input type="text"  name="sn3" id="defend"maxlength="1">
+
+        <div class="h_x" >
+            <span>室</span>
+            <span>卫</span>
+            <span>厅</span>
+        </div>
+    </label>
+
+            <div class="nice-select" id="decorate" v-cloak name="nice-select">
+        <span>装修</span>
+        <input type="text" class="showv" value="" id="decorateSituation1"  readonly  placeholder="请选择">
+        <input type="hidden" value="" class="setv"  id="decorateSituation">
+        <div class="black">            <div class="select_center">
+
+        <a>取消</a>
+                <ul>
+                    <li v-for="decorateSituation in decorateSituations" :data-value="decorateSituation.id">{{decorateSituation.content}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="nice-select"v-cloak  id="orienta" name="nice-select">
+        <span>朝向</span>
+        <input type="text" value=""  class="showv" readonly  id="orientation1" placeholder="请选择">
+        <input type="hidden" value="" id="orientation" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+                <ul>
+                    <li v-for="orientation in orientations" :data-value="orientation.id">{{orientation.content}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <label class="label_three">
+        <span>租金</span>
+        <input type="text" id="rent" placeholder="">
+        <span>元/月</span>
+    </label>
+    <div class="nice-select"id="pay" v-cloak name="nice-select">
+        <span>付款方式</span>
+        <input type="text" value="" class="showv" id="payWay1" readonly  placeholder="请选择">
+        <input type="hidden" value="" id="payWay" class="setv" >
+        <div class="black">
+            <div class="select_center">
+                <a>取消</a>
+                <ul>
+                    <li v-for="payWay in payWays" :data-value="payWay.id">{{payWay.content}}</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <label class="label_three">
+        <span>标题</span>
+        <textarea placeholder="请输入6-30个字(必填)" id="title" rows="2"></textarea>
+    </label>
+    <label class="label_three">
+        <span>描述</span>
+        <textarea placeholder="请输入1-1000个字(必填)" id="details" rows="4"></textarea>
+    </label>
+    <div class="check_box"v-cloak id="supporting">
+        <span>配套设施</span>
+        <ul>
+            <li v-for="supportingFacilitie in supportingFacilities" :data-value="supportingFacilitie.id"><a>{{supportingFacilitie.content}}</a></li>
+        </ul>
+    </div>
+    <div class="radio_box">
+        <span>身份</span>
+        <ul>
+            <li><a>个人</a></li>
+            <li><a>中介</a></li>
+        </ul>
+    </div>
+    <label>
+        <span>联系人</span>
+        <input type="text" id="concactName" placeholder="" >
+    </label>
+    <label>
+        <span>手机号</span>
+        <input type="text" placeholder="" id="tel">
+    </label>
+    <a class="release" href="#" onclick="submit()">保存</a>
+</div>
+</div>
+<script src="../js/jquery.area.js"></script>
+<script src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script type="text/javascript" src="../js/form.js"></script>
+<script type="text/javascript" src="../js/diyUploadUpdate.js">
+</script>
+<script type="text/javascript"
+        src="../js/webuploader.html5only.min.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+
+<script type="text/javascript" language="javascript"
+        src="../../static/common/getQueryString.js">
+</script>
+<script>
+    $(document).ready(function(){
+        var input_text = $(".nice-select input[type='text']");
+        input_text.attr("disabled",true);
+    });
+</script>
+<script type="text/javascript">
+    var houseId = getQueryString("id");
+    var vm1=new Vue({
+        el:'.fileBoxUl',
+        data:{
+            pictures:null
+        }
+    });
+    $(function(){
+        $.ajax({
+            url: "../../picture/getPicturesByHouseId.do",
+            dataType: "json",
+            type: "post",
+            data: {houseId:houseId},
+            success: function (data) {
+                vm1.pictures=data;
+                vm1.$nextTick(function(){
+                    put();
+                });
+            },
+            error: function () {
+            }
+        });
+        $.ajax({
+            url:"../../house/getHouseById.do",
+            type:"post",
+            dataType:"json",
+            data:{id:houseId},
+            success:function(data){
+                $("#garden").val(data.gardenName);
+                $("#addr").text( data.province+">"+data.city+">"+data.area);
+                $("#address").val(data.address);
+                $("#acreage").val(data.acreage);
+                $("#room").val(data.room);
+                $("#office").val(data.office);
+                $("#defend").val(data.defend);
+                $("#decorateSituation1").val(data.decorateSituation.content);
+                $("#orientation1").val(data.orientation.content);
+                $("#rent").val(data.rent);
+                $("#payWay1").val(data.payWay.content);
+                $("#title").val(data.title);
+                $("#details").val(data.details);
+                setTimeout(function(){
+                    $(".check_box ul").children().each(function(){
+                        var su=data.supportingFacilitys;
+                        for(var i=0;i<su.length;i++){
+                            var obj=su[i];
+                            if($(this).text()==obj.content){
+                                $(this).addClass("active");
+                            }
+                        }
+                    });
+                },1000);
+
+                $(".radio_box ul").children().each(function(){
+                    if($(this).text()==data.identity){
+                        $(this).addClass("active");
+                    }
+                });
+                $("#concactName").val(data.concactName);
+                $("#tel").val(data.tel);
+            },
+            error : function() {
+            }
+        });
+    });
+    var n=0;
+    var paths="";
+    var status=0;
+    $('#test').diyUpload( {
+        url: '../../UploadFile.do',// servlet请求路径
+        success : function(data) {
+            var num=$('.fileBoxUl').find(".diy").length;
+            ++n;
+            paths+=data._raw;
+            if(num==n){
+                status=1;
+            }
+        },
+        error : function(err) {
+            console.info(err);
+        }
+    });
+    function getData(){
+        var imgs=$(".image");
+        var data="";
+        imgs.each(function(){
+            data+=$(this).attr("src")+"_";
+        });
+        return data;
+    }
+   $(function() {
+       $.ajax({
+           url: "../../decorateSituation/getAllDecorateSituation.do",
+           type: "post",
+           dataType: "json",
+           data: {},
+           success: function (data) {
+               var vm=new Vue({
+                   el:'#decorate',
+                   data:{
+                       decorateSituations:data,
+                   }
+               });
+               $('[name="nice-select"] li').click(function(e){
+               vm.$nextTick(function(){
+                       var val = $(this).text();
+                       $(this).parents('[name="nice-select"]').find(' .showv').val(val);
+                       $(this).parents('[name="nice-select"]').find(' .setv').val($(this).attr("data-value"));
+                       $('[name="nice-select"] .black').hide();
+                       $('[name="nice-select"] .select_center').animate({bottom:'-100%'},"fast");
+
+                       $(this).parents('[name="nice-select"]').removeClass("nice-select-red");
+                       e.stopPropagation();
+                   });
+               });
+           },
+           error: function () {
+           }
+       });
+       $.ajax({
+           url: "../../decorateSituation/getAllOrientation.do",
+           type: "post",
+           dataType: "json",
+           data: {},
+           success: function (data) {
+               var vm=new Vue({
+                   el:'#orienta',
+                   data:{
+                       orientations:data
+                   }
+               });
+               vm.$nextTick(function(){
+                   $('[name="nice-select"] li').click(function(e){
+                       var val = $(this).text();
+                       $(this).parents('[name="nice-select"]').find(' .showv').val(val);
+                       $(this).parents('[name="nice-select"]').find(' .setv').val($(this).attr("data-value"));
+                       $('[name="nice-select"] .black').hide();
+                       $('[name="nice-select"] .select_center').animate({bottom:'-100%'},"fast");
+
+                       $(this).parents('[name="nice-select"]').removeClass("nice-select-red");
+                       e.stopPropagation();
+                   });
+
+               });
+           },
+           error: function () {
+           }
+       });
+       $.ajax({
+           url: "../../decorateSituation/getAllSupportingFacility.do",
+           type: "post",
+           dataType: "json",
+           data: {},
+           success: function (data) {
+               var vm=new Vue({
+                   el:'#supporting',
+                   data:{
+                       supportingFacilities:data
+                   }
+               });
+               vm.$nextTick(function(){
+                       $(".check_box li").click(function () {
+                           $(this).toggleClass("active");
+                       });
+                   });
+           },
+           error: function () {
+           }
+       });
+        $.ajax({
+            url: "../../decorateSituation/getAllPayWay.do",
+            type: "post",
+            dataType: "json",
+            data: {},
+            success: function (data) {
+                  var vm=new Vue({
+                      el:'#pay',
+                      data:{
+                          payWays:data
+                      }
+                  });
+                vm.$nextTick(function(){
+                    $('[name="nice-select"] li').click(function(e){
+                        var val = $(this).text();
+                        $(this).parents('[name="nice-select"]').find(' .showv').val(val);
+                        $(this).parents('[name="nice-select"]').find(' .setv').val($(this).attr("data-value"));
+                        $('[name="nice-select"] .black').hide();
+                        $('[name="nice-select"] .select_center').animate({bottom:'-100%'},"fast");
+
+                        $(this).parents('[name="nice-select"]').removeClass("nice-select-red");
+                        e.stopPropagation();
+                    });
+                });
+              },
+            error: function () {
+            }
+        });
+    });
+    function submit(){
+            var gardenName=$("#garden").val()
+            var addr=$("#addr").text().split(">");
+            var province,city,area;
+            var address=$("#address").val();
+            var acreage=$("#acreage").val();
+            var room=$("#room").val();
+            var office=$("#office").val();
+            var defend=$("#defend").val();
+            var decorateSituationId=$("#decorateSituation").val();
+            var orientationId=$("#orientation").val();
+            var rent=$("#rent").val();
+            var payWayId=$("#payWay").val();
+            var title=$("#title").val();
+            var details=$("#details").val();
+            var supportingFacilityIds=[];
+            var supportingFacilitys=$(".check_box .active");
+            supportingFacilitys.each(function(){
+                supportingFacilityIds.push($(this).attr("data-value"));
+            });
+            var identity=$(".radio_box .active").text();
+            var concactName=$("#concactName").val();
+            var  tel=$("#tel").val();
+
+          if(!gardenName){
+                $.pop.tips("输入小区名称");
+                return;
+            }
+
+            if(addr.length==3){
+                province=addr[0].trim();
+                city=addr[1].trim();
+                area=addr[2].trim();
+            }else{
+                province=addr[0].trim();
+                city=addr[0].trim();
+                area=addr[1].trim();
+            }
+            if(province=="省"){
+                $.pop.tips("请选择省份");
+                return;
+            }
+            if(city=="市"){
+                $.pop.tips("请选择市");
+                return;
+            }
+            if(city=="市"){
+                $.pop.tips("请选择市");
+                return;
+            }
+            if(area=="区/县"){
+                $.pop.tips("请选区/县");
+                return;
+            }
+
+            if(!address){
+                $.pop.tips("请输入详细地址");
+                return;
+            }
+            if(!acreage){
+                $.pop.tips("请输入占地面积");
+                return;
+            }
+
+        if(!room){
+            $.pop.tips("请输入室");
+            return;
+        }
+
+        if(!office){
+            $.pop.tips("请输入厅");
+                return;
+            }
+
+            if(!defend){
+                $.pop.tips("请输入卫");
+                return;
+            }
+            if(!rent){
+                $.pop.tips("请输入租金");
+                return;
+            }
+            if(!title){
+                $.pop.tips("请输入标题");
+                return;
+            }
+
+            if(!details){
+                $.pop.tips("请输入描述");
+                return;
+            }
+        if(supportingFacilityIds.length==0){
+            $.pop.tips("请选择配套设施");
+            return;
+        }
+        if(!identity){
+            $.pop.tips("请选择身份");
+            return;
+        }
+          if(!concactName){
+              $.pop.tips("请输入联系人");
+              return;
+          }
+        var reg = /^1[3|4|5|7|8]\d{9}$/;
+        if (!reg.test(tel)) {
+            $.pop.tips("手机号格式不对,请重新输入!");
+           return;
+        }
+        startUpload();
+        var data=getData();
+        var timer=setInterval(function(){
+            if((status==1)&&(paths.length>0)){
+            $.ajax( {
+                url : "../../house/updateHouse.do",
+                type : "post",
+                dataType : "json",
+                data : {
+                    id:houseId,
+                    data:data,
+                    path:paths,
+                    gardenName:gardenName,
+                    province:province,
+                    city:city,
+                    area:area,
+                    address:address,
+                    acreage:acreage,
+                    room:room,
+                    office:office,
+                    defend:defend,
+                    decorateSituationId:decorateSituationId,
+                    orientationId:orientationId,
+                    rent:rent,
+                    payWayId:payWayId,
+                    title:title,
+                    details:details,
+                    supportingFacilityIds:supportingFacilityIds.toString(),
+                    identity:identity,
+                    concactName:concactName,
+                    tel:tel,
+                    type:"住宅整租"
+                },
+                async:false,
+                success : function(data) {
+                    $.pop.tips(data.errInfo);
+                    if(!data.hasError){
+                        setTimeout(function(){
+                            location.href="published.html";
+                        },1000);
+                    }
+                    window.clearInterval(timer);
+                },
+                error : function() {
+                }
+            });
+            }else if(data.length==0){
+                $.ajax( {
+                    url : "../../house/updateHouse.do",
+                    type : "post",
+                    dataType : "json",
+                    data : {
+                        id:houseId,
+                        data:data,
+                        path:paths,
+                        gardenName:gardenName,
+                        province:province,
+                        city:city,
+                        area:area,
+                        address:address,
+                        acreage:acreage,
+                        room:room,
+                        office:office,
+                        defend:defend,
+                        decorateSituationId:decorateSituationId,
+                        orientationId:orientationId,
+                        rent:rent,
+                        payWayId:payWayId,
+                        title:title,
+                        details:details,
+                        supportingFacilityIds:supportingFacilityIds.toString(),
+                        identity:identity,
+                        concactName:concactName,
+                        tel:tel
+                    },
+                    async:false,
+                    success : function(data) {
+                        $.pop.tips(data.errInfo);
+                        if(!data.hasError){
+                            setTimeout(function(){
+                                location.href="published.html";
+                            },1000);
+                        }
+                        window.clearInterval(timer);
+                    },
+                    error : function() {
+                    }
+                });
+            }
+        },2000);
+
+    }
+</script>
+</body>
+</html>

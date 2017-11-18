@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>房源列表</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="//at.alicdn.com/t/font_0i9183uhwg17cik9.css">
+
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+        .fiexd{width: 100%;float: left;background: url("img/loding.gif") no-repeat center #fff;height: 100%;position: fixed;top: 0;left: 0;z-index: 9999;background-size: 18%;}
+
+    </style>
+</head>
+<body>
+
+<div class="top top_fix ">
+    <div class="select">
+        <a class="top_btn" style="display:block">城市</a>
+        <ul class="top-right_ul" id="city">
+            <li v-for="area in areas">
+                <a href="#" onclick="getHouseByArea('{{area}}')">{{area}}</a>
+            </li>
+        </ul>
+    </div>
+    <div class="search">
+        <input type="text" id="search" placeholder="租房管理">
+        <button onclick="search()"><i class="iconfont">&#xe632;</i></button>
+    </div>
+    <!--<div class="map"><img src="img/map_icon.png" class="img-responsive"><span>地图</span></div>-->
+</div>
+
+
+
+
+
+<div class="housing_list_nav">
+    <ul>
+        <li>
+            <a class="first_a">类型<span></span></a>
+                <div class="hide_nav">
+                    <ul>
+                        <li><a onclick="getHouseByType('住宅整租')">住宅整租</a></li>
+                        <li><a onclick="getHouseByType('住宅合租')">住宅合租</a></li>
+                        <li><a onclick="getHouseByType('写字楼')">写字楼</a></li>
+                        <li><a onclick="getHouseByType('商铺')">商铺</a></li>
+                        <li><a onclick="getHouseByType('厂房/仓库')">厂房/仓库</a></li>
+                        <li><a onclick="getHouseByType('车库')">车库</a></li>
+                    </ul>
+                </div>
+        </li>
+        <li>
+            <a class="first_a">区域<span></span></a>
+            <div class="hide_nav" >
+                <ul id="area"v-cloak>
+                    <li v-for="area in areas">
+                        <a href="#" onclick="getHouseByArea('{{area}}')">{{area}}</a>
+                    </li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a class="first_a"  >价格<span></span></a>
+            <div class="hide_nav" id="price" v-cloak>
+                <ul>
+                    <li v-for="price in data"> <a onclick="getHousesByPrice('{{price.content}}')">{{price.content}}</a></li>
+                </ul>
+            </div>
+        </li>
+        <li>
+            <a  class="first_a" style="background: none #fff;">更多<span></span></a>
+            <div class="hide_nav">
+                <ul>
+                    <li> <a onclick="getHousesByLocation()">附近</a></li>
+                </ul>
+            </div>
+        </li>
+    </ul>
+</div>
+<div style="height: 4rem;width: 100%; float: left"></div>
+
+<div class="house_list" v-cloak >
+    <h4 id="info" style="display:none;text-align: center">暂无数据</h4>
+    <ul>
+        <li v-for="list in data">
+            <a :href="'details.html?id='+list.id">
+                <p class="house_list_left"><img :src="'../'+list.imgUrl" class="img-responsive"></p>
+                <p class="house_list_right">
+                    <big>{{list.title}}</big>
+                    <span v-if="list.type=='住宅整租'||list.type=='住宅合租'">{{list.gardenName}}</span>
+                    <span><small v-if="list.identity=='个人'">个人</small></span>
+                </p>
+            </a>
+        </li>
+    </ul>
+</div>
+<div style="height: 50px;float: left; width: 100%;"></div>
+<div id="foot">
+    <ul>
+        <li><a href="index.html"><i class="iconfont">&#xe60f;</i><p>出租</p></a></li>
+        <li class="active"><a href="tenant.html"><i class="iconfont">&#xe610;</i><p>承租</p></a></li>
+        <li><a class="#"><i class="iconfont">&#xe614;</i><p>工具</p></a></li>
+        <li><a class="#"><i class="iconfont">&#xe612;</i><p>我的</p></a></li>
+    </ul>
+</div>
+<div class="fiexd" style="display: none;" id="fiexd"></div>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=4591c0f68eaa4aae0bac494646dc82f5"></script>
+<script type="text/javascript" src="js/vue.min.js"></script>
+<script type="text/javascript" src="js/data.js"></script>
+<script type="text/javascript" src="js/style.js"></script>
+<script type="text/javascript" src="js/housing_list.js"></script>
+<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../static/LD.sot/pop.ups/init.js">
+</script>
+
+<script>
+    var map, geolocation,city,area,latitude,longitude;
+    $(function(){
+        area=sessionStorage.getItem("area");
+        city=sessionStorage.getItem("city");
+        if(!area){
+            $("#fiexd").css("display","block");
+            //加载地图，调用浏览器定位服务
+            map = new AMap.Map('container', {
+                resizeEnable: true
+            });
+            map.plugin('AMap.Geolocation', function() {
+                geolocation = new AMap.Geolocation({
+                    enableHighAccuracy: true,//是否使用高精度定位，默认:true
+                    timeout: 3000,          //超过10秒后停止定位，默认：无穷大
+                    buttonOffset: new AMap.Pixel(10, 20),//定位按钮与设置的停靠位置的偏移量，默认：Pixel(10, 20)
+                    zoomToAccuracy: true,      //定位成功后调整地图视野范围使定位位置及精度范围视野内可见，默认：false
+                    buttonPosition:'RB',
+                });
+                map.addControl(geolocation);
+                AMap.event.addListener(geolocation, 'complete', onComplete);//返回定位信息
+                geolocation.getCurrentPosition();
+                AMap.event.addListener(geolocation, 'error', onError);      //返回定位出错信息
+            });
+        }else{
+            $("#fiexd").css("display","none");
+        }
+    });
+
+    //解析定位结果
+    function onComplete(data) {
+        var str=['定位成功'];
+        longitude= data.position.getLng();
+        latitude= data.position.getLat();
+        str.push('经度：' + data.position.getLng());
+        str.push('纬度：' + data.position.getLat());
+        if(data.accuracy){
+            str.push('精度：' + data.accuracy + ' 米');
+        }//如为IP精确定位结果则没有精度信息
+        str.push('是否经过偏移：' + (data.isConverted ? '是' : '否'));
+        city=data.addressComponent.city;
+        area=data.addressComponent.district;
+        sessionStorage.setItem("area",area);
+        sessionStorage.setItem("city",city);
+    }
+    function onError(data) {
+        alert("定位失败");
+    }
+    var vm= new Vue({
+        el:'.house_list',
+        data:{
+            data:null
+        }
+    })
+    function getHousesByLocation(){
+        $.ajax({
+            url:"../house/getHousesByLocation.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                longitude:longitude,
+                latitude:latitude
+            },
+            success:function(data){
+                if(data.length==0){
+                    $("#info").css("display","block");
+                }else{
+                    $("#info").css("display","none");
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+    function search(){
+        var search=$("#search").val();
+        $.ajax({
+            url:"../house/getHosuesBySearch.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                search:search
+            },
+            success:function(data){
+                if(data.length==0){
+                    $("#info").css("display","block");
+                }else{
+                    $("#info").css("display","none");
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+    function getAllPrice(){
+        $.ajax({
+            url:"../compact/getAllPrice.do",
+            type:"post",
+            dataType:"json",
+            data:{
+            },
+            success:function(data){
+                new Vue({
+                    el:'#price',
+                    data:{
+                        data:data
+                    }
+                });
+            },
+            error : function() {
+            }
+        });
+    }
+    function getHousesByPrice(price){
+        $("#price").css("display","none");
+        $.ajax({
+            url:"../house/getHosuesByPrice.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                price:price
+            },
+            success:function(data){
+                if(data.length==0){
+                    $("#info").css("display","block");
+                }else{
+                    $("#info").css("display","none");
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+    function getHouseByType(type){
+        $.ajax({
+            url:"../house/getHosuesByType.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                type:type
+            },
+            success:function(data){
+                if(data.length==0){
+                    $("#info").css("display","block");
+                }else{
+                    $("#info").css("display","none");
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+
+    function getHouseByArea(area){
+        $("#city").css("display","none");
+        $("#area").css("display","none");
+        $(".top_btn").text(area);
+        $.ajax({
+            url:"../house/getHosuesByArea.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                area:area
+            },
+            success:function(data){
+                $("#fiexd").css("display","none");
+                if(data.length==0){
+                    $("#info").css("display","block");
+                }else{
+                    $("#info").css("display","none");
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+    var vm1= new Vue({
+        el:'#city',
+        data:{
+            areas:null}
+    })
+    $(function(){
+        if(!area){
+            setTimeout(function(){
+                $(".top_btn").text(area);
+                getHouseByArea(area);
+                getAllPrice();
+                $.ajax({
+                    url:"../user/getAreas.do",
+                    type:"post",
+                    dataType:"json",
+                    data:{
+                        city:city
+                    },
+                    success:function(data){
+                       vm1.areas=data;
+                    },
+                    error : function() {
+                    }
+                });
+            },3000)
+        }else{
+            $(".top_btn").text(area);
+            getHouseByArea(area);
+            getAllPrice();
+            $.ajax({
+                url:"../user/getAreas.do",
+                type:"post",
+                dataType:"json",
+                data:{
+                    city:city
+                },
+                success:function(data){
+                    vm1.areas=data;
+                },
+                error : function() {
+                }
+            });
+        }
+    });
+
+</script>
+<script>
+    $(".housing_list_nav .first_a").click(function () {
+        $(this).toggleClass("active");
+        $(this).parent("li").siblings("li").find(".first_a").removeClass("active");
+        $(this).siblings(".hide_nav").slideToggle();
+        $(this).parent("li").siblings("li").find(".hide_nav").hide();
+        $('.two_nav').hide().animate({right:'-60%'},"fast");
+        $('.hide_nav li').children().css("color","#333");
+    });
+    $(".hide_nav li").click(function () {
+        if ($(this).children().hasClass('two_nav')) {
+            $('.two_nav').show().animate({right:'0'},"fast");
+            $(this).children().css("color","#f99d27")
+        } else {
+            $('.hide_nav').hide();
+            $(".housing_list_nav .first_a").removeClass("active")
+        }
+        $(this).siblings("li").find(".two_nav").hide().animate({right:'-60%'},"fast");
+        $(this).siblings("li").children().css("color","#333")
+    })
+</script>
+</body>
+</html>

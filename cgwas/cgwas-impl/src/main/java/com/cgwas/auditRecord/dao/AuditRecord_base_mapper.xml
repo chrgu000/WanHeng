@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.auditRecord.dao">
+
+	<sql id="columns">
+		id, checker_id, check_time, comment, production_speed,
+		production_quality, task_check_id, degree_id, evaluation_id, num
+	</sql>
+	<sql id="vals">
+		#{id}, #{checker_id}, #{check_time}, #{comment},
+		#{production_speed}, #{production_quality}, #{task_check_id},
+		#{degree_id}, #{evaluation_id}, #{num}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="checker_id != null and checker_id != ''">
+			and checker_id = #{checker_id}
+		</if>
+		<if test="check_time != null">
+			and check_time = #{check_time}
+		</if>
+		<if test="comment != null and comment != ''">
+			and comment = #{comment}
+		</if>
+		<if test="production_speed != null and production_speed != ''">
+			and production_speed = #{production_speed}
+		</if>
+		<if test="production_quality != null and production_quality != ''">
+			and production_quality = #{production_quality}
+		</if>
+		<if test="task_check_id != null and task_check_id != ''">
+			and task_check_id = #{task_check_id}
+		</if>
+		<if test="degree_id != null and degree_id != ''">
+			and degree_id = #{degree_id}
+		</if>
+		<if test="evaluation_id != null and evaluation_id != ''">
+			and evaluation_id = #{evaluation_id}
+		</if>
+		<if test="num != null and num != ''">
+			and num = #{num}
+		</if>
+	</sql>
+
+	<insert id="saveAuditRecord" parameterType="com.cgwas.auditRecord.entity.AuditRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into a_audit_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveAuditRecordVo" parameterType="com.cgwas.auditRecord.entity.AuditRecordVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into a_audit_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteAuditRecord">
+		delete from a_audit_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteAuditRecordVo">
+		delete from a_audit_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleAuditRecord">
+		delete from a_audit_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleAuditRecordVo">
+		delete from a_audit_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadAuditRecord" resultType="com.cgwas.auditRecord.entity.AuditRecordVo">
+		select
+		<include refid="columns" />
+		from a_audit_record
+		where id=#{id}
+	</select>
+
+	<select id="selectAuditRecord" resultType="com.cgwas.auditRecord.entity.AuditRecordVo">
+		select
+		<include refid="columns" />
+		from a_audit_record
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateAuditRecord">
+		update a_audit_record
+		<set>
+			id=#{id},
+			checker_id=#{checker_id},
+			check_time=#{check_time},
+			comment=#{comment},
+			production_speed=#{production_speed},
+			production_quality=#{production_quality},
+			task_check_id=#{task_check_id},
+			degree_id=#{degree_id},
+			evaluation_id=#{evaluation_id},
+			num=#{num}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateAuditRecordVo">
+		update a_audit_record
+		<set>
+			id=#{id},
+			checker_id=#{checker_id},
+			check_time=#{check_time},
+			comment=#{comment},
+			production_speed=#{production_speed},
+			production_quality=#{production_quality},
+			task_check_id=#{task_check_id},
+			degree_id=#{degree_id},
+			evaluation_id=#{evaluation_id},
+			num=#{num}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullAuditRecord">
+		update a_audit_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="checker_id != null and checker_id != ''">
+				checker_id=#{checker_id},
+			</if>
+			<if test="check_time != null">
+				check_time=#{check_time},
+			</if>
+			<if test="comment != null and comment != ''">
+				comment=#{comment},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="task_check_id != null and task_check_id != ''">
+				task_check_id=#{task_check_id},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="evaluation_id != null and evaluation_id != ''">
+				evaluation_id=#{evaluation_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullAuditRecordVo">
+		update a_audit_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="checker_id != null and checker_id != ''">
+				checker_id=#{checker_id},
+			</if>
+			<if test="check_time != null">
+				check_time=#{check_time},
+			</if>
+			<if test="comment != null and comment != ''">
+				comment=#{comment},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="task_check_id != null and task_check_id != ''">
+				task_check_id=#{task_check_id},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="evaluation_id != null and evaluation_id != ''">
+				evaluation_id=#{evaluation_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleAuditRecord">
+		update a_audit_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="checker_id != null and checker_id != ''">
+				checker_id=#{checker_id},
+			</if>
+			<if test="check_time != null">
+				check_time=#{check_time},
+			</if>
+			<if test="comment != null and comment != ''">
+				comment=#{comment},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="task_check_id != null and task_check_id != ''">
+				task_check_id=#{task_check_id},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="evaluation_id != null and evaluation_id != ''">
+				evaluation_id=#{evaluation_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleAuditRecordVo">
+		update a_audit_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="checker_id != null and checker_id != ''">
+				checker_id=#{checker_id},
+			</if>
+			<if test="check_time != null">
+				check_time=#{check_time},
+			</if>
+			<if test="comment != null and comment != ''">
+				comment=#{comment},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="task_check_id != null and task_check_id != ''">
+				task_check_id=#{task_check_id},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="evaluation_id != null and evaluation_id != ''">
+				evaluation_id=#{evaluation_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 得到最后平均评分 -->
+	<select id="getAVGAuditRecord" resultType="com.cgwas.auditRecord.entity.AuditRecord">
+		SELECT
+		AVG(production_speed) AS production_speed,
+		AVG(production_quality) AS
+		production_quality,
+		AVG(degree_id) AS degree_id,
+		AVG(evaluation_id) AS
+		evaluation_id
+		FROM
+		a_audit_record
+		WHERE
+		num = #{num}
+		AND task_check_id =
+		#{task_check_id}
+	</select>
+	<!-- 得到检查人员数量 -->
+	<select id="getcheckerNum" resultType="com.cgwas.auditRecord.entity.AuditRecord">
+		SELECT DISTINCT checker_id
+		FROM a_audit_record where task_check_id =
+		#{task_check_id}
+	</select>
+	<!-- 得到检查次数数量 -->
+	<select id="getcheckCount" resultType="java.lang.Long">
+		SELECT COUNT(*) FROM a_audit_record WHERE task_check_id = #{task_check_id} GROUP BY num 
+	</select>
+
+</mapper>

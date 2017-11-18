@@ -1,0 +1,124 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<title> 搜索表单</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet" type="text/css" />
+<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet" type="text/css" />
+<!-- <link href="../static/assets/css/dpl-min.css" rel="stylesheet" type="text/css" />
+<link href="../static/assets/css/bui-min.css" rel="stylesheet" type="text/css" /> -->
+<link href="../static/assets/css/page-min.css" rel="stylesheet" type="text/css" />
+<style type="text/css">
+[v-cloak] {
+    display: none;
+}
+</style>
+</head>
+<body>
+  <div class="container">
+  <div class="row">
+      <form id="searchForm" class="form-horizontal span24">
+      <div class="row">
+          <div class="control-group span8">
+            <label class="control-label">用户昵称</label>
+            <div class="controls">
+              <input type="text" class="control-text" name="nickname" placeholder="用户昵称">
+              <input type="text" name="aaa" style="display: none;">
+            </div>
+          </div>
+        <div class="control-group">
+	        <label class="control-label"><s>*</s>充值时间范围</label>
+	        <div class="controls bui-form-group" data-rules="{dateRange : true}" data-messages="{dateRange : '开始时间不能小于结束时间！'}" >
+	          <input name="start_time"  id="start_time" data-tip="{text : '开始时间'}" data-messages="{required : '开始时间不能为空！'}" class="input-small calendar" type="text"><label>&nbsp;-&nbsp;</label>
+	          <input name="end_time" id="end_time" data-tip="{text : '结束时间'}" data-messages="{required : '结束时间不能为空！'}" class="input-small calendar" type="text">
+	        </div>
+	      </div>
+          <div class="span3 offset" style="float:left;margin-left:800px;margin-top:-48px">
+             <button  type="button" id="btnSearch" class="button button-primary">搜索</button>
+          </div>
+            </div>
+      </form>
+    </div>
+    <div class="search-grid-container">
+      <div id="grid"></div>
+    </div>
+
+  </div>
+  <div id="content" class="hide">
+   </div>
+<script type="text/javascript" src="../static/common/jquery.min-2.1.3.js"></script>
+<script type="text/javascript" src="../static/layer/layer.js"></script>
+<script type="text/javascript" src="../static/assets/js/bui.js"></script>
+<script type="text/javascript" src="../static/assets/js/config.js"></script>
+<script type="text/javascript">
+BUI.use(['common/search'],function(Search,Grid,Data){
+
+	var Form = BUI.Form;
+    Form.Rules.add({
+		name : 'mp',  //规则名称
+		msg : '使用门槛不能小于面值！',//默认显示的错误信息
+		validator : function(value,baseValue,formatMsg){ //验证函数，验证值、基准值、格式化后的错误信息
+	   		var price=$("[name='price']").val();
+			if(parseFloat(value) < parseFloat(price)){
+	       		return formatMsg;
+			}
+		}
+	}); 
+
+    var Grid = BUI.Grid,
+      columns = [
+          {title:'用户昵称',width : 50,dataIndex:'',elCls : 'center',renderer : function(value,obj){
+			 if(obj.user==null)
+				 return  null;
+			 return obj.user.nickname;
+          }},
+          {title:'充值消息',width : 50,dataIndex:'news',elCls : 'center'},
+          {title:'充值时间',width : 50,dataIndex:'join_time',elCls : 'center'},
+        ],
+	store = Search.createStore('../balance/loadBalance.do',{
+        proxy : {
+          save : { //也可以是一个字符串，那么增删改，都会往那么路径提交数据，同时附加参数saveType
+          },
+          method : 'POST'
+        },
+        params : { //配置初始请求的参数
+        },
+        pageIndex :0,
+        pageSize:10,
+        autoSync : true //保存数据后，自动更新
+      });
+    var btns=[ ]
+     var gridCfg = Search.createGridCfg(columns,{
+         forceFit:true,
+         emptyDataTpl : '<div class="centered"><img alt="Crying" src="http://img03.taobaocdn.com/tps/i3/T1amCdXhXqXXXXXXXX-60-67.png"><h2>查询的数据不存在</h2></div>',
+		tbar : {
+          items : btns
+        },
+        loadMask: true, //加载数据时显示屏蔽层
+        plugins : [BUI.Grid.Plugins.CheckSelection] // 插件形式引入多选表格
+      });
+
+    var  search = new Search({
+        store : store,
+        gridCfg : gridCfg
+      }),
+      grid = search.get('grid');
+    
+    
+     
+
+    //监听事件，删除一条记录
+    grid.on('cellclick',function(ev){
+      var sender = $(ev.domTarget); //点击的Dom
+      if(sender.hasClass('btn-del')){
+        var record = ev.record;
+        delItems([record]);
+      }
+    });
+    
+  });
+  
+</script>
+
+<body>
+</html>  

@@ -1,0 +1,936 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.animationlighttask.dao">
+<select id="getCommitTime" resultType="java.util.Date">
+  select submit_time from a_task_check where  is_parent_project=#{is_parent_poject} and task_id=#{task_id} and project_id=#{project_id} order by submit_time desc limit 1
+</select>
+<select id="getReceivingModelTaskById" resultType="com.cgwas.animationlighttask.entity.AnimationLightTaskVo">
+  select * from p_animation_light_task where id=#{task_id} and task_status='领取中'
+</select>
+<update id="reBackTask">
+  update  p_animation_light_task  set point_status=null,company_stage=null,company_status=null,stage=null,task_status=null,user_id=null,rate=null,cause=null,abandon=null,delay_cause=null  where id=#{task_id}
+</update>
+<select id="getTasksByIds" resultType="com.cgwas.animationlighttask.entity.AnimationLightTaskVo">
+  select * from  p_animation_light_task where id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach>
+</select>
+<select id="getTaskId" resultType="java.lang.Long">
+  select id from p_animation_light_task where project_id=#{project_id} and is_parent_poject=#{is_parent_poject} and class_id=#{class_id} and pattern_number=#{pattern_number}
+</select>
+<select id="getAnimationLightTaskActualEndTime" resultType="java.util.Date">
+  select modified_time from p_animation_light_task where (stage='待评价' or stage='已完成' or company_stage='待评价' or company_stage='已完成') and id=#{id}
+</select>
+	<select id="getTaskActualBeginTime" resultType="java.util.Date">
+		select MIN(actual_begin_time) from p_animation_light_task where
+		project_id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and
+		class_id=#{class_id}
+	</select>
+
+	<select id="getTaskActualEndTime" resultType="java.util.Date">
+		select MAX(modified_time) from p_animation_light_task where
+		project_id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and
+		class_id=#{class_id}
+	</select>
+	<select id="getTaskEndTime" resultType="java.util.Date">
+		select MAX(end_time) from p_animation_light_task where
+		project_id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and
+		class_id=#{class_id}
+	</select>
+	<select id="getTaskBeginTime" resultType="java.util.Date">
+		select MIN(begin_time) from p_animation_light_task where
+		project_id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and
+		class_id=#{class_id}
+	</select>
+	<select id="getTaskFinishedTotal" resultType="java.lang.Long">
+		select count(*) from p_animation_light_task where project_id in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and class_id=#{class_id} and
+		(stage='待评价' or stage='已完成' or company_stage='待评价' or company_stage='已完成')
+	</select>
+	<select id="getTaskTotal1" resultType="java.lang.Long">
+		select count(*) from p_animation_light_task where project_id  in <foreach collection="ids" close=")" open="(" separator="," item="id">#{id}</foreach> and is_parent_poject=#{is_parent} and class_id=#{class_id}
+	</select>
+	<select id="getTaskTotal" resultType="java.lang.Long">
+		select count(*) from p_animation_light_task where project_id=#{project_id}
+		and is_parent_poject=#{is_parent_project}
+	</select>
+	<update id="updatePublishTypeOfTask">
+		update p_animation_light_task set publish_type_id=#{publish_type_id},user_id=#{user_id}
+		where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="updateAnimationLightTaskEndTime">
+		update p_animation_light_task set end_time=#{end_time},delay_cause=#{delay_cause}  where id=#{id}
+	</update>
+	<update id="repeatBackAnimationTaskById">
+		update p_animation_light_task
+		<set>
+			user_id=null,
+			task_status=null,
+			stage=null,
+			modified_time=now()
+		</set>
+		where id=#{task_id} and task_status='未开始' and stage='未开始'
+	</update>
+	<select id="getBeginTimeBeforeNowAnimationLightTask"
+		resultType="com.cgwas.animationlighttask.entity.AnimationLightTask">
+		select id,cart,pattern_number from p_animation_light_task where begin_time&lt;NOW()
+		and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+
+	<update id="reUpdateAnimationLightTask">
+		update p_animation_light_task
+		<set>
+			user_id=#{user_id},
+			task_status=#{task_status},
+			stage=#{stage},
+			modified_time=now()
+		</set>
+		where id=#{id}
+	</update>
+	<select id="getPublishTypeById" resultType="com.cgwas.publishtype.entity.PublishType">
+		select * from
+		p_publish_type where id=#{publish_type_id}
+	</select>
+	<select id="selectAnimationLightTaskPage2" resultMap="checkTaskMap">
+		SELECT p1.*,p2.tid FROM p_animation_light_task p1 LEFT JOIN
+		a_task_check p2 ON
+		p1.id=p2.task_id left join p_publish_type p4 on
+		p1.publish_type_id=p4.id
+		left join u_user u on p1.user_id=u.id
+		left join u_user_info u1 on p1.user_id=u1.user_id
+		<where>
+			p1.id IN
+			(
+			SELECT t1.task_id FROM a_task_check t1 LEFT
+			JOIN p_group_user
+			g ON t1.audit_order=g.num WHERE
+			g.project_id=t1.project_id AND
+			t1.is_parent_project=g.is_parent_project
+			AND
+			g.is_parent_project=#{is_parent_project} AND g.user_id=#{user_id}
+			and
+			t1.task_type=#{task_type}
+			)
+			and p2.task_type=#{task_type}
+			and
+			p2.is_parent_project=#{is_parent_project}
+			<if
+				test="search.field=='publish_type' and search.search!=null and search.search!=''">
+				and p4.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='pattern_number' and search.search!=null and search.search!=''">
+				and p1.pattern_number like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='username' and search.search!=null and search.search!=''">
+				and u1.name like "%"#{search.search}"%"
+			</if>
+		</where>
+		<if test="search.field=='publish_type' and  search.sort=='asc'">
+			order by to_pinyin(p4.content) asc
+
+		</if>
+		<if test="search.field=='publish_type' and search.sort=='desc'">
+			order by to_pinyin(p4.content) desc
+		</if>
+		<if test="search.field=='pattern_number' and search.sort=='asc'">
+			order by to_pinyin( p1.pattern_number) asc
+		</if>
+		<if test="search.field=='pattern_number' and search.sort=='desc'">
+			order by to_pinyin( p1.pattern_number) desc
+		</if>
+		<if test="search.field=='username' and search.sort=='asc'">
+			order by to_pinyin( u1.name) asc
+		</if>
+		<if test="search.field=='username' and search.sort=='desc'">
+			order by to_pinyin( u1.name) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+	<select id="selectAnimationLightTaskCount2" resultType="java.lang.Long">
+		SELECT count(*) FROM p_animation_light_task p1 LEFT JOIN
+		a_task_check
+		p2 ON
+		p1.id=p2.task_id left join p_publish_type p4 on
+		p1.publish_type_id=p4.id
+		left join u_user u on p1.user_id=u.id
+		left join u_user_info u1 on p1.user_id=u1.user_id
+		<where>
+			p1.id IN
+			(
+			SELECT t1.task_id FROM a_task_check t1 LEFT
+			JOIN p_group_user
+			g ON t1.audit_order=g.num WHERE
+			g.project_id=t1.project_id AND
+			t1.is_parent_project=g.is_parent_project
+			AND
+			g.is_parent_project=#{is_parent_project} AND g.user_id=#{user_id}
+			and
+			t1.task_type=#{task_type}
+			)
+			and p2.task_type=#{task_type}
+			and
+			p2.is_parent_project=#{is_parent_project}
+			<if
+				test="search.field=='publish_type' and search.search!=null and search.search!=''">
+				and p4.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='pattern_number' and search.search!=null and search.search!=''">
+				and p1.pattern_number like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='username' and search.search!=null and search.search!=''">
+				and u1.name like "%"#{search.search}"%"
+			</if>
+		</where>
+	</select>
+	<select id="getMakerById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from u_user u1
+		left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id=#{user_id}
+	</select>
+	<select id="getLastCheckerById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from
+		u_user u1 left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id =
+		(select checker_id from a_audit_record where
+		task_check_id=#{tid} order
+		by id desc limit 1)
+	</select>
+	<resultMap type="com.cgwas.animationlighttask.entity.AnimationLightTaskVo"
+		id="checkTaskMap">
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+		<association property="last_checker_user" column="tid"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getLastCheckerById" />
+	</resultMap>
+	<update id="updateAnimationTask">
+		update p_animation_light_task
+		<set>
+		    <if test="actual_working_hours!=null">
+			    actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="user_id!=null">
+				user_id=#{user_id},
+			</if>
+			<if test="task_status=='进行中'">
+				actual_begin_time=now(),
+			</if>
+			<if test="task_status=='未开始' or task_status=='进行中'">
+			  abandon=null,
+			  rate=null,
+			  cause=null,
+			  modified_time=now(),
+			</if>
+			<if test="task_status!=null">
+				task_status=#{task_status},
+				modified_time=now(),
+			</if>
+			<if test="stage!=null">
+				stage=#{stage},
+				modified_time=now(),
+			</if>
+			<if test="end_time!=null">
+				end_time=#{end_time},
+			</if>
+			<if test="begin_time!=null">
+			    begin_time=#{begin_time},
+			</if>
+			<if test="stage=='已放弃'">
+			user_id=null,
+			modified_time=now(),
+			</if>
+			<if test="cause!=null and cause!=''">
+			 cause=#{cause},
+			</if>
+			<if test="rate!=null and rate!=''">
+			 rate=#{rate},
+			  cause=null,
+			</if>
+			<if test="abandon!=null and abandon!=''">
+			   abandon=#{abandon},
+			</if>
+			<if test="company_stage!=null">
+		    	company_stage=#{company_stage},
+				modified_time=now(),
+			</if>
+			<if test="company_status!=null">
+			    company_status=#{company_status},
+			    modified_time=now(),
+			</if>
+			<if test="checkUserTimes!=null">
+			    checkUserTimes=#{checkUserTimes},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updatePointStatus">
+		update p_animation_light_task
+		<set>
+			<if test="point_status==0">
+				point_status=null,
+				stage=null,
+				task_status=null,
+				user_id=null,
+				modified_time=now()
+			</if>
+			<if test="point_status==1">
+				point_status=1,
+				stage='未开始',task_status='未开始',
+				modified_time=now()
+			</if>
+		</set>
+		where id=#{task_id}
+	</update>
+	<sql id="columns">
+		id, class_id, project_id, is_parent_poject, pattern_number,
+		cart,
+		time, publish_type_id, making_requirement, reference_material,
+		plan_time, actual_working_hours, price, begin_time, end_time, wight,
+		remark, commit_path, extraction_path, degree_id, stage, task_status,
+		user_id, creater_id, create_time, modified_time, check_status,
+		company_id,frameRateContent
+	</sql>
+	<sql id="vals">
+		#{id}, #{class_id}, #{project_id}, #{is_parent_poject},
+		#{pattern_number}, #{cart}, #{time}, #{publish_type_id},
+		#{making_requirement}, #{reference_material}, #{plan_time},
+		#{actual_working_hours}, #{price}, #{begin_time}, #{end_time},
+		#{wight}, #{remark}, #{commit_path}, #{extraction_path}, #{degree_id},
+		#{stage}, #{task_status}, #{user_id}, #{creater_id}, #{create_time},
+		#{modified_time}, #{check_status}, #{company_id},#{frameRateContent}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="class_id != null and class_id != ''">
+			and class_id = #{class_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="is_parent_poject != null and is_parent_poject != ''">
+			and is_parent_poject = #{is_parent_poject}
+		</if>
+		<if test="pattern_number != null and pattern_number != ''">
+			and pattern_number = #{pattern_number}
+		</if>
+		<if test="cart != null and cart != ''">
+			and cart = #{cart}
+		</if>
+		<if test="time != null and time != ''">
+			and time = #{time}
+		</if>
+		<if test="publish_type_id != null and publish_type_id != ''">
+			and publish_type_id = #{publish_type_id}
+		</if>
+		<if test="making_requirement != null and making_requirement != ''">
+			and making_requirement = #{making_requirement}
+		</if>
+		<if test="reference_material != null and reference_material != ''">
+			and reference_material = #{reference_material}
+		</if>
+		<if test="plan_time != null and plan_time != ''">
+			and plan_time = #{plan_time}
+		</if>
+		<if test="actual_working_hours != null and actual_working_hours != ''">
+			and actual_working_hours = #{actual_working_hours}
+		</if>
+		<if test="price != null and price != ''">
+			and price = #{price}
+		</if>
+		<if test="begin_time != null">
+			and begin_time = #{begin_time}
+		</if>
+		<if test="end_time != null and end_time != ''">
+			and end_time = #{end_time}
+		</if>
+		<if test="wight != null and wight != ''">
+			and wight = #{wight}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="commit_path != null and commit_path != ''">
+			and commit_path = #{commit_path}
+		</if>
+		<if test="extraction_path != null and extraction_path != ''">
+			and extraction_path = #{extraction_path}
+		</if>
+		<if test="degree_id != null and degree_id != ''">
+			and degree_id = #{degree_id}
+		</if>
+		<if test="stage != null and stage != ''">
+			and stage = #{stage}
+		</if>
+		<if test="task_status != null and task_status != ''">
+			and task_status = #{task_status}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="creater_id != null and creater_id != ''">
+			and creater_id = #{creater_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="modified_time != null">
+			and modified_time = #{modified_time}
+		</if>
+		<if test="check_status != null and check_status != ''">
+			and check_status = #{check_status}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="frameRateContent != null">
+			and frameRateContent = #{frameRateContent}
+		</if>
+
+	</sql>
+	<insert id="saveAnimationLightTask"
+		parameterType="com.cgwas.animationlighttask.entity.AnimationLightTask"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_animation_light_task (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveAnimationLightTaskVo"
+		parameterType="com.cgwas.animationlighttask.entity.AnimationLightTaskVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_animation_light_task (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+	<delete id="deleteSoftware">
+		delete from p_company_software_model where for_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and model_type='a_task'
+	</delete>
+	<delete id="deleteAll">
+		delete from p_animation_light_task where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteCompanySoftware">
+		delete from p_company_software_model where
+		for_id=#{task_id} and
+		model_type='a_task'
+	</delete>
+	<delete id="deleteAnimationLightTask">
+		delete from p_animation_light_task
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteAnimationLightTaskVo">
+		delete from p_animation_light_task
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleAnimationLightTask">
+		delete from p_animation_light_task
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleAnimationLightTaskVo">
+		delete from p_animation_light_task
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadAnimationLightTask"
+		resultType="com.cgwas.animationlighttask.entity.AnimationLightTaskVo">
+		select
+		<include refid="columns" />
+		from p_animation_light_task
+		where id=#{id}
+	</select>
+
+	<select id="selectAnimationLightTask"
+		resultType="com.cgwas.animationlighttask.entity.AnimationLightTaskVo">
+		select
+		<include refid="columns" />
+		from p_animation_light_task
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateAnimationLightTask">
+		update p_animation_light_task
+		<set>
+			id=#{id},
+			class_id=#{class_id},
+			project_id=#{project_id},
+			is_parent_poject=#{is_parent_poject},
+			pattern_number=#{pattern_number},
+			cart=#{cart},
+			time=#{time},
+			publish_type_id=#{publish_type_id},
+			making_requirement=#{making_requirement},
+			reference_material=#{reference_material},
+			plan_time=#{plan_time},
+			actual_working_hours=#{actual_working_hours},
+			price=#{price},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			wight=#{wight},
+			remark=#{remark},
+			commit_path=#{commit_path},
+			extraction_path=#{extraction_path},
+			degree_id=#{degree_id},
+			stage=#{stage},
+			task_status=#{task_status},
+			user_id=#{user_id},
+			creater_id=#{creater_id},
+			create_time=#{create_time},
+			modified_time=now(),
+			check_status=#{check_status},
+			company_id=#{company_id},
+			frameRateContent = #{frameRateContent}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateAnimationLightTaskVo">
+		update p_animation_light_task
+		<set>
+			id=#{id},
+			class_id=#{class_id},
+			project_id=#{project_id},
+			is_parent_poject=#{is_parent_poject},
+			pattern_number=#{pattern_number},
+			cart=#{cart},
+			time=#{time},
+			publish_type_id=#{publish_type_id},
+			making_requirement=#{making_requirement},
+			reference_material=#{reference_material},
+			plan_time=#{plan_time},
+			actual_working_hours=#{actual_working_hours},
+			price=#{price},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			wight=#{wight},
+			remark=#{remark},
+			commit_path=#{commit_path},
+			extraction_path=#{extraction_path},
+			degree_id=#{degree_id},
+			stage=#{stage},
+			task_status=#{task_status},
+			user_id=#{user_id},
+			creater_id=#{creater_id},
+			create_time=#{create_time},
+			modified_time=now(),
+			check_status=#{check_status},
+			company_id=#{company_id},
+			frameRateContent = #{frameRateContent}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullAnimationLightTask">
+		update p_animation_light_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number = #{pattern_number},
+			</if>
+			<if test="cart != null and cart != ''">
+				cart=#{cart},
+			</if>
+			<if test="time != null and time != ''">
+				time=#{time},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null ">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="wight != null and wight != ''">
+				wight=#{wight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+
+			modified_time=now(),
+
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullAnimationLightTaskVo">
+		update p_animation_light_task
+		<set>
+			<if test="getTaskNums!=null">
+			   getTaskNums=#{getTaskNums},
+			</if>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number = #{pattern_number},
+			</if>
+			<if test="cart != null and cart != ''">
+				cart=#{cart},
+			</if>
+			<if test="time != null and time != ''">
+				time=#{time},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null ">
+				end_time=#{end_time},
+			</if>
+			<if test="wight != null and wight != ''">
+				wight=#{wight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+				user_id=#{user_id},
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+
+			modified_time=now(),
+
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleAnimationLightTask">
+		update p_animation_light_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number = #{pattern_number},
+			</if>
+			<if test="cart != null and cart != ''">
+				cart=#{cart},
+			</if>
+			<if test="time != null and time != ''">
+				time=#{time},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null and end_time != ''">
+				end_time=#{end_time},
+			</if>
+			<if test="wight != null and wight != ''">
+				wight=#{wight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleAnimationLightTaskVo">
+		update p_animation_light_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number = #{pattern_number},
+			</if>
+			<if test="cart != null and cart != ''">
+				cart=#{cart},
+			</if>
+			<if test="time != null and time != ''">
+				time=#{time},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null and end_time != ''">
+				end_time=#{end_time},
+			</if>
+			<if test="wight != null and wight != ''">
+				wight=#{wight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

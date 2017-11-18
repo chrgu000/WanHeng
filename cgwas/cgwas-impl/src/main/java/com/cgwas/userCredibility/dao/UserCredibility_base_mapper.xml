@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userCredibility.dao">
+
+	<sql id="columns">
+		id, passing_rate, production_speed, production_quality,
+		rating_points, user_id, creat_time,update_tiems
+	</sql>
+	<sql id="vals">
+		#{id}, #{passing_rate}, #{production_speed},
+		#{production_quality}, #{rating_points}, #{user_id}, #{creat_time},#{update_tiems}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="passing_rate != null and passing_rate != ''">
+			and passing_rate = #{passing_rate}
+		</if>
+		<if test="production_speed != null and production_speed != ''">
+			and production_speed = #{production_speed}
+		</if>
+		<if test="production_quality != null and production_quality != ''">
+			and production_quality = #{production_quality}
+		</if>
+		<if test="rating_points != null and rating_points != ''">
+			and rating_points = #{rating_points}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="creat_time != null">
+			and creat_time = #{creat_time}
+		</if>
+	</sql>
+
+	<insert id="saveUserCredibility" parameterType="com.cgwas.userCredibility.entity.UserCredibility"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_credibility (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserCredibilityVo" parameterType="com.cgwas.userCredibility.entity.UserCredibilityVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_credibility (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserCredibility">
+		delete from u_user_credibility
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserCredibilityVo">
+		delete from u_user_credibility
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserCredibility">
+		delete from u_user_credibility
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserCredibilityVo">
+		delete from u_user_credibility
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserCredibility" resultType="com.cgwas.userCredibility.entity.UserCredibilityVo">
+		select
+		<include refid="columns" />
+		from u_user_credibility
+		where id=#{id}
+	</select>
+
+	<select id="selectUserCredibility" resultType="com.cgwas.userCredibility.entity.UserCredibilityVo">
+		select
+		<include refid="columns" />
+		from u_user_credibility
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserCredibility">
+		update u_user_credibility
+		<set>
+			id=#{id},
+			passing_rate=#{passing_rate},
+			production_speed=#{production_speed},
+			production_quality=#{production_quality},
+			rating_points=#{rating_points},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserCredibilityVo">
+		update u_user_credibility
+		<set>
+			id=#{id},
+			passing_rate=#{passing_rate},
+			production_speed=#{production_speed},
+			production_quality=#{production_quality},
+			rating_points=#{rating_points},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserCredibility">
+		update u_user_credibility
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="passing_rate != null and passing_rate != ''">
+				passing_rate=#{passing_rate},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+				rating_points=#{rating_points},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time},
+			</if>
+			<if test="update_tiems != null">
+				update_tiems=#{update_tiems}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserCredibilityVo">
+		update u_user_credibility
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="passing_rate != null and passing_rate != ''">
+				passing_rate=#{passing_rate},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+				rating_points=#{rating_points},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time},
+			</if>
+			<if test="update_tiems != null">
+				update_tiems=#{update_tiems}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserCredibility">
+		update u_user_credibility
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="passing_rate != null and passing_rate != ''">
+				passing_rate=#{passing_rate},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+				rating_points=#{rating_points},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserCredibilityVo">
+		update u_user_credibility
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="passing_rate != null and passing_rate != ''">
+				passing_rate=#{passing_rate},
+			</if>
+			<if test="production_speed != null and production_speed != ''">
+				production_speed=#{production_speed},
+			</if>
+			<if test="production_quality != null and production_quality != ''">
+				production_quality=#{production_quality},
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+				rating_points=#{rating_points},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<select id="selectUserCredibilityByUserId" resultType="com.cgwas.userCredibility.entity.UserCredibility">
+		select
+		*
+		from u_user_credibility
+		where user_id = #{user_id}
+	</select>
+</mapper>

@@ -1,0 +1,412 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companyFiles.dao">
+
+	<sql id="columns">
+		id, file_name,file_url,file_size, sort, task_type, file_type, is_file, for_id, parent_id, company_id,creator_id, update_time, create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{file_name},#{file_url},#{file_size}, #{sort}, #{task_type}, #{file_type}, #{is_file}, #{for_id}, #{parent_id}, #{company_id},#{creator_id}, #{update_time}, #{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="file_name != null and file_name != ''">
+			and file_name = #{file_name}
+		</if>
+		<if test="file_size != null and file_size != ''">
+			and file_size = #{file_size}
+		</if>
+		<if test="file_url != null and file_url != ''">
+			and file_url = #{file_url}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+		<if test="task_type != null and task_type != ''">
+			and task_type = #{task_type}
+		</if>
+		<if test="file_type != null and file_type != ''">
+			and file_type = #{file_type}
+		</if>
+		<if test="is_file != null and is_file != ''">
+			and is_file = #{is_file}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and for_id = #{for_id}
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			and parent_id = #{parent_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="creator_id != null and creator_id != ''">
+			and creator_id = #{creator_id}
+		</if>
+		<if test="update_time != null">
+			and update_time = #{update_time}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyFiles" parameterType="com.cgwas.companyFiles.entity.CompanyFiles" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_files (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanyFilesVo" parameterType="com.cgwas.companyFiles.entity.CompanyFilesVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_company_files (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCompanyFiles">
+		delete from p_company_files
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanyFilesVo">
+		delete from p_company_files
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanyFilesAll">
+		delete from p_company_files
+		where id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach> 
+	</delete>
+
+	<delete id="deleteByExampleCompanyFiles">
+		delete from p_company_files
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanyFilesVo">
+		delete from p_company_files
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCompanyFiles" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		select 
+		<include refid="columns"/>
+		from p_company_files
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCompanyFiles" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		select 
+		pcf.id, 
+		<if test="file_type == 'ZC_COMPANY'.toString()">
+			uc.company_name,
+		</if>
+		pcf.file_name,pcf.file_url,pcf.file_type,pcf.parent_id,pcf.creator_id,pcf.company_id,pcf.task_type,pcf.for_id,pcf.is_file, pcf.update_time, pcf.create_time
+		from p_company_files pcf
+		<if test="file_type == 'ZC_COMPANY'.toString()">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		where 1=1
+		<if test="id != null and id != ''">
+			and pcf.id = #{id}
+		</if>
+		<if test="task_type != null and task_type != ''">
+			and pcf.task_type = #{task_type}
+		</if>
+		<if test="file_name != null and file_name != ''">
+			and pcf.file_name = #{file_name}
+		</if>
+		<if test="file_url != null and file_url != ''">
+			and file_url = #{file_url}
+		</if>
+		<if test="file_type != null and file_type != ''">
+			and pcf.file_type = #{file_type}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and pcf.for_id = #{for_id}
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			and pcf.parent_id = #{parent_id}
+		</if>
+		
+		<if test="company_id != null and company_id != ''">
+			and pcf.company_id = #{company_id}
+		</if>
+		<if test="creator_id != null and creator_id != ''">
+			and creator_id = #{creator_id}
+		</if>
+		<if test="file_size != null and file_size != ''">
+			and file_size = #{file_size}
+		</if>
+	</select>
+	
+	<!-- 获取文件夹集合 -->
+	<select id="selectCompanyFilesMap" resultType="Map">
+		SELECT pcf.id,pcf.file_name,pcf.file_type,pcf.parent_id,pcf.company_id,pcf.file_type
+		from p_company_files pcf 
+		<if test="user_id != null and user_id != ''">
+			LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		</if>
+		WHERE pcf.company_id = #{company_id} AND pcf.is_file='Y'
+		<if test="user_id != null and user_id != ''">
+			AND pcfu.user_id=#{user_id}
+		</if>
+		<if test="file_url != null and file_url != ''">
+			AND file_url LIKE #{file_url}
+		</if>
+	</select>
+	
+	<select id="selectList" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT pcf.id,pcf.file_name,pcf.file_type from p_company_files pcf
+		LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		WHERE pcfu.user_id=#{user_id} AND pcf.parent_id=#{parent_id}
+	</select>
+
+	<!-- <select id="getSumCompanyFileSize" resultType="java.lang.Long">
+		SELECT IFNULL(sum(space_volume),0)
+		from z_space_order
+		where order_status = 'SUCCESS'
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="effective_time != null">
+			and effective_time > #{effective_time}
+		</if>
+	</select> -->
+
+	<select id="selectCpmpanyFilesUsers" resultType="com.cgwas.companyFilesUser.entity.CompanyFilesUserVo">
+		SELECT * from p_company_files_user pcfu
+		WHERE pcfu.user_id=#{user_id} AND pcfu.company_files_id =#{company_files_id}
+	</select>
+	<update id="updateCompanyFiles">
+		update p_company_files
+		<set>
+			id=#{id}, 
+			file_name=#{file_name}, 
+			file_url = #{file_url},
+			sort=#{sort}, 
+			task_type=#{task_type}, 
+			file_type=#{file_type}, 
+			is_file=#{is_file}, 
+			for_id=#{for_id}, 
+			parent_id=#{parent_id}, 
+			company_id=#{company_id}, 
+			creator_id=#{creator_id}, 
+			update_time=#{update_time}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCompanyFilesVo">
+		update p_company_files
+		<set>
+			id=#{id}, 
+			file_name=#{file_name}, 
+			file_url = #{file_url},
+			sort=#{sort}, 
+			task_type=#{task_type}, 
+			file_type=#{file_type}, 
+			is_file=#{is_file}, 
+			for_id=#{for_id}, 
+			parent_id=#{parent_id}, 
+			company_id=#{company_id}, 
+			creator_id=#{creator_id}, 
+			update_time=#{update_time}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCompanyFiles">
+		update p_company_files
+		<set>
+		<if test="file_name != null and file_name != ''">
+			file_name=#{file_name}, 
+		</if>
+		<if test="file_url != null and file_url != ''">
+			file_url = #{file_url},
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+		</if>
+		<if test="file_type != null and file_type != ''">
+			file_type=#{file_type}, 
+		</if>
+		<if test="is_file != null and is_file != ''">
+			is_file=#{is_file}, 
+		</if>
+		<if test="for_id != null and for_id != ''">
+			for_id=#{for_id}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="creator_id != null and creator_id != ''">
+		 	creator_id = #{creator_id},
+		</if>
+		<if test="update_time != null">
+			update_time=#{update_time}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCompanyFilesVo">
+		update p_company_files
+		<set>
+		<if test="file_name != null and file_name != ''">
+			file_name=#{file_name}, 
+		</if>
+		<if test="file_url != null and file_url != ''">
+			file_url = #{file_url},
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+		</if>
+		<if test="file_type != null and file_type != ''">
+			file_type=#{file_type}, 
+		</if>
+		<if test="is_file != null and is_file != ''">
+			is_file=#{is_file}, 
+		</if>
+		<if test="for_id != null and for_id != ''">
+			for_id=#{for_id}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="creator_id != null and creator_id != ''">
+			creator_id = #{creator_id},
+		</if>
+		<if test="update_time != null">
+			update_time=#{update_time}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCompanyFiles">
+		update p_company_files
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="file_name != null and file_name != ''">
+			file_name=#{file_name}, 
+			</if>
+			<if test="file_url != null and file_url != ''">
+			file_url = #{file_url},
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+			</if>
+			<if test="file_type != null and file_type != ''">
+			file_type=#{file_type}, 
+			</if>
+			<if test="is_file != null and is_file != ''">
+			is_file=#{is_file}, 
+			</if>
+			<if test="for_id != null and for_id != ''">
+			for_id=#{for_id}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="creator_id != null and creator_id != ''">
+			creator_id = #{creator_id},
+			</if>
+			<if test="update_time != null">
+			update_time=#{update_time}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCompanyFilesVo">
+		update p_company_files
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="file_name != null and file_name != ''">
+			file_name=#{file_name}, 
+			</if>
+			<if test="file_url != null and file_url != ''">
+			file_url = #{file_url},
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="task_type != null and task_type != ''">
+			task_type=#{task_type}, 
+			</if>
+			<if test="file_type != null and file_type != ''">
+			file_type=#{file_type}, 
+			</if>
+			<if test="is_file != null and is_file != ''">
+			is_file=#{is_file}, 
+			</if>
+			<if test="for_id != null and for_id != ''">
+			for_id=#{for_id}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="creator_id != null and creator_id != ''">
+			creator_id = #{creator_id},
+			</if>	
+			<if test="update_time != null">
+			update_time=#{update_time}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

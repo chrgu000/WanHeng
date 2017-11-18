@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.CityDao">
+	<select id="findAllCity" resultType="City">
+		select * from jxc_city
+		order
+		by ch 
+	</select>
+	<select id="findAllCityByPage" resultType="City">
+		select * from jxc_city
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+		order by ch  limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_city
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="findRow" resultType="int">
+		select count(*) from jxc_city
+	</select>
+	<select id="findCityById" resultType="City">
+		select * from jxc_city
+		where id=#{id}
+	</select>
+	<insert id="addCity">
+		insert into jxc_city(name,num,ch,hot_city)values(#{name},#{num},#{ch},#{hot_city})
+	</insert>
+	<update id="updateCity" parameterType="City">
+		update jxc_city
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+				<if test="ch!=null&amp;&amp;!ch.equals('')">
+				ch=#{ch},
+			</if>
+				<if test="hot_city!=null&amp;&amp;!hot_city.equals('')">
+				hot_city=#{hot_city},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteCityById">
+		delete from jxc_city where id=#{id}
+	</delete>
+</mapper>

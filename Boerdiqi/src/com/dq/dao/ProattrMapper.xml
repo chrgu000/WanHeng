@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.ProattrDao">
+<!-- 	<cache type="com.cache.RedisCache"/> -->
+	<resultMap type="Proattr" id="proattrMap">
+		<!-- <id property="parid" column="parid" javaType="Long" jdbcType="BIGINT" /> -->
+		<result property="pid" column="pid"  javaType="int" jdbcType="INTEGER" />
+		<result property="att_id" column="att_id"  javaType="int" jdbcType="INTEGER" />
+		<result property="attr_id" column="attr_id"  javaType="int" jdbcType="INTEGER" />
+		<result property="addtime" column="addtime" javaType="string" jdbcType="VARCHAR" />
+		<result property="delflag" column="delflag" javaType="int" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="getByPage" parameterType="map" resultMap="proattrMap">
+		select * from proattr
+		<where>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id =#{attr_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="map" resultType="int">
+		select count(*) from proattr
+		<where>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id =#{attr_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Proattr">
+		insert into proattr(pid,att_id,attr_id,delflag,addtime)
+		values(#{pid},#{att_id},#{attr_id},#{delflag},#{addtime})
+	</insert>
+	
+	<update id="upd" parameterType="Proattr">
+		update proattr
+		<set>
+			<if test="pid !=null and pid !=''">pid=#{pid},</if>
+			<if test="att_id !=null and att_id !=''">att_id=#{att_id},</if>
+			<if test="attr_id !=null and attr_id !=''">attr_id=#{attr_id},</if>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where pid=#{pid}
+	</update>
+	
+	<delete id="del" >
+		delete from proattr where pid=#{pid}
+	</delete>
+	
+	<select id="findById" resultType="Proattr">
+		select * from proattr where pid=#{pid}
+	</select>
+	
+	<select id="getByMap" parameterType="map" resultMap="proattrMap">
+		select * from proattr
+		<where>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id =#{attr_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByMap" parameterType="map" resultMap="proattrMap">
+		select * from proattr
+		<where>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id =#{attr_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		limit 1
+	</select>
+	
+	<delete id="delByPid" >
+		delete from proattr where pid=#{pid}
+	</delete>
+</mapper>

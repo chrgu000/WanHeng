@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong -->
+<mapper namespace="com.cgwas.companySection.dao">
+
+	<sql id="columns">
+		id, section_name, section_details, company_id,is_delete
+	</sql>
+	<sql id="vals">
+		#{id}, #{section_name}, #{section_details},
+		#{company_id},#{is_delete}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="section_name != null and section_name != ''">
+			and section_name = #{section_name}
+		</if>
+		<if test="section_details != null and section_details != ''">
+			and section_details = #{section_details}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanySection" parameterType="com.cgwas.companySection.entity.CompanySection"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_section (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCompanySectionVo" parameterType="com.cgwas.companySection.entity.CompanySectionVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_section (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCompanySection">
+		delete from u_company_section
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCompanySectionVo">
+		delete from u_company_section
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCompanySection">
+		delete from u_company_section
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCompanySectionVo">
+		delete from u_company_section
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCompanySection" resultType="com.cgwas.companySection.entity.CompanySectionVo">
+		select
+		<include refid="columns" />
+		from u_company_section
+		where id=#{id}
+	</select>
+
+	<select id="selectCompanySection" resultType="com.cgwas.companySection.entity.CompanySectionVo">
+		select
+		<include refid="columns" />
+		from u_company_section
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompanySection">
+		update u_company_section
+		<set>
+			id=#{id},
+			section_name=#{section_name},
+			section_details=#{section_details},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateCompanySectionVo">
+		update u_company_section
+		<set>
+			id=#{id},
+			section_name=#{section_name},
+			section_details=#{section_details},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullCompanySection">
+		update u_company_section
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="section_name != null and section_name != ''">
+				section_name=#{section_name},
+			</if>
+			<if test="section_details != null and section_details != ''">
+				section_details=#{section_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullCompanySectionVo">
+		update u_company_section
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="section_name != null and section_name != ''">
+				section_name=#{section_name},
+			</if>
+			<if test="section_details != null and section_details != ''">
+				section_details=#{section_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCompanySection">
+		update u_company_section
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="section_name != null and section_name != ''">
+				section_name=#{section_name},
+			</if>
+			<if test="section_details != null and section_details != ''">
+				section_details=#{section_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCompanySectionVo">
+		update u_company_section
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="section_name != null and section_name != ''">
+				section_name=#{section_name},
+			</if>
+			<if test="section_details != null and section_details != ''">
+				section_details=#{section_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取可管理职位列表 -->
+	<select id="getcompanySectionList" resultType="com.cgwas.companySection.entity.CompanySection">
+		select * from u_company_section
+		where 1 = 1 and is_delete='N' and company_id=#{companySection.company_id}
+		<choose>
+			<when test="companySection.id!=null">
+				and id=#{companySection.id}
+			</when>
+			<when test="companySection.section_name!=null">
+				and section_name like
+				CONCAT('%',#{companySection.section_name},'%')
+			</when>
+			<when test="companySection.section_details!=null">
+				and section_details like
+				CONCAT('%',#{companySection.section_details},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="flag !='all' and page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取可管理职位列表(数量) -->
+	<select id="getcompanySectionListCount" resultType="java.lang.Long">
+		select COUNT(*) from u_company_section
+		where 1 = 1 and is_delete='N' and company_id=#{companySection.company_id}
+		<choose>
+			<when test="companySection.id!=null">
+				and id=#{companySection.id}
+			</when>
+			<when test="companySection.section_name!=null">
+				and section_name like
+				CONCAT('%',#{companySection.section_name},'%')
+			</when>
+			<when test="companySection.section_details!=null">
+				and section_details like
+				CONCAT('%',#{companySection.section_details},'%')
+			</when>
+		</choose>
+	</select>
+	<!--删除部门(批量) -->
+	<update id="batchDeleteCompanySection">
+		update u_company_section
+		<set>
+			<if test="is_delete != null">
+				is_delete=#{is_delete}
+			</if>
+		</set>
+		where company_id = #{company_id} and id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</update>
+	<!--更改部门 -->
+	<update id="updateCompanySectionByInfo">
+		update u_company_section
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="section_name != null and section_name != ''">
+				section_name=#{section_name},
+			</if>
+			<if test="section_details != null and section_details != ''">
+				section_details=#{section_details}
+			</if>
+		</set>
+		where id = #{id} and company_id =#{company_id}
+	</update>
+
+</mapper>

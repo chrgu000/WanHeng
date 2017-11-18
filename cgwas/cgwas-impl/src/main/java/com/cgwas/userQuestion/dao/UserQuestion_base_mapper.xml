@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userQuestion.dao">
+
+	<sql id="columns">
+		id, question1, question2, question3, answer1, answer2,
+		answer3, user_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{question1}, #{question2}, #{question3},
+		#{answer1}, #{answer2}, #{answer3}, #{user_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="question1 != null and question1 != ''">
+			and question1 = #{question1}
+		</if>
+		<if test="question2 != null and question2 != ''">
+			and question2 = #{question2}
+		</if>
+		<if test="question3 != null and question3 != ''">
+			and question3 = #{question3}
+		</if>
+		<if test="answer1 != null and answer1 != ''">
+			and answer1 = #{answer1}
+		</if>
+		<if test="answer2 != null and answer2 != ''">
+			and answer2 = #{answer2}
+		</if>
+		<if test="answer3 != null and answer3 != ''">
+			and answer3 = #{answer3}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveUserQuestion" parameterType="com.cgwas.userQuestion.entity.UserQuestion"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_question (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserQuestionVo" parameterType="com.cgwas.userQuestion.entity.UserQuestionVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_question (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserQuestion">
+		delete from u_user_question
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserQuestionVo">
+		delete from u_user_question
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserQuestion">
+		delete from u_user_question
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserQuestionVo">
+		delete from u_user_question
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserQuestion" resultType="com.cgwas.userQuestion.entity.UserQuestionVo">
+		select
+		<include refid="columns" />
+		from u_user_question
+		where id=#{id}
+	</select>
+
+	<select id="selectUserQuestion" resultType="com.cgwas.userQuestion.entity.UserQuestionVo">
+		select
+		<include refid="columns" />
+		from u_user_question
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserQuestion">
+		update u_user_question
+		<set>
+			id=#{id},
+			question1=#{question1},
+			question2=#{question2},
+			question3=#{question3},
+			answer1=#{answer1},
+			answer2=#{answer2},
+			answer3=#{answer3},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserQuestionVo">
+		update u_user_question
+		<set>
+			id=#{id},
+			question1=#{question1},
+			question2=#{question2},
+			question3=#{question3},
+			answer1=#{answer1},
+			answer2=#{answer2},
+			answer3=#{answer3},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserQuestion">
+		update u_user_question
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="question1 != null and question1 != ''">
+				question1=#{question1},
+			</if>
+			<if test="question2 != null and question2 != ''">
+				question2=#{question2},
+			</if>
+			<if test="question3 != null and question3 != ''">
+				question3=#{question3},
+			</if>
+			<if test="answer1 != null and answer1 != ''">
+				answer1=#{answer1},
+			</if>
+			<if test="answer2 != null and answer2 != ''">
+				answer2=#{answer2},
+			</if>
+			<if test="answer3 != null and answer3 != ''">
+				answer3=#{answer3},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserQuestionVo">
+		update u_user_question
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="question1 != null and question1 != ''">
+				question1=#{question1},
+			</if>
+			<if test="question2 != null and question2 != ''">
+				question2=#{question2},
+			</if>
+			<if test="question3 != null and question3 != ''">
+				question3=#{question3},
+			</if>
+			<if test="answer1 != null and answer1 != ''">
+				answer1=#{answer1},
+			</if>
+			<if test="answer2 != null and answer2 != ''">
+				answer2=#{answer2},
+			</if>
+			<if test="answer3 != null and answer3 != ''">
+				answer3=#{answer3},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserQuestion">
+		update u_user_question
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="question1 != null and question1 != ''">
+				question1=#{question1},
+			</if>
+			<if test="question2 != null and question2 != ''">
+				question2=#{question2},
+			</if>
+			<if test="question3 != null and question3 != ''">
+				question3=#{question3},
+			</if>
+			<if test="answer1 != null and answer1 != ''">
+				answer1=#{answer1},
+			</if>
+			<if test="answer2 != null and answer2 != ''">
+				answer2=#{answer2},
+			</if>
+			<if test="answer3 != null and answer3 != ''">
+				answer3=#{answer3},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserQuestionVo">
+		update u_user_question
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="question1 != null and question1 != ''">
+				question1=#{question1},
+			</if>
+			<if test="question2 != null and question2 != ''">
+				question2=#{question2},
+			</if>
+			<if test="question3 != null and question3 != ''">
+				question3=#{question3},
+			</if>
+			<if test="answer1 != null and answer1 != ''">
+				answer1=#{answer1},
+			</if>
+			<if test="answer2 != null and answer2 != ''">
+				answer2=#{answer2},
+			</if>
+			<if test="answer3 != null and answer3 != ''">
+				answer3=#{answer3},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据用户id更改密保问题 -->
+	<update id="updateUserQuestionByUserId">
+		update u_user_question
+		<set>
+			<if test="question1 != null and question1 != ''">
+				question1=#{question1},
+			</if>
+			<if test="question2 != null and question2 != ''">
+				question2=#{question2},
+			</if>
+			<if test="question3 != null and question3 != ''">
+				question3=#{question3},
+			</if>
+			<if test="answer1 != null and answer1 != ''">
+				answer1=#{answer1},
+			</if>
+			<if test="answer2 != null and answer2 != ''">
+				answer2=#{answer2},
+			</if>
+			<if test="answer3 != null and answer3 != ''">
+				answer3=#{answer3},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where user_id = #{user_id}
+	</update>
+	
+	<!-- 匹配密保问题 -->
+	<select id="checkQuestion" resultType="java.lang.Long">
+		SELECT
+		a.id
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_question AS b ON a.id =
+		b.user_id
+		WHERE (a.tel = #{user.tel} OR a.username = #{user.username})
+		<if test="answerNo==1">
+			and b.answer1=#{answer}
+		</if>
+		<if test="answerNo==2">
+			and b.answer2=#{answer}
+		</if>
+		<if test="answerNo==3">
+			and b.answer3=#{answer}
+		</if>
+
+	</select>
+	
+	<!-- 得到密保问题 -->
+	<select id="getUserQuestionByUser" resultType="com.cgwas.userQuestion.entity.UserQuestion">
+		SELECT
+		b.question1,b.question2,b.question3
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_question AS b ON a.id =
+		b.user_id
+		WHERE  a.tel = #{tel} OR a.username = #{username}
+	</select>
+</mapper>

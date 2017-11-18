@@ -1,0 +1,302 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="css/date.min.css" rel="stylesheet" type="text/css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form id="searchForm" class="form-horizontal span24">
+					<div id="garden1">
+						<label class="control-label"
+							style="width: 30px; margin-left: 0px; padding-left: 0px; float: left">
+							园区
+						</label>
+						<div class="controls">
+							<select style="height: 33px" v-model="selected" id="garden_id" name="garden_id"
+								onchange="getTeachers(this.value)">
+								<option value="">
+									---请选择---
+								</option>
+								<option v-for="option in options" v-bind:value="option.id">
+									{{option.name}}
+								</option>
+							</select>
+						</div>
+					</div>
+					<div id="teacher1">
+						<label class="control-label"
+							style="width: 30px; margin-left: 0px; padding-left: 0px; float: left">
+							教师
+						</label>
+						<div class="controls">
+							<select style="height: 33px" name="teacher_id">
+								<option value="">
+									---请选择---
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="span3 offset" style="padding-right: 0px; float: right;">
+						<button type="button" id="btnSearch" class="button button-primary">
+							搜索
+						</button>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid"></div>
+			</div>
+		</div>
+		<script src="js/jquery.min.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="js/date.js">
+</script>
+		<script type="text/javascript" src="js/iscroll.js">
+</script>
+		<script type="text/javascript">
+		$(function() {
+	$.ajax( {
+		url : "../admin/getAllGarden.do",
+		dataType : "json",
+		type : "post",
+		data : {},
+		success : function(data) {
+			 
+			new Vue( {
+				el : '#garden1',
+				data : {
+					selected : '',
+					options : data
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+		 function getTeachers(id){
+	 	$.ajax( {
+		url : "../baby/getTeachersByGardenId.do",
+		dataType : "json",
+		type : "post",
+		data : {id:id},
+		success : function(data) {
+			 $("[name='teacher_id']").html('');
+			  $("[name='teacher_id']").html('<option value="">---请选择---</option>');
+			 for(var i=0;i<data.length;i++){
+				 var obj=data[i];
+				 $("[name='teacher_id']").append('<option value="'+obj.id+'">'+obj.username+'</option>');
+			 }
+		},
+		error : function() {
+		}
+	});
+ }
+$(function() {
+	$.ajax( {
+		url : "../admin/getAdmin.do",
+		type : "post",
+		dataType : "json",
+		data : {},
+		async:false,
+		success : function(data) {
+			var gd_id = data.gardens[0].id;
+				if (gd_id != null && gd_id != '') {
+				getTeachers(gd_id);
+			}
+		},
+		error : function() {
+		}
+	});
+});
+
+var store;
+BUI
+		.use(
+				[ 'common/search' ,'common/page'],
+				function(Search, Grid, Data,Form,Tooltip) {
+					var Grid = BUI.Grid;
+					var Grid = BUI.Grid;
+					var columns = [
+							{	title : '园区',
+								dataIndex : '',
+								width : 80,
+								renderer : function(value, obj) {
+								if(obj.garden==null){
+									return null;
+								}
+								return obj.garden.name ;
+							}
+							},
+							{	title : '教师',
+								dataIndex : '',
+								width : 80,
+								renderer : function(value, obj) {
+								if(obj.teacher==null){
+									return null;
+								}
+								return obj.teacher.username ;
+							}
+							},
+							{
+								title : '标题',
+								dataIndex : 'title',
+								width : 100,
+							},
+							{
+								title : '内容',
+								dataIndex : 'content',
+								width : 200,
+							},
+							{
+								title : '创建时间',
+								dataIndex : '',
+								width : 120,
+								renderer : function(value, obj) {
+								if(obj.create_time==null){
+									return null;
+								}
+    							return obj.create_time;
+								}
+							},
+							{
+								title : '操作',
+								dataIndex : '',
+								width : 150,
+								renderer : function(value, obj) {
+									var delStr = '<br/><span class="grid-command btn-del" title="删除园区信息">删除</span>',
+									editStr =  Search.createLink({ //链接使用 此方式
+									id : 'edit' + obj.id,
+									title : '查看照片',
+									text : '查看照片',
+									href : '../admin/style_picture.html?style_id='+obj.id
+									});
+									return delStr+editStr;
+								}
+							} ];
+					 store = Search.createStore('../style/loadStyle.do', {
+						proxy : {
+							save : {},
+							method : 'POST'
+						},
+						params:{
+							 garden_id:$("#garden_id").val()
+						},
+						pageIndex : 0,
+						pageSize : 20,
+						autoSync : true
+					//保存数据后，自动更新
+							});
+					var gridCfg = Search.createGridCfg(columns, {
+						forceFit : true,
+						tbar : {
+							items : [{
+								text : '<i class="icon-edit"></i>编辑',
+								btnCls : 'button button-small',
+								handler : updFunction
+							}, {
+								text : '<i class="icon-remove"></i>删除',
+								btnCls : 'button button-small',
+								handler : delFunction
+							} ]
+						},
+						loadMask : true, //加载数据时显示屏蔽层
+						plugins : [BUI.Grid.Plugins.CheckSelection ]
+					// 插件形式引入多选表格
+							});
+					var search = new Search( {
+						store : store,
+						gridCfg : gridCfg
+					});
+					var grid = search.get('grid');
+					function updFunction() {
+						var selections = grid.getSelection();
+						var ids = [];
+						BUI.each(selections, function(selections) {
+							ids.push(selections.id);
+						});
+						if (ids.length > 1) {
+							BUI.Message.Alert('只能选择一条记录', 'warning');
+						} else if (ids.length <= 0) {
+							BUI.Message.Alert('请选择要编辑的记录', 'warning');
+						} else {
+							location.href="style_update.html?id="+ids[0];
+						}
+					}
+					function delFunction() {
+						var selections = grid.getSelection();
+						delItems(selections);
+					}
+					function delItems(items) {
+						var ids = [];
+						BUI.each(items, function(item) {
+							ids.push(item.id);
+						});
+						if (ids.length) {
+							BUI.Message.Confirm('确定要删除选中记录吗?', function() {
+								$.ajax( {
+									url : '../style/deleteStyle.do',
+									dataType : "json",
+									data : {
+										"ids" : ids.toString()
+									},
+									type : "post",
+									async : true,
+									success : function(data) {
+										if (data.hasError == false) {
+											store.load();
+										} else {
+											BUI.Message.Alert(data.errInfo,
+													'warning');
+										}
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrow) {
+										BUI.Message.Alert('系统繁忙,请稍候'
+												+ XMLHttpRequest.status + ","
+												+ XMLHttpRequest.readyState,
+												+"," + textStatus, 'warning')
+									}
+								});
+							}, 'questions');
+						} else {
+							BUI.Message.Alert('请选择记录', function() {
+							}, 'warning');
+						}
+					}
+					grid.on('cellclick', function(ev) {
+						var sender = $(ev.domTarget);
+						if (sender.hasClass('btn-del')) {
+							var record = ev.record;
+							delItems( [ record ]);
+						}
+					});
+				});
+</script>
+		<body>
+</html>

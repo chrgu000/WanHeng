@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:util="http://www.springframework.org/schema/util"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd    
+            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd    
+            http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd    
+            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-4.0.xsd">
+	<!-- 支持spring3.0新的mvc注解 -->
+	<mvc:annotation-driven />
+	<!-- 使用注解的包，包括子集 -->
+	<!-- 扫描注解 需去除controller，如果不去除会影响事务管理的。   -->
+	<context:component-scan base-package="com">
+		<context:exclude-filter type="annotation"
+			expression="org.springframework.stereotype.Service" />
+	</context:component-scan>
+	<!-- 注册拦截器 -->
+	<mvc:interceptors>
+		<!--		 权限检查拦截器 -->
+		<mvc:interceptor>
+			<mvc:mapping path="/baby/loadBaby.do" />
+			<mvc:mapping path="/baby/updBaby.do" />
+			<mvc:mapping path="/baby/deleteBaby.do" />
+			<mvc:mapping path="/baby/b_changeState.do" />
+			<mvc:mapping path="/log/stu_loadLog.do" />
+			<mvc:mapping path="/log/stu_deleteLog.do" />
+			<mvc:mapping path="/log/stu_changeState.do" />
+			<mvc:mapping path="/footprint/stu_loadFootprint.do" />
+			<mvc:mapping path="/footprint/stu_updFootprint.do" />
+			<mvc:mapping path="/footprint/stu_deleteFootprint.do" />
+			<mvc:mapping path="/picture/loadPicture.do" />
+			<mvc:mapping path="/picture/deletePicture.do" />
+			<mvc:mapping path="/teacher/loadTeacher.do" />
+			<mvc:mapping path="/teacher/updTeacher.do" />
+			<mvc:mapping path="/teacher/deleteTeacher.do" />
+			<mvc:mapping path="/teacher/t_changeState.do" />
+			<mvc:mapping path="/log/tea_loadLog.do" />
+			<mvc:mapping path="/log/tea_updLog.do" />
+			<mvc:mapping path="/log/tea_deleteLog.do" />
+			<mvc:mapping path="/log/tea_changeState.do" />
+			<mvc:mapping path="/footprint/tea_updFootprint.do" />
+			<mvc:mapping path="/footprint/tea_updFootprint.do" />
+			<mvc:mapping path="/footprint/tea_updFootprint.do" />
+			<mvc:mapping path="/garden/loadGarden.do" />
+			<mvc:mapping path="/garden/addGarden.do" />
+			<mvc:mapping path="/garden/updGarden.do" />
+			<mvc:mapping path="/garden/deleteGarden.do" />
+			<mvc:mapping path="/admin//loadAdmin.do" />
+			<mvc:mapping path="/admin/updAdmin.do" />
+			<mvc:mapping path="/admin/addAdmin.do" />
+			<mvc:mapping path="/admin/deleteAdmin.do" />
+			<mvc:mapping path="/role/loadRole.do" />
+			<mvc:mapping path="/role/addRole.do" />
+			<mvc:mapping path="/role/updRole.do" />
+			<mvc:mapping path="/role/deleteRole.do" />
+			<mvc:mapping path="/role/setModules.do" />
+			<mvc:mapping path="/style/loadStyle.do" />
+			<mvc:mapping path="/style/updateStyle.do" />
+			<mvc:mapping path="/style/deleteStyle.do" />
+			<mvc:mapping path="/diary/loadDiary.do" />
+			<mvc:mapping path="/diary/deleteDiary.do" />
+			
+			<!--            <mvc:mapping path="/**" />-->
+			<!--			<mvc:exclude-mapping path="/admin/checkLogin.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/login.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/creatKey.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getTelCode.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/loginOut.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getLoginInfo.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/updPsd.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getAllGarden.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getAllRole.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getAdminById.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getAdmin.do" />-->
+			<!--			<mvc:exclude-mapping path="/admin/getLoginInfo.do" />-->
+			<!--			<mvc:exclude-mapping path="/baby/getBabyById.do" />-->
+			<!--			<mvc:exclude-mapping path="/baby/getTeachersByGardenId.do" />-->
+			<!--			<mvc:exclude-mapping path="/footprint/getFootprintById.do" />-->
+			<!--			<mvc:exclude-mapping path="/garden/getGardenById.do" />-->
+			<!--			<mvc:exclude-mapping path="/garden/getAllGarden.do" />-->
+			<!--			<mvc:exclude-mapping path="/log/getLogById.do" />-->
+			<!--			<mvc:exclude-mapping path="/module/getTopModules.do" />-->
+			<!--			<mvc:exclude-mapping path="/teacher/getTeacherById.do" />-->
+			<!--			<mvc:exclude-mapping path="/teacher/getBabysByTeacherId.do" />-->
+			<!--			<mvc:exclude-mapping path="/teacher/getTels.do" />-->
+			<!--			<mvc:exclude-mapping path="/menu/getMenu.do" />-->
+			<bean class="com.kg.interceptor.CheckModuleInterceptor" />
+		</mvc:interceptor>
+	</mvc:interceptors>
+	<!--对模型视图名称的解析，即在模型视图名称添加前后缀 -->
+	<bean id="viewResolver"
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<!-- 如果使用jstl的话，配置下面的属性 -->
+		<property name="prefix" value="/admin/" />
+		<property name="suffix" value=".html" />
+		<property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+	</bean>
+	<!-- 启动触发器的配置开始 -->
+	<bean name="startQuertz" lazy-init="false" autowire="no"
+		class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+		<property name="triggers">
+			<list>
+				<ref bean="myJobTrigger" />
+				<ref bean="myJobTrigger2" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="myJobTrigger"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="myJobDetail" />
+		</property>
+		<property name="cronExpression">
+			<!--			<value>0 0 0 * * ?</value> -->
+			<value>0 0 0 ? * MON-FRI</value>
+		</property>
+	</bean>
+<bean id="myJobTrigger2"
+		class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">
+		<property name="jobDetail">
+			<ref bean="myJobDetail2" />
+		</property>
+		<property name="cronExpression">
+			<!--			<value>0 0 0 * * ?</value> -->
+			<value>0 55 23 ? * MON-FRI</value>
+		</property>
+	</bean>
+	<!-- job的配置开始 -->
+	<bean id="myJobDetail"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="myJob" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+	<!-- job的配置开始 -->
+	<bean id="myJobDetail2"
+		class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+		<property name="targetObject">
+			<ref bean="myJob2" />
+		</property>
+		<property name="targetMethod">
+			<value>work</value>
+		</property>
+	</bean>
+	<!-- job的配置结束 -->
+
+	<!-- 工作的bean -->
+	<bean id="myJob" class="com.kg.quartz.DS"></bean>
+	<bean id="myJob2" class="com.kg.quartz.DSTwo"></bean>
+</beans>  

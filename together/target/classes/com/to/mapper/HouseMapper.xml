@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.HouseDao">
+	<resultMap id="houseMap" type="House">
+		<result property="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"></result>
+		<result property="gardenName" column="garden_name" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="totalFloor" column="total_floor" javaType="java.lang.Short" jdbcType="INTEGER"></result>
+		<result property="concactName" column="concact_name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<association property="orientation" select="getOrientationById" javaType="Orientation" column="orientation_id"/>
+		<association property="decorateSituation" select="getDecorateSituationById" javaType="DecorateSituation" column="decorate_situation_id"/>
+		<association property="payWay" select="getPayWayById" javaType="PayWay" column="pay_way_id"/>
+		<association property="shareHouse" select="getShareHouseById" javaType="ShareHouse" column="share_house_id"/>
+		<association property="imgUrl" select="getImgUrlByHouseId" javaType="string" column="id"></association>
+		<collection property="supportingFacilitys" column="id" javaType="arrayList" ofType="supportingFacility" select="getSupportingFacilityByHouseId"/>
+	</resultMap>
+	<resultMap id="houseMaps" type="House">
+		<result property="id" column="id" javaType="java.lang.Integer" jdbcType="INTEGER"></result>
+		<result property="gardenName" column="garden_name" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="totalFloor" column="total_floor" javaType="java.lang.Short" jdbcType="INTEGER"></result>
+		<result property="concactName" column="concact_name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<association property="imgUrl" select="getImgUrlByHouseId" javaType="string" column="id"></association>
+	</resultMap>
+	<select id="getSupportingFacilityByHouseId" resultType="SupportingFacility">
+		select s.* from to_supporting_facility s left join to_house_supporting_facility f on s.id=f.supporting_facility_id where f.house_id=#{id}
+	</select>
+	<select id="getImgUrlByHouseId" resultType="string">
+		select imgUrl from to_house_picture where house_id=#{id} order by id asc limit 1
+	</select>
+	<select id="getOrientationById" resultType="Orientation">
+		select * from to_orientation where id=#{orientation_id}
+	</select>
+	<select id="getDecorateSituationById" resultType="DecorateSituation">
+		select * from to_decorate_situation where id=#{decorate_situation_id}
+	</select>
+	<select id="getPayWayById" resultType="PayWay">
+		select * from to_pay_way where id=#{pay_way_id}
+	</select>
+	<select id="getShareHouseById" resultType="ShareHouse">
+		select * from to_share_house where id=#{share_house_id}
+	</select>
+<delete id="deleteById">
+	update   to_house set delflag=1  where id=#{id}
+</delete>
+	<insert id="save" keyProperty="id" useGeneratedKeys="true">
+		insert into
+		to_house(garden_name,province,city,area,address,room,office,defend,orientation_id,decorate_situation_id,
+		acreage,rent,title,details,pay_way_id,concact_name,tel,sex,create_time,
+		modified_time,type,delflag,identity,status,share_house_id,module,user_id,latitude,longitude)
+		values(
+		#{gardenName},#{province},#{city},#{area},#{address},#{room},#{office},#{defend},#{orientationId},#{decorateSituationId},
+		#{acreage},#{rent},#{title},#{details},#{payWayId},#{concactName},#{tel},#{sex},#{createTime},
+		#{modifiedTime},#{type},#{delflag},#{identity},#{status},#{shareHouseId},#{module},#{userId},#{latitude},#{longitude}
+		)
+	</insert>
+	<update id="update">
+		update to_house
+		<set>
+			<if test="latitude!=null and latitude!=''">
+				latitude=#{latitude},
+			</if>
+			<if test="longitude!=null and longitude!=''">
+				longitude=#{longitude},
+			</if>
+			<if test="gardenName!=null and gardenName!=''">
+				garden_name=#{gardenName},
+        </if>
+			<if test="province!=null and province!=''">
+			province=#{province},
+		</if>
+			<if test="city!=null and city!=''">
+				city=#{city},
+			</if>
+			<if test="area!=null and area!=''">
+				area=#{area},
+			</if>
+			<if test="address!=null and address!=''">
+				address=#{address},
+			</if>
+			<if test="room!=null and room!=''">
+				room=#{room},
+			</if>
+			<if test="office!=null and office!=''">
+				office=#{office},
+			</if>
+			<if test="defend!=null and defend!=''">
+				defend=#{defend},
+			</if>
+			<if test="orientationId!=null and orientationId!=''">
+				orientation_id=#{orientationId},
+			</if>
+			<if test="decorateSituationId!=null and decorateSituationId!=''">
+				decorate_situation_id=#{decorateSituationId},
+			</if>
+			<if test="acreage!=null and acreage!=''">
+				acreage=#{acreage},
+			</if>
+			<if test="rent!=null and rent!=''">
+				rent=#{rent},
+			</if>
+			<if test="shareHouseId!=null and shareHouseId!=''">
+				share_house_id=#{shareHouseId},
+			</if>
+			<if test="module!=null and module!=''">
+				module=#{module},
+			</if>
+			<if test="title!=null and title!=''">
+				title=#{title},
+			</if>
+			<if test="details!=null and details!=''">
+				details=#{details},
+			</if>
+			<if test="payWayId!=null and payWayId!=''">
+				pay_way_id=#{payWayId},
+			</if>
+			<if test="concactName!=null and concactName!=''">
+				concact_name=#{concactName},
+			</if>
+			<if test="tel!=null and tel!=''">
+				tel=#{tel},
+			</if>
+			<if test="sex!=null and sex!=''">
+				sex=#{sex},
+			</if>
+			<if test="identity!=null and identity!=''">
+				identity=#{identity},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				modified_time=#{modifiedTime},
+			</if>
+			<if test="delflag!=null and delflag!=''">
+			delflag=#{delflag},
+			<if test="shareHouseId!=null and shareHouseId!=''">
+				share_house_id=#{shareHouseId},
+			</if>
+		</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		update   to_house set delflag=1  where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="houseMap">
+		select * from to_house
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="houseMap">
+		select * from to_house <where>
+		delflag=2
+		<if test="type!=null and type!=''">
+		and type=#{type}
+		</if>
+	</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_house <where>
+		delflag=2
+		<if test="type!=null and type!=''">
+			and type=#{type}
+		</if>
+		</where>
+	</select>
+	<insert id="addHouseSupportingFacility" >
+		insert into to_house_supporting_facility(house_id,supporting_facility_id)values(#{houseId},#{supportingFacilityId})
+	</insert>
+	<insert id="addHousePicture">
+        insert into to_house_picture(imgUrl,data,house_id,create_time)values(#{imgUrl},#{data},#{houseId},#{createTime})
+	</insert>
+	<select id="getHouseByArea" resultMap="houseMaps">
+		select * from to_house where area=#{area} and delflag=2 and status=0
+	</select>
+	<select id="getHousesByStatus" resultMap="houseMaps">
+		select * from to_house where user_id=#{userId} and status=#{status} and delflag=2
+	</select>
+	<delete id="deleteHouseSupportingFacilityByHouseId">
+		delete from to_house_supporting_facility where house_id=#{houseId}
+	</delete>
+	<select id="getHousesByType" resultMap="houseMaps">
+		select * from to_house where type=#{type} and area=#{area} and delflag=2 and status=0
+	</select>
+	<select id="getHouseBySearch" resultMap="houseMaps">
+		select * from to_house <where>
+		area=#{area} and delflag=2 and status=0
+		<if test="search!=null">and  title like CONCAT(CONCAT('%', #{search}), '%');</if>
+	</where>
+	</select>
+	<select id="getHousesByPrice" resultMap="houseMaps">
+		select * from to_house <where>
+		area=#{area} and delflag=2 and status=0
+		<if test="less!=null">and  rent &lt;=#{less}</if>
+		<if test="more!=null">and rent >=#{more}</if>
+		<if test="start!=null and end!=null">
+			and rent>=#{start} and rent &lt;=#{end}
+		</if>
+	</where>
+	</select>
+</mapper>

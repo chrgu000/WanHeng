@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.positionMenu.dao">
+
+	<sql id="columns">
+		id, position_id, menu_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{position_id}, #{menu_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="position_id != null and position_id != ''">
+			and position_id = #{position_id}
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			and menu_id = #{menu_id}
+		</if>
+	</sql>
+
+	<insert id="savePositionMenu" parameterType="com.cgwas.positionMenu.entity.PositionMenu" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_position_menu (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="savePositionMenuVo" parameterType="com.cgwas.positionMenu.entity.PositionMenuVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_position_menu (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deletePositionMenu">
+		delete from u_position_menu
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteAllPositionMenu">
+		delete from u_position_menu
+		where 
+		<if test="status==1">
+			id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+			
+		</if>
+		<if test="status==5">
+			menu_id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+		</if>
+		<if test="status==6">
+			position_id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+		</if>
+	</delete>
+	
+	<delete id="deletePositionMenuVo">
+		delete from u_position_menu
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExamplePositionMenu">
+		delete from u_position_menu
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExamplePositionMenuVo">
+		delete from u_position_menu
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadPositionMenu" resultType="com.cgwas.positionMenu.entity.PositionMenuVo">
+		select 
+		<include refid="columns"/>
+		from u_position_menu
+		where id=#{id} 
+	</select>
+	
+	<select id="selectPositionMenu" resultType="com.cgwas.positionMenu.entity.PositionMenuVo">
+		select 
+		<include refid="columns"/>
+		from u_position_menu
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updatePositionMenu">
+		update u_position_menu
+		<set>
+			id=#{id}, 
+			position_id=#{position_id}, 
+			menu_id=#{menu_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updatePositionMenuVo">
+		update u_position_menu
+		<set>
+			id=#{id}, 
+			position_id=#{position_id}, 
+			menu_id=#{menu_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullPositionMenu">
+		update u_position_menu
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="position_id != null and position_id != ''">
+			position_id=#{position_id}, 
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullPositionMenuVo">
+		update u_position_menu
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="position_id != null and position_id != ''">
+			position_id=#{position_id}, 
+		</if>
+		<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExamplePositionMenu">
+		update u_position_menu
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="position_id != null and position_id != ''">
+			position_id=#{position_id}, 
+			</if>
+			<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExamplePositionMenuVo">
+		update u_position_menu
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="position_id != null and position_id != ''">
+			position_id=#{position_id}, 
+			</if>
+			<if test="menu_id != null and menu_id != ''">
+			menu_id=#{menu_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

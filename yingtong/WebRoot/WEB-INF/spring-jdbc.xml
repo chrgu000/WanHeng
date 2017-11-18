@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:cache="http://www.springframework.org/schema/cache"
+	xsi:schemaLocation="    
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.0.xsd  
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.0.xsd  
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.0.xsd
+        http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-3.1.xsd
+        ">
+	<bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource"
+		destroy-method="close">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+		<property name="url" value="jdbc:mysql://localhost:3306/yingtong?characterEncoding=utf-8"></property>
+		<property name="username" value="root"></property>
+			<property name="password" value="aidehuxi"></property>
+<!--  		<property name="password" value="handsome"></property>  -->
+		<property name="initialSize" value="10" />
+		<property name="maxIdle" value="100" />
+		<property name="minIdle" value="10" />
+		<property name="maxActive" value="50" />
+		<property name="maxWait" value="100" />
+		<property name="validationQuery" value="SELECT 1"></property>
+		<property name="testWhileIdle" value="true"></property>
+		<property name="testOnBorrow" value="true"></property>
+		<property name="timeBetweenEvictionRunsMillis" value="3600000"></property>
+		<property name="numTestsPerEvictionRun" value="50"></property>
+		<property name="minEvictableIdleTimeMillis" value="120000"></property>
+		<property name="removeAbandoned" value="true" />
+		<property name="removeAbandonedTimeout" value="10" />
+	</bean>
+
+	<bean id="transactionManager"
+		class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource" />
+	</bean>
+
+	<tx:advice id="transactionAdvice" transaction-manager="transactionManager">
+		<tx:attributes>
+			<tx:method name="*" propagation="REQUIRED" read-only="true" />
+			<!-- 自己的方法名开头 -->
+		</tx:attributes>
+	</tx:advice>
+
+	<aop:config>
+		<aop:pointcut id="myPointcut" expression="execution(* service.*.*(..))" />
+		<aop:advisor pointcut-ref="myPointcut" advice-ref="transactionAdvice" />
+	</aop:config>
+
+</beans>

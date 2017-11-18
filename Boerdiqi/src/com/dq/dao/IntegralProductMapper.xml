@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.IntegralProductDao">
+	<insert id="save" keyProperty="id" useGeneratedKeys="true">
+		insert into
+		dq_integral_product
+		(name,details,imgUrl,isOnline,nums,join_time,delflag,integral,code)
+		values(#{name},#{details},#{imgUrl},#{isOnline},#{nums},#{join_time},#{delflag},#{integral},#{code})
+	</insert>
+	<update id="update">
+		update dq_integral_product
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+			<if test="details!=null and details!=''">
+				details=#{details},
+</if>
+			<if test="imgUrl!=null and imgUrl!=''">
+				imgUrl=#{imgUrl},
+</if>
+
+			<if test="isOnline!=null and isOnline!=''">
+				isOnline=#{isOnline},
+</if>
+
+			<if test="nums!=null and nums!=''">
+				nums=#{nums},
+</if>
+                        <if test="code!=null and code!=''">
+				code=#{code},
+</if>
+			<if test="integral!=null and integral!=''">
+				integral=#{integral},
+</if>
+
+			<if test="delflag!=null and delflag!=''">
+				delflag=#{delflag},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_integral_product where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="IntegralProduct">
+		select * from dq_integral_product
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="IntegralProduct">
+		select * from dq_integral_product
+		<where>
+			<if test="name!=null and name!=''">
+				and name like "%"#{name}"%"
+		</if>
+			<if test="isOnline!=null">
+				and isOnline=#{isOnline}
+		</if>
+			and delflag=1
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_integral_product
+		<where>
+			<if test="name!=null and name!=''">
+				and name like "%"#{name}"%"
+		</if>
+			 
+			<if test="isOnline!=null">
+				and isOnline=#{isOnline}
+		</if>
+			and delflag=1
+		</where>
+	</select>
+	<update id="updateByIds">
+		update dq_integral_product set delflag=2 where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}
+	</foreach>
+	</update>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.user.dao">
+	<sql id="columnsAs">
+		t1.id, t1.uuid, t1.username, t1.nickname, t1.tel, t1.password, t1.regist_time, t1.last_login_time, t1.ip, t1.login_times
+	</sql>
+
+	<select id="selectUserPage" resultType="com.cgwas.user.entity.UserVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_user t1
+		join
+		(SELECT
+		id
+		from
+		u_user
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectUserCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_user
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

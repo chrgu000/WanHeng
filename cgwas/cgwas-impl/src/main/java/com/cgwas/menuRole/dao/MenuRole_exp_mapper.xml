@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.menuRole.dao">
+	<sql id="columnsAs">
+		t1.id, t1.menu_id, t1.role_id
+	</sql>
+
+	<select id="selectMenuRolePage" resultType="com.cgwas.menuRole.entity.MenuRoleVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		s_menu_role t1
+		join
+		(SELECT
+		id
+		from
+		s_menu_role
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectMenuRoleCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from s_menu_role
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

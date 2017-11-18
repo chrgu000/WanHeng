@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.AttrDao">
+<!-- 	<cache type="com.cache.RedisCache"/> -->
+	<resultMap type="Attr" id="attrMap">
+		<id property="attr_id" column="attr_id" javaType="int" jdbcType="INTEGER" />
+		<result property="att_id" column="att_id"  javaType="int" jdbcType="INTEGER" />
+		<result property="v" column="v" javaType="string" jdbcType="LONGVARCHAR" />
+		<result property="addtime" column="addtime" javaType="string" jdbcType="VARCHAR" />
+		<result property="delflag" column="delflag" javaType="int" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="getByPage" parameterType="map" resultMap="attrMap">
+		select * from attr
+		<where>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id=#{attr_id}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="v !=null and v !=''">
+				and v =#{v}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="map" resultType="int">
+		select count(*) from attr
+		<where>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id=#{attr_id}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="v !=null and v !=''">
+				and v =#{v}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+	
+	<insert id="add" parameterType="Attr" keyProperty="attr_id" useGeneratedKeys="true">
+		insert into attr(att_id,v,delflag,addtime)
+		values(#{att_id},#{v},#{delflag},#{addtime})
+	</insert>
+	
+	<update id="upd" parameterType="Attr">
+		update attr
+		<set>
+			<if test="att_id !=null and att_id !=''">att_id=#{att_id},</if>
+			<if test="v !=null and v !=''">v=#{v},</if>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where attr_id=#{attr_id}
+	</update>
+	
+	<update id="updByTitle" parameterType="map">
+		update attr
+		<set>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where v=#{v}
+	</update>
+	
+	<delete id="del" >
+		delete from attr where attr_id=#{attr_id}
+	</delete>
+	
+	<select id="findById" resultType="Attr">
+		select * from attr where attr_id=#{attr_id}
+	</select>
+	
+	<select id="getByMap" parameterType="map" resultMap="attrMap">
+		select * from attr
+		<where>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id=#{attr_id}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="v !=null and v !=''">
+				and v =#{v}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+	
+	<select id="findByMap" parameterType="map" resultMap="attrMap">
+		select * from attr
+		<where>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id=#{attr_id}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and att_id =#{att_id}
+			</if>
+			<if test="v !=null and v !=''">
+				and v =#{v}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		limit 1
+	</select>
+	
+	<select id="getByPro" parameterType="map" resultMap="attrMap">
+		SELECT * FROM attr
+		<where>
+			<if test="att_id !=null and att_id !=''">
+				and att_id=#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and attr_id=#{attr_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag=#{delflag}
+			</if>
+		</where>
+		UNION
+		SELECT a.* FROM proattr p LEFT JOIN attr a ON p.attr_id=a.attr_id 
+		<where>
+			<if test="att_id !=null and att_id !=''">
+				and p.att_id=#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and p.attr_id=#{attr_id}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and p.pid=#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and p.delflag=#{delflag}
+			</if>
+		</where>
+	</select>
+	
+	
+	<select id="getAttr" parameterType="map" resultMap="attrMap">
+		SELECT a.* FROM proattr p LEFT JOIN attr a ON p.attr_id=a.attr_id 
+		<where>
+			<if test="att_id !=null and att_id !=''">
+				and p.att_id=#{att_id}
+			</if>
+			<if test="attr_id !=null and attr_id !=''">
+				and p.attr_id=#{attr_id}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and p.pid=#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and p.delflag=#{delflag}
+			</if>
+		</where>
+	</select>
+</mapper>

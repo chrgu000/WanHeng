@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.workExperience.dao">
+
+	<sql id="columns">
+		id, work_begin_date, work_end_date, company_name, position,
+		work_details, user_id, creat_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{work_begin_date}, #{work_end_date},
+		#{company_name}, #{position}, #{work_details}, #{user_id},
+		#{creat_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="work_begin_date != null">
+			and work_begin_date = #{work_begin_date}
+		</if>
+		<if test="work_end_date != null">
+			and work_end_date = #{work_end_date}
+		</if>
+		<if test="company_name != null and company_name != ''">
+			and company_name = #{company_name}
+		</if>
+		<if test="position != null and position != ''">
+			and position = #{position}
+		</if>
+		<if test="work_details != null and work_details != ''">
+			and work_details = #{work_details}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="creat_time != null">
+			and creat_time = #{creat_time}
+		</if>
+	</sql>
+
+	<insert id="saveWorkExperience" parameterType="com.cgwas.workExperience.entity.WorkExperience"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_work_experience (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveWorkExperienceVo" parameterType="com.cgwas.workExperience.entity.WorkExperienceVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_work_experience (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteWorkExperience">
+		delete from u_work_experience
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteWorkExperienceVo">
+		delete from u_work_experience
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleWorkExperience">
+		delete from u_work_experience
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleWorkExperienceVo">
+		delete from u_work_experience
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadWorkExperience" resultType="com.cgwas.workExperience.entity.WorkExperienceVo">
+		select
+		<include refid="columns" />
+		from u_work_experience
+		where id=#{id}
+	</select>
+
+	<select id="selectWorkExperience" resultType="com.cgwas.workExperience.entity.WorkExperienceVo">
+		select
+		<include refid="columns" />
+		from u_work_experience
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateWorkExperience">
+		update u_work_experience
+		<set>
+			id=#{id},
+			work_begin_date=#{work_begin_date},
+			work_end_date=#{work_end_date},
+			company_name=#{company_name},
+			position=#{position},
+			work_details=#{work_details},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateWorkExperienceVo">
+		update u_work_experience
+		<set>
+			id=#{id},
+			work_begin_date=#{work_begin_date},
+			work_end_date=#{work_end_date},
+			company_name=#{company_name},
+			position=#{position},
+			work_details=#{work_details},
+			user_id=#{user_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullWorkExperience">
+		update u_work_experience
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="work_begin_date != null">
+				work_begin_date=#{work_begin_date},
+			</if>
+			<if test="work_end_date != null">
+				work_end_date=#{work_end_date},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="position != null and position != ''">
+				position=#{position},
+			</if>
+			<if test="work_details != null and work_details != ''">
+				work_details=#{work_details},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullWorkExperienceVo">
+		update u_work_experience
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="work_begin_date != null">
+				work_begin_date=#{work_begin_date},
+			</if>
+			<if test="work_end_date != null">
+				work_end_date=#{work_end_date},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="position != null and position != ''">
+				position=#{position},
+			</if>
+			<if test="work_details != null and work_details != ''">
+				work_details=#{work_details},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleWorkExperience">
+		update u_work_experience
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="work_begin_date != null">
+				work_begin_date=#{work_begin_date},
+			</if>
+			<if test="work_end_date != null">
+				work_end_date=#{work_end_date},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="position != null and position != ''">
+				position=#{position},
+			</if>
+			<if test="work_details != null and work_details != ''">
+				work_details=#{work_details},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleWorkExperienceVo">
+		update u_work_experience
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="work_begin_date != null">
+				work_begin_date=#{work_begin_date},
+			</if>
+			<if test="work_end_date != null">
+				work_end_date=#{work_end_date},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="position != null and position != ''">
+				position=#{position},
+			</if>
+			<if test="work_details != null and work_details != ''">
+				work_details=#{work_details},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据ID得到工作经历信息 -->
+	<select id="getWorkExperienceByUserId" resultType="com.cgwas.workExperience.entity.WorkExperience">
+		SELECT
+		*
+		FROM
+		u_work_experience
+		WHERE
+		user_id = #{user_id}
+		ORDER BY
+		work_end_date DESC
+
+	</select>
+	<!-- 根据ID更改工作经历信息 -->
+	<update id="updateWorkExperienceByUserId">
+		update u_work_experience
+		<set>
+			<if test="work_begin_date != null">
+				work_begin_date=#{work_begin_date},
+			</if>
+			<if test="work_end_date != null">
+				work_end_date=#{work_end_date},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="position != null and position != ''">
+				position=#{position},
+			</if>
+			<if test="work_details != null and work_details != ''">
+				work_details=#{work_details},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where user_id=#{user_id} and id=#{id}
+	</update>
+</mapper>

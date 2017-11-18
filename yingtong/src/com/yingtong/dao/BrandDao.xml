@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.BrandDao">
+	<select id="findAllBrand" resultType="Brand">
+		select * from yt_brand
+		order by num desc
+	</select>
+	<select id="findAllBrandByPage" resultType="Brand">
+		select * from yt_brand
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+			and	name  like "%"#{name}"%"
+			</if>
+		</where>
+		order by num desc limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from yt_brand
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="findRow" resultType="int">
+	select count(*) from yt_brand
+	</select>
+	<select id="findBrandById" resultType="Brand">
+		select * from yt_brand where id=#{id}
+	</select>
+	<insert id="addBrand">
+		insert into yt_brand(name,num)values(#{name},#{num})
+	</insert>
+	<update id="updateBrand">
+		update yt_brand
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num}
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteBrandById">
+		delete from yt_brand where id=#{id}
+	</delete>
+</mapper>

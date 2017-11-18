@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.freezeRecord.dao">
+
+	<sql id="columns">
+		id, freeze_price, freeze_state, consume_state, trade_type,
+		task_type, user_id, task_id, company_id, create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{freeze_price}, #{freeze_state}, #{consume_state},
+		#{trade_type}, #{task_type}, #{user_id}, #{task_id}, #{company_id},
+		#{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="freeze_price != null and freeze_price != ''">
+			and freeze_price = #{freeze_price}
+		</if>
+		<if test="freeze_state != null and freeze_state != ''">
+			and freeze_state = #{freeze_state}
+		</if>
+		<if test="consume_state != null and consume_state != ''">
+			and consume_state = #{consume_state}
+		</if>
+		<if test="trade_type != null and trade_type != ''">
+			and trade_type = #{trade_type}
+		</if>
+		<if test="task_type != null and task_type != ''">
+			and task_type = #{task_type}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="task_id != null and task_id != ''">
+			and task_id = #{task_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveFreezeRecord" parameterType="com.cgwas.freezeRecord.entity.FreezeRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_freeze_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveFreezeRecordVo" parameterType="com.cgwas.freezeRecord.entity.FreezeRecordVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_freeze_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteFreezeRecord">
+		delete from u_freeze_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteFreezeRecordVo">
+		delete from u_freeze_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleFreezeRecord">
+		delete from u_freeze_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleFreezeRecordVo">
+		delete from u_freeze_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadFreezeRecord" resultType="com.cgwas.freezeRecord.entity.FreezeRecordVo">
+		select
+		<include refid="columns" />
+		from u_freeze_record
+		where id=#{id}
+	</select>
+
+	<select id="selectFreezeRecord" resultType="com.cgwas.freezeRecord.entity.FreezeRecordVo">
+		select
+		<include refid="columns" />
+		from u_freeze_record
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateFreezeRecord">
+		update u_freeze_record
+		<set>
+			id=#{id},
+			freeze_price=#{freeze_price},
+			freeze_state=#{freeze_state},
+			consume_state=#{consume_state},
+			trade_type=#{trade_type},
+			task_type=#{task_type},
+			user_id=#{user_id},
+			task_id=#{task_id},
+			company_id=#{company_id},
+			create_time=#{create_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateFreezeRecordVo">
+		update u_freeze_record
+		<set>
+			id=#{id},
+			freeze_price=#{freeze_price},
+			freeze_state=#{freeze_state},
+			consume_state=#{consume_state},
+			trade_type=#{trade_type},
+			task_type=#{task_type},
+			user_id=#{user_id},
+			task_id=#{task_id},
+			company_id=#{company_id},
+			create_time=#{create_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullFreezeRecord">
+		update u_freeze_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="freeze_price != null and freeze_price != ''">
+				freeze_price=#{freeze_price},
+			</if>
+			<if test="freeze_state != null and freeze_state != ''">
+				freeze_state=#{freeze_state},
+			</if>
+			<if test="consume_state != null and consume_state != ''">
+				consume_state=#{consume_state},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullFreezeRecordVo">
+		update u_freeze_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="freeze_price != null and freeze_price != ''">
+				freeze_price=#{freeze_price},
+			</if>
+			<if test="freeze_state != null and freeze_state != ''">
+				freeze_state=#{freeze_state},
+			</if>
+			<if test="consume_state != null and consume_state != ''">
+				consume_state=#{consume_state},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleFreezeRecord">
+		update u_freeze_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="freeze_price != null and freeze_price != ''">
+				freeze_price=#{freeze_price},
+			</if>
+			<if test="freeze_state != null and freeze_state != ''">
+				freeze_state=#{freeze_state},
+			</if>
+			<if test="consume_state != null and consume_state != ''">
+				consume_state=#{consume_state},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleFreezeRecordVo">
+		update u_freeze_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="freeze_price != null and freeze_price != ''">
+				freeze_price=#{freeze_price},
+			</if>
+			<if test="freeze_state != null and freeze_state != ''">
+				freeze_state=#{freeze_state},
+			</if>
+			<if test="consume_state != null and consume_state != ''">
+				consume_state=#{consume_state},
+			</if>
+			<if test="trade_type != null and trade_type != ''">
+				trade_type=#{trade_type},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 得到冻结的金额 -->
+	<select id="getUserFreezePrice" resultType="java.lang.Double">
+		select freeze_price from u_freeze_record where freeze_state ='Y' AND
+		<choose>
+			<when test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</when>
+			<when test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</when>
+		</choose>
+
+	</select>
+	<!-- 根据任务id解冻金额 -->
+	<update id="thawFreezeRecord">
+		update u_freeze_record
+		<set>
+			freeze_state = 'N',consume_state='Y'
+		</set>
+		where user_id=#{user_id} and task_id=#{task_id} and task_type
+		=#{task_type}
+	</update>
+	<!-- 根据任务查询冻结信息 -->
+	<select id="selectFreezeRecordByTask" resultType="com.cgwas.freezeRecord.entity.FreezeRecordVo">
+		SELECT
+		*
+		FROM
+		u_freeze_record AS a
+		LEFT JOIN u_company AS b ON a.company_id = b.id
+		WHERE
+		a.task_id = #{task_id}
+		AND a.user_id = #{user_id}
+		AND a.task_type
+		=
+		#{task_type}
+		AND a.freeze_state = 'Y'
+		LIMIT 0,
+		1
+	</select>
+	<!-- 列表查询冻结信息 -->
+	<select id="selectFreezeRecordList" resultType="com.cgwas.freezeRecord.entity.FreezeRecordVo">
+		SELECT
+		*
+		FROM
+		u_freeze_record
+		WHERE 1 = 1
+		<choose>
+			<when test="fsreezeRecord.id!=null">
+				and id=#{fsreezeRecord.id}
+			</when>
+			<when test="fsreezeRecord.freeze_price!=null">
+				and freeze_price = #{fsreezeRecord.freeze_price}
+			</when>
+			<when test="fsreezeRecord.consume_state!=null">
+				and consume_state =#{fsreezeRecord.consume_state}
+			</when>
+			<when test="fsreezeRecord.trade_type!=null">
+				and trade_type=#{fsreezeRecord.trade_type}
+			</when>
+
+			<when test="fsreezeRecord.task_type!=null">
+				and task_type=#{fsreezeRecord.task_type}
+			</when>
+			<when test="fsreezeRecord.user_id!=null">
+				and user_id=#{fsreezeRecord.user_id}
+			</when>
+			<when test="fsreezeRecord.task_id!=null">
+				and task_id=#{fsreezeRecord.task_id}
+			</when>
+			<when test="fsreezeRecord.company_id!=null">
+				and company_id=#{fsreezeRecord.company_id}
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="flag !='all' and page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+
+	</select>
+	<!-- 列表查询冻结信息（数量） -->
+	<select id="selectFreezeRecordListCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_freeze_record
+		WHERE 1 = 1
+		<choose>
+			<when test="fsreezeRecord.id!=null">
+				and id=#{fsreezeRecord.id}
+			</when>
+			<when test="fsreezeRecord.freeze_price!=null">
+				and freeze_price = #{fsreezeRecord.freeze_price}
+			</when>
+			<when test="fsreezeRecord.consume_state!=null">
+				and consume_state =#{fsreezeRecord.consume_state}
+			</when>
+			<when test="fsreezeRecord.trade_type!=null">
+				and trade_type=#{fsreezeRecord.trade_type}
+			</when>
+
+			<when test="fsreezeRecord.task_type!=null">
+				and task_type=#{fsreezeRecord.task_type}
+			</when>
+			<when test="fsreezeRecord.user_id!=null">
+				and user_id=#{fsreezeRecord.user_id}
+			</when>
+			<when test="fsreezeRecord.task_id!=null">
+				and task_id=#{fsreezeRecord.task_id}
+			</when>
+			<when test="fsreezeRecord.company_id!=null">
+				and company_id=#{fsreezeRecord.company_id}
+			</when>
+		</choose>
+	</select>
+	<!-- 查询冻结数量 -->
+	<select id="checkFreezeRecordCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_freeze_record
+		WHERE
+		user_id = #{user_id}
+		AND task_id = #{task_id}
+		AND freeze_price = #{freeze_price}
+		AND task_type = #{task_type}
+		AND
+		trade_type = #{trade_type}
+		AND freeze_state = 'Y'
+		AND consume_state =
+		'N'
+	</select>
+	<!-- 确认任务解冻接受者 -->
+	<update id="thawReceiverFreezeRecord">
+		update u_freeze_record
+		<set>
+			freeze_state = 'N',consume_state='Y'
+		</set>
+		where user_id!=#{user_id} and task_id=#{task_id} and task_type
+		=#{task_type} and trade_type = 2
+	</update>
+	<!-- 根据任务获取冻结人员表   -->
+	<select id="searchUserIdByTaskId" resultType="java.lang.Long">
+		SELECT
+		user_id
+		FROM
+		u_freeze_record
+		WHERE
+		task_id = #{task_id}
+		AND trade_type = 2
+		AND freeze_state = 'Y'
+	</select>
+
+</mapper>

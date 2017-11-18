@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.logInfo.dao">
+
+	<select id="selectLogInfoPage" resultType="com.cgwas.logInfo.entity.LogInfoVo">
+		SELECT id, user_name, content, user_id, access_time
+		FROM s_log_info 
+		WHERE 1=1
+		<if test="user_id!=null and user_id !=''">
+			AND user_id=#{user_id}
+		</if>
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectLogInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from s_log_info
+		where 1=1
+		<if test="user_id!=null and user_id !=''">
+			AND user_id=#{user_id}
+		</if>
+	</select>
+
+</mapper>

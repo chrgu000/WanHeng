@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html>
+<html>
+	<head lang="en">
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link href="../css/date.min.css" rel="stylesheet" type="text/css" />
+		<link rel="stylesheet" href="../css/style.css">
+		<link rel="stylesheet" href="../css/teacher_style.css">
+		<style type="text/css">
+[v-cloak] {
+	display: none;
+}
+</style>
+	</head>
+	<body>
+
+		<div class="back">
+			<div class="back_btn" onclick="window.location.href='index.html'">
+				<img src="../img/left_icon.png" class="img-responsive" />
+			</div>
+			<div class="back_center">
+				足迹
+			</div>
+			<div class="back_right">
+				<div class="record_time">
+					<img src="../img/time.png" class="img-responsive kbtn"
+						style="width: 17px; float: left; margin: 12px 0;" id="date">
+					<div id="datePlugin"></div>
+				</div>
+			</div>
+		</div>
+
+		<div class="record record_t">
+			<table>
+				<thead>
+					<tr>
+						<td>
+							宝宝
+						</td>
+						<td>
+							午餐情况
+						</td>
+						<td>
+							大便
+						</td>
+						<td>
+							午睡
+						</td>
+						<td>
+							操作
+						</td>
+					</tr>
+				</thead>
+				<tbody class="body" v-cloak>
+					<tr v-for="list in data">
+						<td>
+							<img :src="'../..'+list.baby.header_pic_path"
+								style="width: 50px; height: 50px; border-radius: 12%; overflow: hidden; margin-left: 4%;"
+								class="img-responsive">
+							<span>{{list.baby.username}}</span>
+						</td>
+						<td id="Siesta{{list.id}}" onclick="changeSiesta({{list.id}})">
+							<span id="Siesta{{-list.id}}">{{list.siesta}}</span>
+							<i id="SiestaId{{list.id}}"></i>
+						</td>
+						<td class="choose" id="shit{{list.id}}">
+							<span id="shit{{-list.id}}">{{list.isShit}}</span><i
+								v-if="list.isShit=='是'">否</i><i v-else>是</i>
+						</td>
+						<td class="choose" id="siesta{{list.id}}">
+							<span id="siesta{{-list.id}}">{{list.isSiesta}}</span><i
+								v-if="list.isSiesta=='是'">否</i><i v-else>是</i>
+						</td>
+						<td>
+							<a style="margin-top: 15px; text-decoration: none" href="#"
+								onclick="update({{list.id}})">保存<a>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<script src="../js/jquery.min.js">
+</script>
+		<script type="text/javascript" src="../js/iscroll.js">
+</script>
+		<script type="text/javascript" src="../js/date.js">
+</script>
+		<script src="../../static/common/jquery.form.js">
+</script>
+		<script src="../js/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script type="text/javascript">
+var num = 0;
+function changeSiesta(id) {
+	if(num==0){
+	var siesta = $("#Siesta-" + id).text();
+    if(siesta=='正常'){
+    	num=1;
+    }else if(siesta=='少量'){
+    	num=2;
+    }else{
+    	num=3;
+    }
+	}
+	$("#Siesta-" + id).css("display", "none");
+	if (num % 3 == 0) {
+		$("#SiestaId" + id).text("正常");
+		num++;
+	} else if (num % 3 == 1) {
+		$("#SiestaId" + id).text("少量");
+		num++;
+	} else if (num % 3 == 2) {
+		$("#SiestaId" + id).text("无");
+		num++;
+	}
+}
+function update(id) {
+	num=0;
+	var siesta = $("#SiestaId" + id).text().trim();
+	var isShit = $("#shit" + id).text().trim();
+	var isSiesta = $("#siesta" + id).text().trim();
+	if ($("#shit-" + id).css("display") == "block") {
+		isShit = isShit.substring(0, 1);
+	} else {
+		isShit = isShit.substring(1, 2);
+	}
+	if ($("#siesta-" + id).css("display") == "block") {
+		isSiesta = isSiesta.substring(0, 1);
+	} else {
+		isSiesta = isSiesta.substring(1, 2);
+	}
+	$.ajax( {
+		url : "../../footprint/updFootprintById.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			id : id,
+			siesta:siesta,
+			isShit : isShit,
+			isSiesta : isSiesta
+		},
+		success : function(data) {
+			if (data.hasError) {
+				$.pop.tips(data.errInfo);
+			} else {
+				$.pop.tips(data.errInfo);
+				setTimeout(function() {
+					getFootprint($("#date").val());
+				}, 500);
+			}
+		},
+		error : function() {
+		}
+	});
+}
+$(function() {
+	getFootprint(null);
+});
+var vm;
+function getFootprint(date) {
+	$.ajax( {
+		url : "../../footprint/getFootprintByTeacherId.do",
+		type : "post",
+		data : {
+			date : date
+		},
+		dataType : "json",
+		success : function(data) {
+			if (date == null) {
+				vm = new Vue( {
+					el : ".body",
+					data : {
+						data : data
+					}
+				});
+			} else {
+				vm.data = data;
+			}
+			setTimeout(function() {
+				$(".choose").click(function() {
+					$(this).find("span").toggle()
+				})
+
+			}, 500);
+		},
+		error : function() {
+		}
+	});
+	$('.beginTime').date();
+	$('#date').date();
+}
+</script>
+		<script>
+$(".body .kbtn").click(function() {
+	$(this).css("width", "100%");
+	$(this).css("border", "1")
+})
+</script>
+	</body>
+</html>

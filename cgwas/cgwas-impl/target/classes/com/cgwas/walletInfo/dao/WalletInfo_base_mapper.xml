@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.walletInfo.dao">
+
+	<sql id="columns">
+		id, remaining_sum, currency_type,
+		user_id,pay_password,status
+	</sql>
+	<sql id="vals">
+		#{id}, #{remaining_sum}, #{currency_type},
+		#{user_id},#{pay_password},#{status}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="remaining_sum != null and remaining_sum != ''">
+			and remaining_sum = #{remaining_sum}
+		</if>
+		<if test="currency_type != null and currency_type != ''">
+			and currency_type = #{currency_type}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveWalletInfo" parameterType="com.cgwas.walletInfo.entity.WalletInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_wallet_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveWalletInfoVo" parameterType="com.cgwas.walletInfo.entity.WalletInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_wallet_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteWalletInfo">
+		delete from u_wallet_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteWalletInfoVo">
+		delete from u_wallet_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleWalletInfo">
+		delete from u_wallet_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleWalletInfoVo">
+		delete from u_wallet_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadWalletInfo" resultType="com.cgwas.walletInfo.entity.WalletInfoVo">
+		select
+		<include refid="columns" />
+		from u_wallet_info
+		where id=#{id}
+	</select>
+
+	<select id="selectWalletInfo" resultType="com.cgwas.walletInfo.entity.WalletInfoVo">
+		select
+		<include refid="columns" />
+		from u_wallet_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateWalletInfo">
+		update u_wallet_info
+		<set>
+			id=#{id},
+			remaining_sum=#{remaining_sum},
+			currency_type=#{currency_type},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateWalletInfoVo">
+		update u_wallet_info
+		<set>
+			id=#{id},
+			remaining_sum=#{remaining_sum},
+			currency_type=#{currency_type},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullWalletInfo">
+		update u_wallet_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="remaining_sum != null and remaining_sum != ''">
+				remaining_sum=#{remaining_sum},
+			</if>
+			<if test="currency_type != null and currency_type != ''">
+				currency_type=#{currency_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullWalletInfoVo">
+		update u_wallet_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="remaining_sum != null and remaining_sum != ''">
+				remaining_sum=#{remaining_sum},
+			</if>
+			<if test="currency_type != null and currency_type != ''">
+				currency_type=#{currency_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleWalletInfo">
+		update u_wallet_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="remaining_sum != null and remaining_sum != ''">
+				remaining_sum=#{remaining_sum},
+			</if>
+			<if test="currency_type != null and currency_type != ''">
+				currency_type=#{currency_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleWalletInfoVo">
+		update u_wallet_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="remaining_sum != null and remaining_sum != ''">
+				remaining_sum=#{remaining_sum},
+			</if>
+			<if test="currency_type != null and currency_type != ''">
+				currency_type=#{currency_type},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<!-- 获取用户钱包 -->
+	<select id="getUserWallet" resultType="com.cgwas.walletInfo.entity.WalletInfo">
+		select
+		*
+		from u_wallet_info
+		where 1=1 and user_id=#{user_id} LIMIT 0,1
+	</select>
+	<!-- 存取用户金额 -->
+	<update id="accessUserMoney">
+		update u_wallet_info
+		<set>
+			<if test="remaining_sum != null and remaining_sum != ''">
+				remaining_sum=remaining_sum + #{remaining_sum},
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+	<!-- 更改支付密码 -->
+	<update id="changePayPassword">
+		update u_wallet_info
+		<set>
+			<if test="pay_password != null and pay_password != ''">
+				pay_password= #{pay_password},
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+
+
+</mapper>

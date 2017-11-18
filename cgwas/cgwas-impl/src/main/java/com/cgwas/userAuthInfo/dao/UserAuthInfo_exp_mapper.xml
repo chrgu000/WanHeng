@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userAuthInfo.dao">
+	<sql id="columnsAs">
+		t1.id, t1.idcard, t1.idcard_pic_path, t1.status, t1.user_id
+	</sql>
+
+	<select id="selectUserAuthInfoPage" resultType="com.cgwas.userAuthInfo.entity.UserAuthInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_user_auth_info t1
+		join
+		(SELECT
+		id
+		from
+		u_user_auth_info
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectUserAuthInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_user_auth_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

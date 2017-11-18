@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.MarkDao">
+	<select id="findAllMark" resultType="Mark">
+		select * from jxc_mark
+		order
+		by num desc
+	</select>
+	<select id="findAllMarkByPage" resultMap="MarkMaps">
+		select distinct m.* from jxc_mark m left join jxc_mark_title t on m.id=t.mark_id
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and m.name like "%"#{name}"%"
+			</if>
+			<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+				and t.title_id =#{title_id}
+			</if>
+		</where>
+		order by m.num desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Mark" id="MarkMaps">
+	<id column="id" property="id"/>
+	<collection property="titles" column="id" javaType="arrayList" ofType="Title"  select="findTitlesByMarkId"/>
+	</resultMap>
+	<select id="findTitlesByMarkId" resultType="Title">
+	select t.* from jxc_title t left join jxc_mark_title m on t.id=m.title_id where m.mark_id=#{id}
+	</select>
+	<select id="findRows" resultType="int">
+	select count(distinct m.id) from jxc_mark m left join jxc_mark_title t on m.id=t.mark_id
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and m.name like "%"#{name}"%"
+			</if>
+			<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+				and t.title_id =#{title_id}
+			</if>
+		</where>
+	</select>
+	<select id="findMarkByTitleIds" resultType="Mark">
+	select distinct m.* from jxc_mark m left join jxc_mark_title t on m.id=t.mark_id
+	where  t.title_id in <foreach collection="titleIds" item="id" close=")" open="(" separator="," >#{id}</foreach>
+	</select>
+	<select id="findMarkById" resultMap="MarkMap">
+		select * from jxc_mark
+		where id=#{id}
+	</select>
+	<resultMap type="Mark" id="MarkMap">
+	<id column="id" property="id"/>
+	<collection property="titleIds" column="id" javaType="arrayList" ofType="int" select="findTitleIdsByMarkId"></collection>
+	</resultMap>
+	<select id="findTitleIdsByMarkId"  resultType="int">
+	select title_id from jxc_mark_title where mark_id=#{id}
+	</select>
+	<select id="findMarksByTitleId" resultType="Mark">
+	select m.* from jxc_mark m left join jxc_mark_title t on m.id=t.mark_id where m.title_id=#{title_id}
+	</select>
+	<select id="findFiveMarks" resultType="Mark">
+	select * from jxc_mark order by num desc limit 0,5
+	</select>
+	<insert id="addMark" useGeneratedKeys="true" keyProperty="id">
+		insert into jxc_mark(name,num,isFront)values(#{name},#{num},#{isFront})
+	</insert>
+	<insert id="addMarkTitle">
+	insert into jxc_mark_title(mark_id,title_id) values(#{mark_id},#{title_id})
+	</insert>
+	<delete id="deleteMarkTitle">
+	delete from jxc_mark_title where mark_id=#{id}
+	</delete>
+	<update id="updateMark">
+		update jxc_mark
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+				<if test="isFront!=null&amp;&amp;!isFront.equals('')">
+				isFront=#{isFront},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteMarkById">
+		delete from jxc_mark where id=#{id}
+	</delete>
+</mapper>

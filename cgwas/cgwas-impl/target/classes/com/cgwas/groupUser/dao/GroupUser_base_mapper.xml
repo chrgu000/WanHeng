@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.groupUser.dao">
+
+	<sql id="columns">
+		id, is_parent_project, num, user_id, role_id, project_id,company_id,create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{is_parent_project}, #{num}, #{user_id}, #{role_id}, #{project_id}, #{company_id}, #{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			and is_parent_project = #{is_parent_project}
+		</if>
+		<if test="num != null and num != ''">
+			and num = #{num}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			and role_id = #{role_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="create_time != null ">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveGroupUser" parameterType="com.cgwas.groupUser.entity.GroupUser" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_group_user (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveGroupUserVo" parameterType="com.cgwas.groupUser.entity.GroupUserVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_group_user (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteGroupUser">
+		delete from p_group_user
+		where 1=1 
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			and is_parent_project = #{is_parent_project}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			and role_id = #{role_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+	</delete>
+	
+	<delete id="deleteGroupUserVo">
+		DELETE FROM p_group_user 
+		WHERE 1=1
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			and is_parent_project = #{is_parent_project}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			and role_id = #{role_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+	</delete>
+
+	<delete id="deleteByExampleGroupUser">
+		delete from p_group_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleGroupUserVo">
+		delete from p_group_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadGroupUser" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		select 
+		<include refid="columns"/>
+		from p_group_user
+		where id=#{id} 
+	</select>
+	
+	<!-- 查询用户是否已经是某个项目的制作者角色 -->
+	<select id="selectFabricator" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		select * from p_group_user pgu
+		LEFT JOIN p_g_role pgr ON pgr.role_p_id=5 AND pgr.id=pgu.role_id
+		WHERE pgu.is_parent_project=#{is_parent_project} 
+		AND pgu.project_id=#{project_id} AND pgu.user_id=#{user_id} 
+		AND pgr.role_p_id=5 LIMIT 1
+	</select>
+	
+	<!-- 获取当前项目的成员，除了制作者 -->
+	<select id="selectTeamList" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		SELECT pgu.user_id,uui.`name` userName,uui.head_pic_path headUrl FROM p_group_user pgu
+		LEFT JOIN p_g_role pgr ON pgu.role_id=pgr.id
+		LEFT JOIN u_user_info uui ON uui.user_id=pgu.user_id
+		WHERE pgr.role_p_id!=5 AND pgu.project_id=#{project_id} AND pgu.is_parent_project=#{is_parent_project}
+		ORDER BY pgr.num 
+	</select>
+	
+	<!-- 根据条件查询列表 -->
+	<select id="selectGroupUser" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		SELECT pgu.id, pgu.num, pgu.user_id, pgu.role_id, pgu.project_id,pgu.company_id,uui.head_pic_path headUrl from p_group_user pgu
+		LEFT JOIN u_user_info uui ON uui.user_id=pgu.user_id
+		WHERE 1=1 
+		<if test="id != null and id != ''">
+			AND pgu.id = #{id}
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			AND pgu.is_parent_project= #{is_parent_project}
+		</if>
+		<if test="num != null and num != ''">
+			AND pgu.num>#{num}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			AND pgu.project_id= #{project_id}
+		</if>
+		<if test="role_id != null and role_id != ''">
+			AND pgu.role_id = #{role_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			AND pgu.user_id = #{user_id}
+		</if>
+	</select>
+	
+	<!-- 获取审核成员列表 -->
+	<select id="getAuditorList" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		SELECT pgu.id,pgu.user_id,uui.`name` userName
+		FROM p_group_user pgu 
+		LEFT JOIN p_g_role pgr ON pgr.id=pgu.role_id 
+		LEFT JOIN u_user_info uui ON uui.user_id=pgu.user_id
+		WHERE 1=1
+		<if test="is_parent_project != null and is_parent_project != ''">
+			AND pgu.is_parent_project= #{is_parent_project}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			AND pgu.project_id= #{project_id}
+		</if>
+		AND pgr.role_p_id=#{role_id}
+		ORDER BY pgu.num 
+	</select>
+	
+	<!-- 获取当前管理层级最大的一个成员 -->
+	<select id="getMaxNumByCheck" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		SELECT pgu.* from p_group_user pgu 
+		WHERE pgu.is_parent_project = #{is_parent_project} AND pgu.project_id = #{project_id} AND pgu.role_id= #{role_id}  
+		ORDER BY pgu.num DESC LIMIT 1
+	</select>
+
+	<update id="updateNumPuss">
+		update p_group_user set num=num+1 where id=#{id}
+	</update>
+	
+	<update id="updateNumSubduction">
+		update p_group_user set num=num-1 where id=#{id}
+	</update>
+	
+	<update id="updateGroupUser">
+		update p_group_user
+		<set>
+			id=#{id}, 
+			is_parent_project=#{is_parent_project}, 
+			num=#{num}, 
+			user_id=#{user_id}, 
+			role_id=#{role_id}, 
+			project_id=#{project_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateGroupUserVo">
+		update p_group_user
+		<set>
+			id=#{id}, 
+			is_parent_project=#{is_parent_project}, 
+			num=#{num}, 
+			user_id=#{user_id}, 
+			role_id=#{role_id}, 
+			project_id=#{project_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullGroupUser">
+		update p_group_user
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+		</if>
+		<if test="num != null and num != ''">
+			num=#{num}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id},
+		</if>
+		<if test="create_time != null ">
+			create_time = #{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullGroupUserVo">
+		update p_group_user
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+		</if>
+		<if test="num != null and num != ''">
+			num=#{num}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+		</if>
+		<if test="create_time != null ">
+			and create_time = #{create_time},
+		</if>
+		<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleGroupUser">
+		update p_group_user
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+			</if>
+			<if test="num != null and num != ''">
+			num=#{num}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleGroupUserVo">
+		update p_group_user
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="is_parent_project != null and is_parent_project != ''">
+			is_parent_project=#{is_parent_project}, 
+			</if>
+			<if test="num != null and num != ''">
+			num=#{num}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="role_id != null and role_id != ''">
+			role_id=#{role_id}, 
+			</if>
+			<if test="project_id != null and project_id != ''">
+			project_id=#{project_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

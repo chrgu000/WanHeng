@@ -1,0 +1,219 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../static/assets/css/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link rel="stylesheet"
+			href="../static/kindeditor/themes/default/default.css" />
+		<link rel="stylesheet"
+			href="../static/kindeditor/plugins/code/prettify.css" />
+				<link href="../admin/css/base.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/tab.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/item.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/item_do.css" type="text/css" rel="stylesheet" />
+		<link rel="stylesheet" href="../admin/css/uploadify.css"
+			type="text/css" />
+		<style>
+#edit {
+	margin-top: 30px;
+	margin-left: 200px;
+}
+
+#edit_1 {
+	margin: 0 auto;
+}
+
+.loading {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	background: url(../static/images/loading2.gif) no-repeat 0 center #fff;
+	background-size: auto;
+	background-position: center;
+	opacity: 0.4;
+	display: none;
+	z-index: 9999;
+}
+</style>
+	</head>
+	<body>
+		<div class="loading" style="display: none;"></div>
+		<form action="../picture/addPicture.do" id="regForm" method="post">
+			<div style="padding: 20px 0 0 20px;" class="productliist">
+				<div id="">
+					<div id="i_do_wrap">
+					<input type="hidden" name="product_id"  id="product_id"/>
+                        <input type="text" id="input11" style="display: none;" name="imgUrl"
+							value="" />
+						<div id="pic11" style="display: none;" class="i_do_div rel"
+							id="i_no_sku_stock_wrap"></div>
+						<div class="i_do_div rel" id="i_no_sku_stock_wrap">
+							<p class="i_do_tle r_txt abs font14">
+								图片展示
+							</p>
+							<img id="uploadify" type="file" />
+							<span>分辨率:702*280</span>
+						</div>
+						 
+						<div id="i_do_btns" style="height: 50px;">
+							<div style="width: 800px; margin: 0 auto">
+								<input type="button" class="btns block margin_auto"
+									style="float: left; margin-right: 20px;" value="提 交" id="tj" />
+								<a href="javascript:void(0);" onclick="close1();"
+									class="btns block margin_auto" style="float: left;">关 闭</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.form.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+<script type="text/javascript"
+			src="../admin/js/jquery.uploadify.v2.0.3.js">
+</script>
+		<script type="text/javascript"
+			src="../admin/js/swfobject.js">
+</script>
+		<script type="text/javascript" charset="utf-8"
+			src="../admin/tiancheng/kindeditor-min.js">
+</script>
+<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.form.js">
+</script>
+		<script type="text/javascript">
+$(document).ready(
+		function() {
+			$("#tj").click(function() {
+				$("#regForm").submit();
+			});
+			$("#regForm").ajaxForm(
+					{
+						//定义返回JSON数据，还包括xml和script格式
+						dataType : 'json',
+						beforeSend : function() {
+							//表单提交前做表单验证
+							return check();
+						},
+						success : function(data) {
+							if (data.hasError == false) {
+								//刷新其他页面时，如果页面未打开，不进行任何操作
+								window.location.href = document.referrer;
+							} else {
+								BUI.Message.Alert(data.errInfo, 'warning');
+							}
+						},
+						error : function(XMLHttpRequest, textStatus,
+								errorThrown) {
+							BUI.Message.Alert("系统繁忙，请稍后"
+									+ XMLHttpRequest.status + ","
+									+ XMLHttpRequest.readyState + ","
+									+ textStatus, 'warning');
+						}
+					});
+		});
+function check() {
+	return true;
+}
+</script>
+<script type="text/javascript">
+KE.show( {
+	id : "content1",
+	width : "800px",
+	height : "370px",
+	resizeMode : 1,
+	allowFileManager : true,
+	/*图片上传的SERVLET路径*/
+	imageUploadJson : "uploadImage.html",
+	/*图片管理的SERVLET路径*/
+	fileManagerJson : "uploadImgManager.html",
+	/*允许上传的附件类型*/
+	accessoryTypes : "doc|xls|pdf|txt|ppt|rar|zip",
+	/*附件上传的SERVLET路径*/
+	accessoryUploadJson : "uploadAccessory.html"
+});
+</script>
+		<script type="text/javascript">
+		
+$(document)
+		.ready(
+				function() {
+					var product_id = getQueryString("product_id");
+					$("#product_id").val(product_id);
+					var time = 1;
+					var times = 1;
+					$("#uploadify")
+							.uploadify(
+									{
+										'uploader' : '../admin/swf/uploadify.swf', //flash文件的相对路径
+										'script' : '../UploadFile.do', //后台处理程序的相对路径
+										'fileDataName' : 'file', //设置上传文件名称,默认为Filedata
+										'cancelImg' : 'images/cancel.png', //每一个文件上的关闭按钮图标
+										'queueID' : 'div_progress', //文件队列的ID，该ID与存放文件队列的div的ID一致
+										'queueSizeLimit' : 1, //当允许多文件生成时，设置选择文件的个数，默认值：999
+										'fileDesc' : '*.jpg;*.gif;*.png;*.ppt;*.pdf;*.jpeg', //用来设置选择文件对话框中的提示文本        
+										'fileExt' : '*.jpg;*.gif;*.png;*.ppt;*.pdf;*.jpeg', //设置可以选择的文件的类型
+										'auto' : true, //设置为true当选择文件后就直接上传了，为false需要点击上传按钮才上传
+										'multi' : true, //设置为true时可以上传多个文件
+										'simUploadLimit' : 1, //允许同时上传的个数 默认值：1 
+										'sizeLimit' : 2048000, //上传文件的大小限制
+										'buttonText' : '上传图片', //浏览按钮的文本，默认值：BROWSE
+										'displayData' : 'percentage', //上传队列显示的数据类型，percentage是百分比，speed是上传速度
+										//回调函数
+										'onComplete' : function(evt, queueID,
+												fileObj, response, data) {
+											
+											$("#pic11")
+													.html(
+															"<img src=\"../"
+																	+ response
+																			.trim()
+																	+ "\" width=\"110\" height=\"110\"/>");
+											$("#input11").val(response.trim());
+											$("#pic11").removeAttr("style");
+											return false;
+										},
+										'onError' : function(event, queueID,
+												fileObj, errorObj) {
+											if (errorObj.type === "File Size") {
+												alert("文件最大为2M");
+												$("#uploadify")
+														.uploadifyClearQueue();
+											}
+										},
+										'onQueueFull' : function(event,
+												queueSizeLimit) {
+											alert("最多上传" + queueSizeLimit
+													+ "张图片");
+											return false;
+										}
+									});
+				});
+</script>
+	</body>
+</html>

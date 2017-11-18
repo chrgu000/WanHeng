@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.StyleDao">
+	<select id="getStyleByPage" resultMap="StyleMaps">
+		select * from kg_style
+		<where>
+			<if test="garden_id!=null">
+				and garden_id=#{garden_id}
+		</if>
+			<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+			<if test="teacher_id!=null">
+				and teacher_id=#{teacher_id}
+    </if>
+		</where>
+		order by garden_id ,teacher_id,id desc
+		limit
+		#{begin},#{pageSize}
+	</select>
+	<resultMap type="Style" id="StyleMaps">
+		<association property="garden" column="garden_id"
+			javaType="Garden" select="getGardenById" />
+		<association property="teacher" column="teacher_id"
+			javaType="Teacher" select="getTeacherById" />
+	</resultMap>
+	<select id="getGardenById" resultType="Garden">
+		select * from kg_garden where id=#{garden_id}
+	</select>
+	<select id="getTeacherById" resultType="Teacher">
+		select * from kg_teacher where id = #{teacher_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_style
+		<where>
+		<if test="garden_id!=null">
+				and garden_id=#{garden_id}
+		</if>
+			<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+			<if test="teacher_id!=null">
+				and teacher_id=#{teacher_id}
+    </if>
+		</where>
+	</select>
+	<select id="getStyleByTeacherId" resultType="Style">
+		select * from
+		kg_style where teacher_id=#{teacher_id} order by id desc
+	</select>
+	<select id="getStyleById" resultMap="StyleMap">
+		select * from kg_style
+		where
+		id=#{id}
+	 </select>
+	<resultMap type="Style" id="StyleMap">
+		<id column="id" property="id" />
+		<collection property="stylePics" column="id" javaType="arrayList"
+			ofType="StylePic" select="getStylePicByStyleId" />
+	</resultMap>
+	<select id="getStylePicByStyleId" resultType="StylePic">
+		select * from kg_style_pic where style_id=#{id}
+	 </select>
+	<update id="updateStyle">
+		update kg_style
+		<set>
+			<if test="title!=null and title!=''">
+				title=#{title},
+	</if>
+			<if test="content!=null and content!=''">
+				content=#{content}
+	</if>
+		</set>
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_style where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<insert id="addStyle" keyProperty="id" useGeneratedKeys="true">
+		insert
+		into
+		kg_style(title,content,create_time,garden_id,teacher_id)
+		values(#{title},#{content},#{create_time},#{garden_id},#{teacher_id})
+	</insert>
+	<insert id="addStylePic">
+		insert into kg_style_pic(style_id,imgUrl,create_time,min_path)
+		values(#{style_id},#{imgUrl},#{create_time},#{min_path})
+	</insert>
+</mapper>
+
+
+
+
+

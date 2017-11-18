@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.DecorateSituationDao">
+	<resultMap id="decorateSituationMap" type="DecorateSituation">
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+	</resultMap>
+	<insert id="save">
+		insert into
+		to_decorate_situation(content,num,create_time,modified_time,delflag) 	values(#{content},#{num},#{createTime},#{modifiedTime},#{delflag})
+	</insert>
+	<update id="update">
+		update to_decorate_situation
+		<set>
+		<if test="content!=null and content!=''">
+			content=#{content},
+		</if>
+		<if test="modifiedTime!=null and modifiedTime!=''">
+			modified_time=#{modifiedTime},
+		</if>
+		<if test="num!=null and num!=''">
+			num=#{num},
+		</if>
+		<if test="delflag!=null and delflag!=''">
+			delflag=#{delflag},
+		</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		update to_decorate_situation  set delflag=1 where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+
+	<select id="getById" resultMap="decorateSituationMap">
+		select * from to_decorate_situation
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="decorateSituationMap">
+		select * from to_decorate_situation where delflag=2
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_decorate_situation where delflag=2
+	</select>
+	<select id="getRoleByName" resultType="DecorateSituation">
+	 select * from to_decorate_situation where name=#{name}
+	</select>
+	<select id="getAllDecorateSituation" resultType="DecorateSituation">
+	 select * from to_decorate_situation where delflag=2 order by num ASC
+	</select>
+</mapper>

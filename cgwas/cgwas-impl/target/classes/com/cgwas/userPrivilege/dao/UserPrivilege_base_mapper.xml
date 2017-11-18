@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.userPrivilege.dao">
+
+	<sql id="columns">
+		id, privilege_id, user_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{privilege_id}, #{user_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			and privilege_id = #{privilege_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveUserPrivilege" parameterType="com.cgwas.userPrivilege.entity.UserPrivilege" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_user_privilege (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveUserPrivilegeVo" parameterType="com.cgwas.userPrivilege.entity.UserPrivilegeVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_user_privilege (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteUserPrivilege">
+		delete from u_user_privilege
+		where user_id = #{user_id}
+		<if test="privilege_id != null and privilege_id != ''">
+			and privilege_id = #{privilege_id}
+		</if>
+	</delete>
+	
+	<delete id="deleteUserPrivilegeVo">
+		delete from u_user_privilege
+		where user_id=#{user_id} 
+	</delete>
+
+	<delete id="deleteByExampleUserPrivilege">
+		delete from u_user_privilege
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleUserPrivilegeVo">
+		delete from u_user_privilege
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadUserPrivilege" resultType="com.cgwas.userPrivilege.entity.UserPrivilegeVo">
+		select 
+		<include refid="columns"/>
+		from u_user_privilege
+		where id=#{id} 
+	</select>
+	
+	<select id="selectUserPrivilege" resultType="com.cgwas.userPrivilege.entity.UserPrivilegeVo">
+		select 
+		<include refid="columns"/>
+		from u_user_privilege
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserPrivilege">
+		update u_user_privilege
+		<set>
+			id=#{id}, 
+			privilege_id=#{privilege_id}, 
+			user_id=#{user_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateUserPrivilegeVo">
+		update u_user_privilege
+		<set>
+			id=#{id}, 
+			privilege_id=#{privilege_id}, 
+			user_id=#{user_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullUserPrivilege">
+		update u_user_privilege
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullUserPrivilegeVo">
+		update u_user_privilege
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleUserPrivilege">
+		update u_user_privilege
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleUserPrivilegeVo">
+		update u_user_privilege
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_id != null and privilege_id != ''">
+			privilege_id=#{privilege_id}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

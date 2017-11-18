@@ -1,0 +1,2463 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.modeltask.dao">
+<select id="getPublishTimeOfProject" resultType="java.util.Date">
+select a.publishTime from
+		(select publishTime from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		union all
+		select publishTime from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		) a WHERE a.publishTime IS NOT NULL  order by a.publishTime asc limit 1
+ 
+</select>
+<select id="getUseMoneyOfProject" resultType="java.lang.Double">
+select sum(a.price) from
+		(select price from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		union all
+		select price from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		) a  
+</select>
+<select id="getFinishDateOfProject" resultType="java.util.Date">
+select a.modified_time from
+		(select modified_time from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		union all
+		select modified_time from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}  
+		) a order by a.modified_time desc limit 1
+</select>
+<select id="getCheckDate" resultType="java.util.Date">
+   select check_time from a_audit_record where task_check_id=#{task_check_id} order by id desc limit #{num},1
+</select>
+<select id="getCurrentCheckNum" resultType="java.lang.Long">
+ select audit_order from a_task_check where
+		task_type=#{task_type}
+		and is_parent_project=#{is_parent_project} and project_id=#{project_id}
+		and task_id=#{task_id}
+</select>
+	<select id="getCheckerNumOfTask" resultType="java.lang.Long">
+		select count(id) from a_audit_record
+		where task_check_id=(select tid from a_task_check where
+		task_type=#{task_type}
+		and is_parent_project=#{is_parent_project} and project_id=#{project_id}
+		and task_id=#{task_id}
+		and num=#{num}
+		)
+	</select>
+	<select id="getFinishTaskNums" resultType="java.lang.Long">
+		select count(id) from
+		(select id,class_id,is_parent_poject,project_id
+		from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		union all
+		select id,class_id,is_parent_poject,project_id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		) a
+	</select>
+	<select id="getRunTaskNums" resultType="java.lang.Long">
+		select count(id) from
+		(select id,class_id,is_parent_poject,project_id
+		from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and stage='进行中'
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		<if test="date==null">
+			and (stage='进行中' or stage='未开始' or stage='审核中')
+		</if>
+		union all
+		select id,class_id,is_parent_poject,project_id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and stage='进行中'
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		<if test="date==null">
+			and (stage='进行中' or stage='未开始' or stage='审核中')
+		</if>
+		) a
+	</select>
+	<select id="getNewTaskNums" resultType="java.lang.Long">
+		select count(id) from
+		(select id,class_id,is_parent_poject,project_id
+		from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and stage='发布中'
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+
+		union all
+		select id,class_id,is_parent_poject,project_id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and stage='发布中'
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		) a
+	</select>
+	<select id="getNewTaskNums1" resultType="java.lang.Long">
+		select count(id) from
+		(select id,class_id,is_parent_poject,project_id
+		from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='发布中' or stage is null)
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+
+		union all
+		select id,class_id,is_parent_poject,project_id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='发布中' or stage is null)
+		<if test="date!=null">
+			and modified_time like "%"#{date}"%"
+		</if>
+		) a
+	</select>
+	<select id="getFinishTasksByMap" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select * from
+		(select id,class_id,is_parent_poject,project_id from
+		p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		and modified_time like "%"#{date}"%"
+		 
+		union all
+		select id,class_id,is_parent_poject,project_id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		and modified_time like "%"#{date}"%"
+		) a
+	</select>
+	<select id="getTradingByMap" resultType="java.lang.Double">
+		select sum(price) from
+		(select price from p_model_task
+		where project_id
+		in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		and modified_time like "%"#{date}"%"
+		union all
+		select price from
+		p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or
+		stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		and modified_time like "%"#{date}"%"
+		) a
+	</select>
+	<select id="getPublishNumsByMap" resultType="java.lang.Long">
+		select count(id) from
+		(select id from p_model_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (task_status='发布中' or
+		task_status='指派中') and modified_time like "%"#{date}"%"
+		union all
+		select id from p_animation_light_task
+		where project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (task_status='发布中' or
+		task_status='指派中') and modified_time like "%"#{date}"%"
+		) a
+	</select>
+	<select id="getOutTaskEndTimeNums" resultType="java.lang.Long">
+		select count(id)
+		from (select id from p_model_task where end_time&lt;now() and end_time&gt;#{beginTime}
+		and
+		user_id=#{id} union all
+		select id from p_animation_light_task where
+		user_id=#{id} and
+		end_time&lt;now() and end_time&gt;#{beginTime}) a
+	</select>
+	<select id="getFinishedNumsOfUser" resultType="java.lang.Long">
+		select count(id)
+		from (select id from p_model_task where modified_time
+		>=#{beginTime}
+		and modified_time &lt;=now() and user_id=#{id} and
+		(stage='待评价' or
+		stage='已完成' or company_stage='待评价' or
+		company_stage='已完成') union all
+		select id from p_animation_light_task where user_id=#{id} and
+		modified_time
+		>=#{beginTime} and modified_time &lt;=now() and
+		(stage='待评价' or
+		stage='已完成' or company_stage='待评价' or
+		company_stage='已完成') ) a
+	</select>
+	<select id="getTaskNumsOfUser" resultType="java.lang.Long">
+		select id from
+		(select id from p_model_task where user_id=#{id} union
+		all
+		select id
+		from p_animation_light_task where user_id=#{id}) a
+
+	</select>
+	<select id="getCommitTime" resultType="java.util.Date">
+		select submit_time from
+		a_task_check where task_type=#{task_type} and
+		is_parent_project=#{is_parent_project} and task_id=#{task_id} and
+		project_id=#{project_id} order by submit_time desc limit 1
+	</select>
+	<insert id="addTaskRecord">
+		insert into
+		p_task_record(totalNums,runnNums,checkNuns
+		,finishedNums,abandonNums,create_time,is_parent_project,project_id)
+		values(#{totalNums},#{runnNums},#{checkNuns}
+		,#{finishedNums},#{abandonNums},now(),#{is_parent_project},#{project_id})
+	</insert>
+	<select id="getReceivingModelTaskById" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select * from
+		p_model_task where id=#{task_id} and task_status='领取中'
+	</select>
+	<select id="getTaskRecord" resultType="com.cgwas.taskrecord.entity.TaskRecord">
+		select sum(totalNums) as totalNums,sum(runnNums) as
+		runnNums,sum(checkNuns) as checkNuns,
+		sum(finishedNums) as
+		finishedNums,sum(abandonNums) as abandonNums
+		from p_task_record where
+		project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_project=#{is_parent} and create_time=#{date}
+	</select>
+	<select id="getRepairTime" resultType="java.util.Date">
+		select repairTime from
+		p_repair where task_id=#{task_id} and
+		is_model_task=#{is_model_task}
+		and num=#{num}
+	</select>
+	<select id="getTaskTotalOfProject" resultType="java.lang.Long">
+		select count(*) from (select project_id,is_parent_poject,stage from
+		p_model_task
+		union all
+		select project_id,is_parent_poject,stage from
+		p_animation_light_task
+		) a where a.project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and a.is_parent_poject=#{is_parent}
+	</select>
+	<select id="getRunningNumsOfProject" resultType="java.lang.Long">
+		select count(*) from (select project_id,is_parent_poject,stage from
+		p_model_task
+		union all
+		select project_id,is_parent_poject,stage from
+		p_animation_light_task
+		) a where a.project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and a.is_parent_poject=#{is_parent} and a.stage='进行中'
+	</select>
+	<select id="getCheckNumsOfProject" resultType="java.lang.Long">
+		select count(*) from (select project_id,is_parent_poject,stage from
+		p_model_task
+		union all
+		select project_id,is_parent_poject,stage from
+		p_animation_light_task
+		) a where a.project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and a.is_parent_poject=#{is_parent} and a.stage='审核中'
+	</select>
+	<select id="getFinishedNumsOfProject" resultType="java.lang.Long">
+		select count(*) from (select
+		project_id,is_parent_poject,stage,company_stage from p_model_task
+		union all
+		select project_id,is_parent_poject,stage,company_stage from
+		p_animation_light_task
+		) a where a.project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and a.is_parent_poject=#{is_parent} and
+		(a.stage='已完成' or a.stage='待评价'
+		or
+		a.company_stage='待评价' or a.company_stage='已完成')
+
+	</select>
+	<select id="getabandonNumsOfProject" resultType="java.lang.Long">
+		select count(*) from (select
+		project_id,is_parent_poject,stage,company_stage from p_model_task
+		union all
+		select project_id,is_parent_poject,stage,company_stage from
+		p_animation_light_task
+		) a where a.project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and a.is_parent_poject=#{is_parent} and a.stage='已放弃'
+
+	</select>
+	<select id="getCurrentChecker" resultType="java.lang.String">
+		SELECT u.name FROM
+		u_user_info u LEFT JOIN p_group_user p ON
+		u.user_id=p.user_id
+		LEFT JOIN
+		p_g_role g ON p.role_id=g.id left join a_task_check a on
+		p.num=a.audit_order WHERE
+		p.project_id=#{project_id} and
+		p.is_parent_project=#{is_parent_project}
+		and g.role_p_id=2 and
+		a.task_id=#{task_id}
+		and a.task_type=#{task_type}
+		and
+		a.project_id=#{project_id}
+		and a.is_parent_project=#{is_parent_project}
+	</select>
+	<select id="getCheckersOfTask" resultType="java.lang.String">
+		SELECT u.name FROM
+		u_user_info u LEFT JOIN p_group_user p ON
+		u.user_id=p.user_id LEFT JOIN
+		p_g_role g ON p.role_id=g.id
+		WHERE g.role_p_id=2 AND
+		p.project_id=#{project_id} AND
+		p.is_parent_project=#{is_parent_project} ORDER BY p.num ASC
+	</select>
+	<select id="getTaskApply" resultType="java.lang.Long">
+		select id from p_task_apply
+		where task_id=#{task_id} and user_id=#{user_id}
+		and
+		task_type=#{task_type}
+	</select>
+
+	<select id="getIsMakerOfGroup" resultType="java.lang.Long">
+		select count(distinct
+		g.role_p_id) from p_group_user p left join p_g_role g
+		on p.role_id=g.id
+		where p.user_id=#{user_id} and g.role_p_id=5 and
+		p.project_id=#{project_id} and
+		p.is_parent_project=#{is_parent_project}
+	</select>
+	<select id="hasGroupMemeber" resultType="java.lang.Long">
+		select p.user_id from
+		p_group_user p where p.project_id=#{project_id} and
+		p.is_parent_project=#{is_parent_project} order by p.id asc limit 1
+	</select>
+	<select id="getIsGroupMemeber" resultType="java.lang.Long">
+		select count(distinct
+		g.role_p_id) from p_group_user p left join p_g_role g
+		on p.role_id=g.id
+		where p.user_id=#{user_id} and g.role_p_id!=5 and
+		p.project_id=#{project_id} and
+		p.is_parent_project=#{is_parent_project}
+	</select>
+	<select id="isChecker" resultType="java.lang.Long">
+		select distinct g.role_p_id
+		from p_group_user p left join p_g_role g on
+		p.role_id=g.id where
+		p.user_id=#{user_id} and g.role_p_id=2
+	</select>
+	<update id="reBackTask">
+		update p_model_task set
+		point_status=null,company_stage=null,company_status=null,stage=null,task_status=null,user_id=null,rate=null,cause=null,abandon=null,delay_cause=null
+		where id=#{task_id}
+	</update>
+	<select id="getTasksByIds" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select *from p_model_task where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getRepairImageById" resultType="com.cgwas.repairimage.entity.RepairImage">
+		select * from
+		p_repair_image where repair_id=#{id}
+	</select>
+	<resultMap type="com.cgwas.repair.entity.RepairVo" id="repairMap">
+		<id column="id" property="id" />
+		<collection property="repairImages" column="id" javaType="arrayList"
+			ofType="com.cgwas.repairimage.entity.RepairImage" select="getRepairImageById" />
+	</resultMap>
+	<select id="getRepairInfo" resultMap="repairMap">
+		select * from p_repair
+		where task_id=#{task_id} and
+		is_model_task=#{is_model_task} order by id
+		desc limit 1
+	</select>
+	<select id="getProjectPaid" resultType="java.lang.Double">
+		select sum(price) from (SELECT
+		price,project_id,is_parent_poject,stage
+		FROM
+		p_model_task
+		UNION all SELECT
+		price,project_id,is_parent_poject,stage
+		FROM
+		p_animation_light_task) a
+		<where>
+			project_id in
+			<foreach collection="ids" close=")" open="(" separator=","
+				item="id">#{id}</foreach>
+			and is_parent_poject=#{is_parent}
+			and stage is not null
+		</where>
+	</select>
+	<select id="getIsCheckerOrNot" resultType="java.lang.Long">
+		SELECT g.id FROM
+		p_group_user g LEFT JOIN p_g_role u ON g.role_id=u.id left
+		join
+		a_task_check a on g.num=a.audit_order WHERE
+		g.project_id=#{project_id}
+		and
+		g.is_parent_project=#{is_parent_project}
+		and u.role_p_id=2 and
+		g.user_id=#{user_id}
+		and a.task_id=#{task_id}
+		and
+		a.task_type=#{task_type}
+		and a.is_parent_project=#{is_parent_project}
+
+	</select>
+	<select id="getSuccessTaskNumsOfUser" resultType="java.lang.Long">
+		select count(*)
+		from (select stage,company_stage,user_id from p_model_task union all
+		select stage,company_stage,user_id from p_animation_light_task) a
+		where (stage='待评价' or stage='已完成' or company_stage='待评价' or
+		company_stage='已完成') and user_id=#{user_id}
+	</select>
+	<select id="getPublishTaskNums" resultType="java.lang.Long">
+		select count(*) from
+		(select stage,company_id from p_model_task union all
+		select
+		stage,company_id from p_animation_light_task) a
+		where stage is not null
+		and company_id=#{company_id}
+	</select>
+	<select id="getSuccessTaskNums" resultType="java.lang.Long">
+		select count(*) from
+		(select stage,company_stage,company_id from p_model_task union all
+		select stage,company_stage,company_id from p_animation_light_task) a
+		where (stage='待评价' or stage='已完成' or company_stage='待评价' or
+		company_stage='已完成')and company_id=#{company_id}
+	</select>
+	<select id="getTaskIds" resultType="java.lang.Long">
+		select id from p_task_apply
+		where task_type=#{task_type} and
+		task_id=#{for_id} and apply_status is
+		null
+	</select>
+	<select id="getTaskId" resultType="java.lang.Long">
+		select id from p_model_task
+		where project_id=#{project_id} and
+		is_parent_poject=#{is_parent_poject} and
+		pattern_number=#{pattern_number}
+	</select>
+	<select id="getCompanysByUserId" resultType="java.lang.Long">
+		select company_id
+		from u_employee where user_id=#{user_id} and is_delete='N'
+	</select>
+	<select id="getIsChecker" resultType="java.lang.Long">
+		SELECT distinct p.role_p_id
+		FROM
+		p_group_user g LEFT JOIN p_g_role p ON
+		g.role_id=p.id
+		WHERE
+		g.user_id=#{user_id} AND p.role_p_id=2 and g.project_id=#{project_id}
+		and g.is_parent_project=#{is_parent_project}
+	</select>
+	<select id="getIsMaker" resultType="java.lang.Long">
+		SELECT distinct p.role_p_id
+		FROM
+		p_group_user g LEFT JOIN p_g_role p ON
+		g.role_id=p.id
+		WHERE
+		g.user_id=#{user_id} AND p.role_p_id=5
+	</select>
+	<select id="getJoinProjectsByUserId" resultType="java.util.HashMap">
+		SELECT
+		g.is_parent_project,g.project_id FROM p_group_user g LEFT JOIN
+		p_g_role p ON g.role_id=p.id
+		WHERE g.user_id=#{user_id} AND
+		p.role_p_id!=5
+	</select>
+	<select id="getRoleIdByUserId" resultType="java.lang.Long">
+		select role_id from
+		u_user_role where user_id=#{user_id}
+	</select>
+	<select id="getUserInfos" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select
+		id,name,head_pic_path from u_user_info where user_id in (select
+		user_id from p_task_apply where task_type=#{task_type} and
+		task_id=#{task_id} and apply_status is null)
+	</select>
+	<select id="getActualEndTime" resultType="java.util.Date">
+		select MAX(modified_time) from (
+		select
+		project_id,class_id,is_parent_poject,modified_time,stage,company_stage
+		from
+		p_model_task union
+		select
+		project_id,class_id,is_parent_poject,modified_time,stage,company_stage
+		from
+		p_animation_light_task
+		<if test="firstrownum!=null and limit!=null"> limit #{firstrownum}, #{limit}</if>
+		) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+		and (stage='待评价' or stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+	</select>
+	<select id="getActualBeginTime" resultType="java.util.Date">
+		select MIN(actual_begin_time) from (select
+		id,name,begin_time,end_time,actual_begin_time,project_id,class_id
+		,is_parent_poject from p_model_task union
+		select id,pattern_number AS
+		name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_animation_light_task
+		<if test="firstrownum!=null and limit!=null"> limit #{firstrownum}, #{limit}</if>
+		) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getEndTime" resultType="java.util.Date">
+		select MAX(end_time) from (select
+		id,name,begin_time,end_time,actual_begin_time,project_id,class_id
+		,is_parent_poject from p_model_task union
+		select id,pattern_number AS
+		name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_animation_light_task
+		<if test="firstrownum!=null and limit!=null"> limit #{firstrownum}, #{limit}</if>
+		) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getBeginTime" resultType="java.util.Date">
+		select MIN(begin_time) from (select
+		id,name,begin_time,end_time,actual_begin_time,project_id,class_id
+		,is_parent_poject from p_model_task union
+		select id,pattern_number AS
+		name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_animation_light_task
+		<if test="firstrownum!=null and limit!=null"> limit #{firstrownum}, #{limit}</if>
+		) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getIsDrawOfMe" resultType="java.lang.Long">
+		select id from
+		p_task_apply where user_id=#{user_id} and task_id=#{task_id}
+		and
+		task_type=#{task_type} and apply_status is null
+	</select>
+	<select id="getTaskClassNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_model_task
+		UNION SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_animation_light_task) a
+		<where>
+			project_id in
+			<foreach collection="ids" close=")" open="(" separator=","
+				item="id">#{id}</foreach>
+			and is_parent_poject=#{is_parent}
+			and class_id=#{class_id}
+		</where>
+	</select>
+	<select id="getGetTaskNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_model_task
+		UNION SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_animation_light_task) a
+		<where>
+			project_id in
+			<foreach collection="ids" close=")" open="(" separator=","
+				item="id">#{id}</foreach>
+			and is_parent_poject=#{is_parent}
+			and point_status is null
+			and stage is
+			not null
+		</where>
+	</select>
+	<select id="getPointTaskNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_model_task
+		UNION SELECT
+		id,stage,class_id,project_id,is_parent_poject,point_status
+		FROM
+		p_animation_light_task) a
+		<where>
+			project_id in
+			<foreach collection="ids" close=")" open="(" separator=","
+				item="id">#{id}</foreach>
+			and is_parent_poject=#{is_parent}
+			and point_status=1
+		</where>
+	</select>
+	<select id="getTaskOfSomeInfoNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,task_status,stage,publish_type_id,class_id,project_id,is_parent_poject
+		FROM
+		p_model_task
+		UNION SELECT
+		id,task_status,stage,publish_type_id,class_id,project_id,is_parent_poject
+		FROM
+		p_animation_light_task) a
+		<where>
+			project_id in
+			<foreach collection="ids" close=")" open="(" separator=","
+				item="id">#{id}</foreach>
+			and is_parent_poject=#{is_parent}
+			<if test="stage!=null and stage!='放弃中' and stage!='未发布'">
+				and stage=#{stage}
+			</if>
+			<if test="stage=='放弃中'">
+				and task_status=#{stage}
+			</if>
+			<if test="publish_type_id!=null">
+				and publish_type_id=#{publish_type_id}
+			</if>
+			<if test="stage=='未发布'">
+				and (stage is null or stage='已放弃')
+			</if>
+			<if test="stage=='已完成'">
+				and (stage='已完成' or stage='待评价')
+			</if>
+		</where>
+	</select>
+	<select id="getModelTaskActualEndTime1" resultType="java.util.Date">
+		select
+		modified_time from p_model_task where (stage='待评价' or stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+		and
+		id=#{id}
+	</select>
+	<select id="getModelTaskActualEndTime" resultType="java.util.Date">
+		select MAX(modified_time) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getTaskFinishedTotal" resultType="java.lang.Long">
+		select count(*) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} and (stage='待评价' or stage='已完成' or
+		company_stage='待评价' or company_stage='已完成')
+	</select>
+	<select id="getTaskTotal" resultType="java.lang.Long">
+		select count(*) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getModelTaskActualBeginTime" resultType="java.util.Date">
+		select MIN(actual_begin_time) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getModelTaskEndTime" resultType="java.util.Date">
+		select MAX(end_time) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getModelTaskBeginTime" resultType="java.util.Date">
+		select MIN(begin_time) from p_model_task where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getNoticeInfo" resultType="com.cgwas.notice.entity.Notice">
+		select * from p_notice
+		where stage=#{stage} and task_status=#{task_status}
+		and role=#{role}
+	</select>
+
+	<update id="updatePublishTypeOfTask">
+		update p_model_task set
+		publish_type_id=#{publish_type_id},user_id=#{user_id} where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<select id="getabandonNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='已放弃'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					and a1.stage='已放弃' and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='已放弃' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getWaitEvalutionNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id,company_stage
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id,company_stage
+		FROM
+		p_animation_light_task) a1
+		<where>
+
+			<if test="company_id!=null">
+				a1.company_stage='待评价'
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					and a1.stage='待评价' and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+					    a1.company_stage='待评价' and(
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.company_stage='待评价' and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.company_stage='待评价'	and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='待评价' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getFinishedNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id,company_stage
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id,company_stage
+		FROM
+		p_animation_light_task) a1
+		<where>
+			<if test="company_id!=null">
+				a1.company_stage='已完成'
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务222222 -->
+					and a1.stage='已完成' and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (a1.company_stage='已完成' and 
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.company_stage='已完成' and  a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						 and  a1.company_stage='已完成' and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+					 and  a1.company_stage='已完成'	and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='已完成' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getWaitPayNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='待付款'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					and a1.stage='待付款' and a1.user_id=#{user_id}
+				</if>
+
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='待付款' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getCheckNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='审核中'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+
+
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					and a1.stage='审核中' and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='审核中' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getRunningNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='进行中'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务222222 -->
+					and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有除指派任务 3333333 -->
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='进行中' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getUnStartNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='未开始'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+				<if test="parentIds.size()==0 and subIds.size()==0">
+					<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+					and a1.user_id=#{user_id}
+				</if>
+				<if test="parentIds.size()>0 or subIds.size()>0">
+					<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='未开始' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getPublushNums" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_model_task
+		UNION SELECT
+		id,user_id,task_status,stage,publish_type_id,company_id,is_parent_poject,project_id
+		FROM
+		p_animation_light_task) a1
+		<where>
+			a1.stage='发布中'
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="company_id==null">
+
+				<if
+					test="companyIds.size()==0 and parentIds.size()==0 and subIds.size()==0">
+					<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+					and (a1.publish_type_id=1 OR (a1.publish_type_id=3 AND
+					a1.user_id=#{user_id}))
+				</if>
+				<if
+					test="companyIds.size()>0 and parentIds.size()==0 and subIds.size()==0">
+					<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务给自己的任务222222 -->
+					and a1.stage='发布中' AND (a1.publish_type_id=1 OR
+					(a1.publish_type_id=2 and a1.company_id in
+					<foreach collection="companyIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					)or a1.user_id=#{user_id})
+				</if>
+				<if
+					test="companyIds.size()==0 and (parentIds.size()>0 or subIds.size()>0)">
+					and a1.task_status!='指派中'
+					<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有非指派任务以及所有需求大厅任务3333333 -->
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						and (
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						and a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						and a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+					</if>
+					or (a1.stage='发布中' and a1.publish_type_id=1)
+				</if>
+				<if
+					test="companyIds.size()>0 and (parentIds.size()>0 or subIds.size()>0)">
+					<!-- 当前操作者既是公司员工又是团队成员:可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务以及团队所参与项目的内部任务 -->
+					and a1.stage='发布中' and a1.publish_type_id=2 and a1.company_id in
+					<foreach collection="companyIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.stage='发布中' and a1.task_status!='指派中' and
+					<if test="parentIds.size()>0 and subIds.size()>0">
+						(
+						a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						or (a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+						)
+					</if>
+					<if test="parentIds.size()>0 and subIds.size()==0">
+						(a1.is_parent_poject=1 and a1.project_id in
+						<foreach collection="parentIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						)
+					</if>
+					<if test="parentIds.size()==0 and subIds.size()>0">
+						( a1.is_parent_poject=0 and a1.project_id in
+						<foreach collection="subIds" open="(" close=")" separator=","
+							item="id">#{id}</foreach>
+						)
+					</if>
+					)
+					or (a1.publish_type_id=1 and a1.stage='发布中')or
+					(a1.task_status='指派中' and a1.user_id=#{user_id})
+				</if>
+			</if>
+		</where>
+	</select>
+	<update id="updateModelTaskEndTime">
+		update p_model_task set
+		end_time=#{end_time},delay_cause=#{delay_cause} where
+		id=#{id}
+	</update>
+	<update id="repeatBackModelTaskById">
+		update p_model_task set
+		user_id=null,
+		task_status=null,
+		stage=null,
+		modified_time=now()
+		where
+		id=#{task_id} and
+		task_status='未开始'
+		and stage='未开始'
+	</update>
+	<select id="getBeginTimeBeforeNowModelTask" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select id,name from p_model_task where begin_time&lt;now() and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getUserIdOfModelTaskApply" resultType="java.lang.Long">
+		select user_id
+		from p_task_apply where apply_status is null and
+		task_id=#{task_id} and
+		task_type=#{task_type} order by create_time asc
+		limit 1
+	</select>
+	<select id="getUserIdOfAnimationTaskApply" resultType="java.lang.Long">
+		select
+		user_id from p_task_apply where apply_status is null and
+		task_id=#{task_id} and task_type !='建模' order by create_time asc limit
+		1
+	</select>
+	<delete id="deleteModelTaskApplys">
+		delete from p_task_apply where task_type=#{task_type} and task_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteAnimationTaskApply">
+		delete from p_task_apply where (task_type=#{task_type1} or
+		task_type=#{task_type2}) and task_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<update id="reUpdateModelTask">
+		update p_model_task set
+		user_id=#{user_id},
+		task_status=#{task_status},
+		stage=#{stage},
+		modified_time=now()
+		where
+		id=#{id}
+	</update>
+	<update id="updateModelTaskTimeLiness">
+		update p_model_task set timeliness=#{timeliness} where id
+		in
+		<foreach collection="modelTaskIds" open="(" close=")"
+			separator="," item="id">#{id}</foreach>
+	</update>
+	<update id="updateAnimationLightTaskTimeLiness">
+		update p_animation_light_task set timeliness=#{timeliness} where id
+		in
+		<foreach collection="animationLightTaskIds" open="(" close=")"
+			separator="," item="id">#{id}</foreach>
+	</update>
+	<update id="repeatBackModelTask">
+		update p_model_task set
+		stage=null,task_status=null,modified_time=now() where
+		stage='发布中'
+		and
+		(task_status='发布中' or task_status='领取中') and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="repeatBackAnimationLightTask">
+		update p_animation_light_task set
+		stage=null,task_status=null,modified_time=now() where
+		stage='发布中' and
+		(task_status='发布中' or task_status='领取中') and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="repeatBackPointModelTask">
+		update p_model_task set
+		stage=null,task_status=null,user_id=null,modified_time=now(),point_status=null
+		where
+		stage='发布中' and task_status='指派中' and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="repeatBackPointAnimationLightTask">
+		update p_animation_light_task set
+		stage=null,task_status=null,user_id=null,modified_time=now(),point_status=null
+		where
+		stage='发布中' and
+		task_status='指派中' and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<select id="getPublishModelTaskIds" resultType="java.lang.Long">
+		select id from p_model_task where stage='发布中' and task_status='发布中'
+		and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getPublishAnimationLightTaskIds" resultType="java.lang.Long">
+		select id from p_animation_light_task where stage='发布中' and
+		task_status='发布中'
+		and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getPublishPointModelTaskIds" resultType="java.lang.Long">
+		select id from p_model_task where stage='发布中' and task_status='指派中'
+		and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getPublishPointAnimationLightTaskIds" resultType="java.lang.Long">
+		select id from p_animation_light_task where stage='发布中' and
+		task_status='指派中'
+		and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+
+	<select id="getTaskCheck" resultType="com.cgwas.taskCheck.entity.TaskCheck">
+		select * from a_task_check
+		where task_id=#{task_id} and
+		project_id=#{project_id} and
+		is_parent_project=#{is_parent_project}
+		and task_type=#{task_type}
+	</select>
+	<update id="updateTaskCheck">
+		update a_task_check set
+		submit_time=#{submit_time},audit_order=#{audit_order},num=#{num} where
+		tid=#{tid}
+	</update>
+	<insert id="addProofImage">
+		insert into
+		p_proof_image(advice_path,proof_id)values(#{advice_path},#{proof_id})
+	</insert>
+	<insert id="addRepairImage">
+		insert into
+		p_repair_image(advice_path,repair_id)values(#{advice_path},#{repair_id})
+	</insert>
+	<insert id="addRepair" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		p_repair(task_id,advice_content,is_model_task,num,repairTime)
+		values(#{task_id},#{advice_content},#{is_model_task},#{num},now())
+	</insert>
+	<insert id="addProof" useGeneratedKeys="true" keyProperty="id">
+		insert into p_proof(task_id,advince_content,is_model_task,rate,info)
+		values(#{task_id},#{advince_content},#{is_model_task},#{rate},#{info})
+	</insert>
+	<insert id="addAuditRecord">
+		insert into
+		a_audit_record(checker_id,check_time,comment
+		,production_speed,production_quality,task_check_id,degree_id,evaluation_id,num)
+		values(#{checker_id},#{check_time},#{comment},#{production_speed},#{production_quality},
+		#{task_check_id},#{degree_id},#{evaluation_id},#{num})
+	</insert>
+	<update id="updateCheckNum">
+		update a_task_check
+		<set>
+			<if test="recheck_num!=null">
+				num=#{recheck_num},
+			</if>
+			<if test="next_check_degree_num!=null">
+				audit_order=#{next_check_degree_num}
+			</if>
+		</set>
+		where tid=#{id}
+	</update>
+	<select id="getSubmitDate" resultType="java.util.Date">
+		select submit_time from
+		a_task_check where project_id=#{project_id} and
+		is_parent_project=#{is_parent_project} and task_id=#{task_id} and
+		task_type=#{task_type}
+	</select>
+	<select id="getTaskCheckId" resultType="java.lang.Long">
+		select tid from
+		a_task_check where project_id=#{project_id} and
+		is_parent_project=#{is_parent_project} and task_id=#{task_id} and
+		task_type=#{task_type}
+	</select>
+	<select id="getEvaluationInfo" resultType="com.cgwas.evaluation.entity.EvaluationVo">
+		select * from
+		p_evaluation
+	</select>
+	<select id="getNextChecker" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from u_user
+		u1 left join u_user_info u2 on u1.id=u2.user_id
+		where u1.id in (select
+		p.user_id from p_group_user p left join p_g_role g on p.role_id=g.id
+		where
+		p.num=#{next_check_num}
+		and
+		p.is_parent_project=#{is_parent_project} and
+		p.project_id=#{project_id} and g.role_p_id=2)
+	</select>
+	<select id="getCurrentDegreeNum" resultType="java.lang.Long">
+		select g.num from
+		p_group_user g left join p_g_role p on g.role_id=p.id where
+		g.user_id=#{user_id}
+		and g.project_id=#{project_id} and
+		g.is_parent_project=#{is_parent_project}
+		and p.role_p_id=2
+	</select>
+	<select id="getMaxDegreeNum" resultType="java.lang.Long">
+		select max(g.num) from
+		p_group_user g left join p_g_role p on g.role_id=p.id where
+		g.is_parent_project=#{is_parent_project} and
+		g.project_id=#{project_id}
+		and p.role_p_id=2
+	</select>
+	<select id="getRecheckNum" resultType="java.lang.Long">
+		select max(num) from
+		p_repair where task_id=#{task_id} and
+		is_model_task=#{is_model_task}
+	</select>
+	<select id="selectModelTaskPage3" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select * from (select
+		id,name,begin_time,end_time,actual_begin_time,project_id,class_id
+		,is_parent_poject from p_model_task union
+		select id,pattern_number AS
+		name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_animation_light_task) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent} limit #{firstrownum}, #{limit}
+	</select>
+	<select id="selectModelTaskCount3" resultType="java.lang.Long">
+		select count(*) from (select
+		id,name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_model_task union
+		select id,pattern_number AS
+		name,begin_time,end_time,actual_begin_time,project_id,class_id,is_parent_poject
+		from p_animation_light_task) a
+		where project_id in
+		<foreach collection="ids" close=")" open="(" separator=","
+			item="id">#{id}</foreach>
+		and is_parent_poject=#{is_parent}
+	</select>
+	<select id="getCheckStatusTasks" resultMap="taskMap1">
+		SELECT * FROM ( SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,
+		is_parent_poject,project_id FROM p_model_task where id in
+		(SELECT
+		t1.task_id FROM a_task_check t1 LEFT
+		JOIN p_group_user
+		g ON
+		t1.audit_order=g.num LEFT JOIN p_g_role p ON g.role_id=p.id WHERE
+		g.project_id=t1.project_id AND
+		t1.is_parent_project=g.is_parent_project
+		AND g.user_id=#{user_id}
+		and
+		t1.task_type='建模' and p.role_p_id=2 ) UNION
+		SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,
+		is_parent_poject,project_id FROM p_animation_light_task where id in
+		(SELECT t1.task_id FROM a_task_check t1 LEFT JOIN p_group_user
+		g ON
+		t1.audit_order=g.num LEFT JOIN p_g_role p ON g.role_id=p.id WHERE
+		g.project_id=t1.project_id AND
+		t1.is_parent_project=g.is_parent_project AND g.user_id=#{user_id} and
+		t1.task_type!='建模' AND p.role_p_id=2)) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			a1.stage='审核中'
+			<if test="status!=null and status!=''">
+				and a1.task_status=#{status}
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<select id="selectModelTaskPage2" resultMap="checkTaskMap">
+		SELECT p1.*,p2.tid FROM p_model_task p1 LEFT JOIN a_task_check p2 ON
+		p1.id=p2.task_id left join p_model_type p3 on p1.model_type_id=p3.id
+		left join p_publish_type p4 on p1.publish_type_id=p4.id
+		left join
+		u_user u on p1.user_id=u.id
+		left join u_user_info u1 on
+		p1.user_id=u1.user_id
+		<where>
+			p1.id IN
+			(
+			SELECT t1.task_id FROM a_task_check t1 LEFT
+			JOIN p_group_user
+			g ON t1.audit_order=g.num WHERE
+			g.project_id=t1.project_id AND
+			t1.is_parent_project=g.is_parent_project
+			AND
+			g.is_parent_project=#{is_parent_project} AND g.user_id=#{user_id}
+			and
+			t1.task_type=#{task_type}
+			)
+			and p2.task_type=#{task_type}
+			and
+			p2.is_parent_project=#{is_parent_project} and
+			p1.company_id=#{company_id}
+			<if
+				test="search.field=='model_type' and search.search!=null and search.search!=''">
+				and p3.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='publish_type' and search.search!=null and search.search!=''">
+				and p4.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='pattern_number' and search.search!=null and search.search!=''">
+				and p1.pattern_number like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='name' and search.search!=null and search.search!=''">
+				and p1.name like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='username' and search.search!=null and search.search!=''">
+				and u1.name like "%"#{search.search}"%"
+			</if>
+		</where>
+		<if test="search.field=='model_type' and  search.sort=='asc'">
+			order by to_pinyin( p2.content) asc
+		</if>
+		<if test="search.field=='model_type' and search.sort=='desc'">
+			order by to_pinyin( p2.content) desc
+		</if>
+		<if test="search.field=='publish_type' and  search.sort=='asc'">
+			order by to_pinyin( p4.content) asc
+		</if>
+		<if test="search.field=='publish_type' and search.sort=='desc'">
+			order by to_pinyin( p4.content) desc
+		</if>
+		<if test="search.field=='pattern_number' and search.sort=='asc'">
+			order by to_pinyin( p1.pattern_number) asc
+		</if>
+		<if test="search.field=='pattern_number' and search.sort=='desc'">
+			order by to_pinyin( p1.pattern_number) desc
+		</if>
+		<if test="search.field=='name' and search.sort=='asc'">
+			order by to_pinyin( p1.name) asc
+		</if>
+		<if test="search.field=='name' and search.sort=='desc'">
+			order by to_pinyin( p1.name) desc
+		</if>
+		<if test="search.field=='username' and search.sort=='asc'">
+			order by to_pinyin( u1.name) asc
+		</if>
+		<if test="search.field=='username' and search.sort=='desc'">
+			order by to_pinyin( u1.name) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+	<select id="selectModelTaskCount2" resultType="java.lang.Long">
+		SELECT count(*) FROM p_model_task p1 LEFT JOIN a_task_check p2 ON
+		p1.id=p2.task_id left join p_model_type p3 on p1.model_type_id=p3.id
+		left join p_publish_type p4 on p1.publish_type_id=p4.id
+		left join
+		u_user u on p1.user_id=u.id
+		left join u_user_info u1 on
+		p1.user_id=u1.user_id
+		<where>
+			p1.id IN
+			(
+			SELECT t1.task_id FROM a_task_check t1 LEFT
+			JOIN p_group_user
+			g ON t1.audit_order=g.num WHERE
+			g.project_id=t1.project_id AND
+			t1.is_parent_project=g.is_parent_project
+			AND
+			g.is_parent_project=#{is_parent_project} AND g.user_id=#{user_id}
+			and
+			t1.task_type=#{task_type}
+			)and p2.task_type=#{task_type}
+			and
+			p2.is_parent_project=#{is_parent_project} and
+			p1.company_id=#{company_id}
+			<if
+				test="search.field=='model_type' and search.search!=null and search.search!=''">
+				and p3.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='publish_type' and search.search!=null and search.search!=''">
+				and p4.content like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='pattern_number' and search.search!=null and search.search!=''">
+				and p1.pattern_number like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='name' and search.search!=null and search.search!=''">
+				and p1.name like "%"#{search.search}"%"
+			</if>
+			<if
+				test="search.field=='username' and search.search!=null and search.search!=''">
+				and u1.name like "%"#{search.search}"%"
+			</if>
+		</where>
+	</select>
+	<select id="getMakerById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from u_user u1
+		left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id=#{user_id}
+	</select>
+	<select id="getLastCheckerById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from
+		u_user u1 left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id =
+		(select checker_id from a_audit_record where
+		task_check_id=#{tid} order
+		by id desc limit 1)
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="checkTaskMap">
+		<association property="modeltype" column="model_type_id"
+			javaType="com.cgwas.modeltype.entity.ModelType" select="getModelTypeById" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+		<association property="last_checker_user" column="tid"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getLastCheckerById" />
+	</resultMap>
+	<insert id="addTaskCheck" useGeneratedKeys="true" keyProperty="id">
+		insert into a_task_check
+		(task_type,audit_order,task_id,user_id,submit_time,project_id,is_parent_project,num)
+		values
+		(#{task_type},#{audit_order},#{task_id},#{user_id},#{submit_time},#{project_id},#{is_parent_project},#{num})
+	</insert>
+	<select id="getModelTaskCheckSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select * from
+		p_model_task_check_search
+	</select>
+	<select id="getAnimationLightTaskCheckSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select
+		* from p_animation_light_task_check_search
+	</select>
+	<select id="getPublishTaskSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select * from
+		p_publish_task_search
+	</select>
+	<select id="getModelTaskSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select * from
+		p_model_task_search
+	</select>
+	<delete id="deleteTaskApply">
+		delete from p_task_apply where task_id=#{task_id}
+	</delete>
+	<select id="getNotAgreeNums" resultType="java.lang.Long">
+		select count(*) from
+		p_task_apply where apply_status='未通过' and
+		task_id=#{task_id}
+	</select>
+	<select id="getCheekerIsNotNullNums" resultType="java.lang.Long">
+		select
+		count(checker_id) from p_task_apply where task_id=#{task_id}
+	</select>
+	<select id="getModelTypeId" resultType="java.lang.Long">
+		select id from
+		p_model_type where content=#{model_type}
+	</select>
+	<select id="getPublishTypeId" resultType="java.lang.Long">
+		select id from
+		p_publish_type where content=#{publish_type}
+	</select>
+	<select id="getDegreeId" resultType="java.lang.Long">
+		select id from p_degree
+		where content=#{degree}
+	</select>
+	<update id="updatePointStatus">
+		update p_model_task
+		<set>
+			<if test="point_status==0">
+				point_status=null,
+				stage=null,task_status=null,
+				user_id=null,
+				modified_time=now()
+			</if>
+			<if test="point_status==1">
+				point_status=1,
+				stage='未开始',task_status='未开始',
+				modified_time=now()
+			</if>
+		</set>
+		where id=#{task_id}
+	</update>
+	<sql id="columns">
+		id, project_id, is_parent_poject, class_id, name,
+		pattern_number, model_type_id, publish_type_id, making_requirement,
+		reference_material, plan_time, actual_working_hours, price,
+		begin_time, end_time, weight, remark, commit_path, extraction_path,
+		degree_id, task_status, stage, user_id, creater_id, create_time,
+		modified_time, check_status,company_id,frameRateContent
+	</sql>
+	<sql id="vals">
+		#{id}, #{project_id}, #{is_parent_poject}, #{class_id},
+		#{name}, #{pattern_number}, #{model_type_id}, #{publish_type_id},
+		#{making_requirement}, #{reference_material}, #{plan_time},
+		#{actual_working_hours}, #{price}, #{begin_time}, #{end_time},
+		#{weight}, #{remark}, #{commit_path}, #{extraction_path},
+		#{degree_id}, #{task_status}, #{stage}, #{user_id}, #{creater_id},
+		#{create_time}, #{modified_time},
+		#{check_status},#{company_id},#{frameRateContent}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="is_parent_poject != null and is_parent_poject != ''">
+			and is_parent_poject = #{is_parent_poject}
+		</if>
+		<if test="class_id != null and class_id != ''">
+			and class_id = #{class_id}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="pattern_number != null and pattern_number != ''">
+			and pattern_number = #{pattern_number}
+		</if>
+		<if test="model_type_id != null and model_type_id != ''">
+			and model_type_id = #{model_type_id}
+		</if>
+		<if test="publish_type_id != null and publish_type_id != ''">
+			and publish_type_id = #{publish_type_id}
+		</if>
+		<if test="making_requirement != null and making_requirement != ''">
+			and making_requirement = #{making_requirement}
+		</if>
+		<if test="reference_material != null and reference_material != ''">
+			and reference_material = #{reference_material}
+		</if>
+		<if test="plan_time != null and plan_time != ''">
+			and plan_time = #{plan_time}
+		</if>
+		<if test="actual_working_hours != null and actual_working_hours != ''">
+			and actual_working_hours = #{actual_working_hours}
+		</if>
+		<if test="price != null and price != ''">
+			and price = #{price}
+		</if>
+		<if test="begin_time != null">
+			and begin_time = #{begin_time}
+		</if>
+		<if test="end_time != null">
+			and end_time = #{end_time}
+		</if>
+		<if test="weight != null and weight != ''">
+			and weight = #{weight}
+		</if>
+		<if test="remark != null and remark != ''">
+			and remark = #{remark}
+		</if>
+		<if test="commit_path != null and commit_path != ''">
+			and commit_path = #{commit_path}
+		</if>
+		<if test="extraction_path != null and extraction_path != ''">
+			and extraction_path = #{extraction_path}
+		</if>
+		<if test="degree_id != null and degree_id != ''">
+			and degree_id = #{degree_id}
+		</if>
+		<if test="task_status != null and task_status != ''">
+			and task_status = #{task_status}
+		</if>
+		<if test="stage != null and stage != ''">
+			and stage = #{stage}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="creater_id != null and creater_id != ''">
+			and creater_id = #{creater_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="modified_time != null">
+			and modified_time = #{modified_time}
+		</if>
+		<if test="check_status != null and check_status != ''">
+			and check_status = #{check_status}
+		</if>
+		<if test="company_id != null">
+			and company_id = #{company_id}
+		</if>
+		<if test="frameRateContent != null">
+			and frameRateContent = #{frameRateContent}
+		</if>
+
+	</sql>
+	<update id="updateMTask">
+		update p_model_task
+		<set>
+			<if test="user_id!=null">
+				user_id=#{user_id},
+			</if>
+			<if test="task_status!=null">
+				task_status=#{task_status},
+				modified_time=now(),
+			</if>
+			<if test="task_status=='进行中'">
+				actual_begin_time=now(),
+				modified_time=now(),
+			</if>
+			<if test="stage!=null">
+				stage=#{stage},
+				modified_time=now(),
+			</if>
+			<if test="stage=='已放弃'">
+				user_id=null,
+				modified_time=now(),
+			</if>
+			<if test="end_time!=null">
+				end_time=#{end_time},
+			</if>
+			<if test="begin_time!=null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="rate!=null and rate!=''">
+				rate=#{rate},
+				cause=null,
+			</if>
+			<if test="cause!=null and cause!=''">
+				cause=#{cause},
+			</if>
+			<if test="task_status=='未开始' or task_status=='进行中'">
+				abandon=null,
+				rate=null,
+				cause=null,
+				modified_time=now(),
+			</if>
+			<if test="abandon!=null and abandon!=''">
+				abandon=#{abandon},
+			</if>
+			<if test="company_stage!=null">
+				company_stage=#{company_stage},
+				modified_time=now(),
+			</if>
+			<if test="company_status!=null">
+				company_status=#{company_status},
+				modified_time=now(),
+			</if>
+			<if test="actual_working_hours!=null">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="checkUserTimes!=null">
+				checkUserTimes=#{checkUserTimes},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateTaskApply">
+		update p_task_apply set
+		check_time=#{check_time},checker_id=#{checker_id},apply_status=#{apply_status}
+		where
+		task_id=#{task_id} and user_id=#{user_id}
+	</update>
+	<insert id="addTaskApply">
+		insert into
+		p_task_apply(apply_status,task_type,task_id,user_id,create_time)values(#{apply_status},#{task_type},#{task_id},#{user_id},#{create_time})
+	</insert>
+	<update id="pointerModelTaskToUser">
+		update p_model_task set
+		user_id=#{user_id},point_status=1 where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="pointerAnimationLightTaskToUser">
+		update p_animation_light_task set user_id=#{user_id},point_status=1
+		where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="publishPointModelTask">
+		update p_model_task set
+		task_status='指派中',stage='发布中',modified_time=now(),publishTime=now(),point_status=null
+		where user_id is
+		not
+		null and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="publishPointAnimationLightTask">
+		update p_animation_light_task set
+		task_status='指派中',stage='发布中',modified_time=now(),publishTime=now(),point_status=null
+		where
+		user_id is not
+		null and
+		id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="publishModelTask">
+		update p_model_task set
+		task_status='发布中',stage='发布中',modified_time=now(),publishTime=now(),point_status=null
+		where user_id is
+		null and id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<update id="publishAnimationLightTask">
+		update p_animation_light_task set
+		task_status='发布中',stage='发布中',modified_time=now(),publishTime=now(),point_status=null
+		where
+		user_id is null
+		and
+		id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</update>
+	<insert id="saveModelTask" parameterType="com.cgwas.modeltask.entity.ModelTask"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_model_task (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveModelTaskVo" parameterType="com.cgwas.modeltask.entity.ModelTaskVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_model_task (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteModelTask">
+		delete from p_model_task
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteModelTaskVo">
+		delete from p_model_task
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleModelTask">
+		delete from p_model_task
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleModelTaskVo">
+		delete from p_model_task
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	<delete id="deleteCompanySoftware">
+		delete from p_company_software_model where
+		for_id=#{task_id} and
+		model_type='m_task'
+	</delete>
+	<delete id="deleteSoftware">
+		delete from p_company_software_model where for_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+		and model_type='m_task'
+	</delete>
+	<delete id="deleteAll">
+		delete from p_model_task where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getModelTypes" resultType="com.cgwas.modeltype.entity.ModelType">
+		select * from p_model_type
+	</select>
+	<select id="getPublishTypes" resultType="com.cgwas.publishtype.entity.PublishType">
+		select * from
+		p_publish_type
+	</select>
+	<select id="getDegrees" resultType="com.cgwas.degree.entity.Degree">
+		select * from p_degree
+	</select>
+	<select id="getClazz" resultType="com.cgwas.clazz.entity.Clazz">
+		select * from p_clazz
+	</select>
+	<select id="loadModelTask" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select
+		<include refid="columns" />
+		from p_model_task
+		where id=#{id}
+	</select>
+
+	<select id="selectModelTask" resultType="com.cgwas.modeltask.entity.ModelTaskVo">
+		select
+		<include refid="columns" />
+		from p_model_task
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateModelTask">
+		update p_model_task
+		<set>
+			id=#{id},
+			project_id=#{project_id},
+			is_parent_poject=#{is_parent_poject},
+			class_id=#{class_id},
+			name=#{name},
+			pattern_number=#{pattern_number},
+			model_type_id=#{model_type_id},
+			publish_type_id=#{publish_type_id},
+			making_requirement=#{making_requirement},
+			reference_material=#{reference_material},
+			plan_time=#{plan_time},
+			actual_working_hours=#{actual_working_hours},
+			price=#{price},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			weight=#{weight},
+			remark=#{remark},
+			commit_path=#{commit_path},
+			extraction_path=#{extraction_path},
+			degree_id=#{degree_id},
+			task_status=#{task_status},
+			stage=#{stage},
+			user_id=#{user_id},
+			creater_id=#{creater_id},
+			create_time=#{create_time},
+			modified_time=now(),
+			check_status=#{check_status},
+			company_id=#{company_id},
+			frameRateContent = #{frameRateContent}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateModelTaskVo">
+		update p_model_task
+		<set>
+			id=#{id},
+			project_id=#{project_id},
+			is_parent_poject=#{is_parent_poject},
+			class_id=#{class_id},
+			name=#{name},
+			pattern_number=#{pattern_number},
+			model_type_id=#{model_type_id},
+			publish_type_id=#{publish_type_id},
+			making_requirement=#{making_requirement},
+			reference_material=#{reference_material},
+			plan_time=#{plan_time},
+			actual_working_hours=#{actual_working_hours},
+			price=#{price},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			weight=#{weight},
+			remark=#{remark},
+			commit_path=#{commit_path},
+			extraction_path=#{extraction_path},
+			degree_id=#{degree_id},
+			task_status=#{task_status},
+			stage=#{stage},
+			user_id=#{user_id},
+			creater_id=#{creater_id},
+			create_time=#{create_time},
+			modified_time=now()
+			check_status=#{check_status},
+			company_id=#{company_id},
+			frameRateContent = #{frameRateContent}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullModelTask">
+		update p_model_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number=#{pattern_number},
+			</if>
+			<if test="model_type_id != null and model_type_id != ''">
+				model_type_id=#{model_type_id},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="weight != null and weight != ''">
+				weight=#{weight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			modified_time=now(),
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullModelTaskVo">
+		update p_model_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="getTaskNums!=null">
+			   getTaskNums=#{getTaskNums},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number=#{pattern_number},
+			</if>
+			<if test="model_type_id != null and model_type_id != ''">
+				model_type_id=#{model_type_id},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="weight != null and weight != ''">
+				weight=#{weight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			user_id=#{user_id},
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			modified_time=now(),
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleModelTask">
+		update p_model_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number=#{pattern_number},
+			</if>
+			<if test="model_type_id != null and model_type_id != ''">
+				model_type_id=#{model_type_id},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="weight != null and weight != ''">
+				weight=#{weight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=now(),
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleModelTaskVo">
+		update p_model_task
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="class_id != null and class_id != ''">
+				class_id=#{class_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="pattern_number != null and pattern_number != ''">
+				pattern_number=#{pattern_number},
+			</if>
+			<if test="model_type_id != null and model_type_id != ''">
+				model_type_id=#{model_type_id},
+			</if>
+			<if test="publish_type_id != null and publish_type_id != ''">
+				publish_type_id=#{publish_type_id},
+			</if>
+			<if test="making_requirement != null and making_requirement != ''">
+				making_requirement=#{making_requirement},
+			</if>
+			<if test="reference_material != null and reference_material != ''">
+				reference_material=#{reference_material},
+			</if>
+			<if test="plan_time != null and plan_time != ''">
+				plan_time=#{plan_time},
+			</if>
+			<if test="actual_working_hours != null and actual_working_hours != ''">
+				actual_working_hours=#{actual_working_hours},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="weight != null and weight != ''">
+				weight=#{weight},
+			</if>
+			<if test="remark != null and remark != ''">
+				remark=#{remark},
+			</if>
+			<if test="commit_path != null and commit_path != ''">
+				commit_path=#{commit_path},
+			</if>
+			<if test="extraction_path != null and extraction_path != ''">
+				extraction_path=#{extraction_path},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="task_status != null and task_status != ''">
+				task_status=#{task_status},
+			</if>
+			<if test="stage != null and stage != ''">
+				stage=#{stage},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="creater_id != null and creater_id != ''">
+				creater_id=#{creater_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=now(),
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="frameRateContent != null and frameRateContent != ''">
+				frameRateContent = #{frameRateContent}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

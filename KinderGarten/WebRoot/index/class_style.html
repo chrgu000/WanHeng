@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+   <title>蒙台梭利</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/teacher_style.css">
+    <script src="js/TouchSlide.1.1.js"></script>
+    <style>
+[v-cloak] {
+	display: none;
+}
+</style>
+</head>
+<body scroll="no">
+<div class="back">
+    <div class="back_btn" onclick="goBack()"><img src="img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center" id="garden">班级风采</div>
+</div>
+<div class="wrap" data-role="page" id="ch_ad">
+    <div class="list_address" v-cloak>
+        <ul>
+            <li v-for="list in data">
+                <a :href="'class_details.html?id='+list.id" target="_parent" >
+                    <p class="name red">{{list.title}}</p>
+                    <p class="address">{{list.create_time}}</p>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
+<div id="foot">
+    <ul class="footer">
+        <li><a href="class_style.html"><img src="img/fengcaibanji.png" class="img-responsive"><span>班级风采</span></a></li>
+        <li><a href="teacher.html" target="_blank"><img src="img/teacher.png" class="img-responsive"><span>教师介绍</span></a></li>
+    </ul>
+</div>
+<script src="js/jquery.min.js"></script>
+<script src="js/vue.min.js"></script>
+<script src="js/data.js"></script>
+<script src="js/jquery.mobile-1.4.5.min.js"></script>
+<script src="js/style.js"></script>
+<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+<script>
+$(function(){
+	$.ajax({
+				url:"../style/getStyleByTeacherId.do",
+				type:"post",
+				data:{},
+				dataType:"json",
+				success:function(data){
+					  new Vue({
+					        el:'.list_address',
+					        data:{
+					            data:data
+					        }
+					    });
+				},error:function(){}
+			});
+});
+</script>
+<script>
+    $(document).on("pagecreate","#ch_ad",function(){
+        $(".list_address li").on("swipeleft",function(){
+            $(this).animate({marginLeft:'0'});
+            $(this).find('.delete').animate({right:'0'});
+        });
+        $(".list_address li").on("swiperight",function(){
+            $(this).animate({marginLeft:'0rem'});
+            $(this).find('.delete').animate({right:'-25%'});
+        });
+    });
+</script>
+</body>
+</html>

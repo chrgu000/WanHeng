@@ -1,0 +1,127 @@
+/*通用样式*/
+html{}
+body{font-family: '微软雅黑 Regular','Helvetica Neue',Helvetica ,Arial,'Microsoft YaHei UI','Microsoft YaHei',SimHei,'\5B8B\4F53',simsun,sans-serif;  margin: 0;}
+a{cursor: pointer;display: block;color: #333;}
+a:hover{text-decoration: none;}
+a:hover, a:focus{color: #98989f;}
+.thumbnail{border: none;}
+ul,ol{-webkit-padding-start: 0;}
+li{list-style: none;}
+.carousel-inner{overflow: hidden;max-height: 170px;}
+.carousel-inner .item img{width: 100%;}
+input:focus{outline: none;}
+input{outline: none; box-shadow: 0; box-sizing:inherit;  appearance:button;
+    -moz-appearance:button; /* Firefox */
+    -webkit-appearance:button; /* Safari 和 Chrome */
+    -webkit-appearance:none;}
+button:focus,textarea:focus{outline: none;}
+a:hover,a:focus{background-color: transparent;}
+h1,h2,h3,h4,h5,h6{font-family: 微软雅黑;}
+.nav li a:hover,.nav li a:focus{background-color: transparent;}
+/*checkbox样式*/
+input[type=checkbox]{visibility: hidden;}
+.check{width: 100%;float: left;margin-top: 10px;}
+.left_100{float: left;width: 100%;}
+/**/
+.back{width: 100%;float: left;padding: 0 5px;border-bottom: 1px solid #e4e4e4;background: #fff;height: 40px;}
+.back_btn{width: 11%;float: left;line-height: 40px;}
+.back_center{width: 79%;float: left;text-align: center;font-size: 14px;line-height: 40px;}
+.back_right{width: 10%;float: right;line-height: 40px;}
+.back_right img{width: 20px;margin: 35% auto;height: 19px;}
+.sum{width: 100%;float: left;position: fixed;bottom: 0;height: 40px;line-height: 40px;padding: 0 6px;display: none;}
+.sum span{color: #04a019;}
+.sum .sum_btn{float: right;}
+#in_num{background: #04a019;color: #fff;border: none;border-radius: 100%;width: 25px;height: 25px;padding: 0;font-size: 12px; line-height: 25px;}
+.delete_btn{width: 100%;float: left;position: fixed;bottom: 0;left: 0;background: rgba(0, 0, 0, 0.58);height: 100%;display: none;z-index: 99;}
+.delete_btn a{width: 100%;float: left;text-align: center;line-height: 45px;border-top: 1px solid #e4e4e4;position: absolute;bottom: 0;left: 0;background: #fff;letter-spacing: 2px;}
+.delete_btn a:first-child{color: red;bottom: 45px;}
+
+/*放大轮播*/
+#Header { background: #EEBF02; height: 61px; padding: 0; border-bottom: 1px solid #3c3c3c;  }
+#Header img { display: block; margin: 0 auto 0; }
+#MainContent {padding: 3%;width: 100%;float: left;}
+#Footer { padding: 10px; border-top: none; }
+#SocialLinks { padding: 10px 0 0 0; }
+#SocialLinks:after { clear: both; content: "."; display: block; height: 0; visibility: hidden; }
+#SocialLinks a { display: block; float: left; padding-right: 15px; }
+.gallery { list-style: none; padding: 0; margin: 0; overflow: auto; overflow-x: hidden; }
+.gallery::-webkit-scrollbar{width: 0; height: 0;}
+.gallery:after { clear: both; content: "."; display: block; height: 0; visibility: hidden; }
+.gallery li {float: left;width: 33.33333333%;overflow: hidden; }
+.gallery li a {display: flex;height: 100%;overflow: hidden;align-items: center;border: 1px solid #fff;}
+.gallery li img {display: block;width: 100%;height: 100%;max-width: 100%;margin: auto;}
+.delete{position: absolute;right: 0;top: 0;width: 100%;height: 100%;z-index: 9;display: none;}
+.relative{position: relative;}
+.delete .choose1{
+    position: absolute;
+    right: 0;
+    top: 1px;
+    background: url("../img/choose1.png")no-repeat 96% 3%;
+    background-size: 20px;
+    width: 100%;
+    height: 100%;
+}
+.delete .choose2{
+    position: absolute;
+    right: 0;
+    top: 1px;
+    display: none;
+    background: url("../img/choose2.png")no-repeat 96% 3%;
+    background-size: 20px;
+    width: 100%;
+    height: 100%;
+}
+/* For inline examples only */
+#PhotoSwipeTarget { width: 100%; height: 200px; }
+#Indicators { text-align: center; margin-top: 20px; }
+#Indicators span { display: inline-block; height: 10px; width: 10px; margin: 0 10px 0 0; padding: 0; -webkit-border-radius:5px; -moz-border-radius:5px; -o-border-radius:5px; border-radius:5px; background: #c5c5c5; overflow:hidden; }
+#Indicators span.current{ background: #EEBF02; }
+
+.sum{width: 100%;float: left;position: fixed;bottom: 0;height: 40px;line-height: 40px;padding: 0 6px;display: none;}
+.sum span{color: #04a019;}
+.sum .sum_btn{float: right;}
+#in_num{background: #04a019;color: #fff;border: none;border-radius: 100%;width: 25px;height: 25px;padding: 0;font-size: 12px;}
+.delete_btn{width: 100%;float: left;position: fixed;bottom: 0;left: 0;background: rgba(0, 0, 0, 0.58);height: 100%;display: none;z-index: 99;}
+.delete_btn a{width: 100%;float: left;text-align: center;line-height: 45px;border-top: 1px solid #e4e4e4;position: absolute;bottom: 0;left: 0;background: #fff;letter-spacing: 2px;margin: 0;}
+.delete_btn a:first-child{color: red;bottom: 45px;}
+.pic_list_ul {
+	width: 100%;
+	float: left;
+	margin-bottom: 0;
+}
+
+.pic_list_ul li {
+	width: 25%;
+	float: left;
+	border-right: 1px solid #e4e4e4;
+}
+
+.pic_list_ul li:last-child {
+	width: 25%;
+	float: left;
+	border-right: 1px solid #fff;
+}
+
+.pic_list_ul li a {
+	width: 100%;
+	float: left;
+	text-align: center;
+	color: #333;
+	padding: 10px 0;
+	font-size: 16px;
+}
+
+.pic_list_ul li a small {
+	width: 100%;
+	float: left;
+	color: #999;
+	font-size: 12px;
+}
+   .back_btn img {
+    width: 50%;
+    margin: 13px 10px;
+}
+
+.add_pic{width: 100%; float: left; background: #fff; position: fixed; bottom: 0px;  left: 0;}
+.add_pic a{width:50%;float:left;}
+.add_pic img{margin: 10px auto;width: 50px;}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>我的房子——已发布</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="published">
+   <div class="pub_top">
+       <div class="pub_top_cent">
+           <a href="published.html">未租</a>
+           <a class="active" onclick="getHouseByStatus(1)">已租</a>
+           <a href="../rent_way.html">发布</a>
+       </div>
+   </div>
+    <div class="pub_body" v-cloak>
+                <ul>
+            <li v-for="list in data">
+                <a :href="'../details.html?id='+list.id">
+                    <p class="house_list_left"><img :src="'../..'+list.imgUrl" class="img-responsive"></p>
+                    <p class="house_list_right">
+                        <big>{{list.title}}</big>
+                        <span v-if="list.type=='住宅整租'||list.type=='住宅合租'">{{list.gardenName}}</span>
+                        <span><small v-if="list.type=='住宅整租'||list.type=='住宅合租'">{{list.room}}室{{list.office}}厅{{list.defend}}卫</small><small>{{list.type}}</small><big>{{list.rent}}元/月</big></span>
+                    </p>
+                </a>
+                <div class="pub_btn">
+                    <div class="pub_btn_right">
+                        <a :href="'../contract/contract.html?id='+list.id">查看合同</a>
+                        <a>分享</a>
+                        <div v-if="list.type=='住宅整租'">
+                            <a  :href="'whole_rent_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <div v-if="list.type=='住宅合租'">
+                            <a  :href="'roommates_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <div v-if="list.type=='写字楼'">
+                            <a  :href="'office_buildings_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <div v-if="list.type=='商铺出租'">
+                            <a  :href="'shops_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <div v-if="list.type=='厂房/仓库'">
+                            <a  :href="'warehouse_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <div  v-if="list.type=='车库'">
+                            <a  :href="'parking_space_bj.html?id='+list.id">编辑</a>
+                        </div>
+                        <a onclick="deleteById('{{list.id}}')">删除</a>
+                        <p>同小区整租房源{{list.number}}套</p>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script src="../js/jquery.area.js"></script>
+<script type="text/javascript" src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../js/data.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js"></script>
+<script>
+    $(document).ready(function(){
+        var input_text = $(".nice-select input[type='text']");
+        input_text.attr("disabled",true);
+    });
+</script>
+<script>
+    var vm=new Vue({
+        el:'.pub_body',
+        data:{
+            data:null
+        }
+    });
+    $(function(){
+        getHouseByStatus(1);
+    });
+    function getHouseByStatus(status){
+        $.ajax( {
+            url : "../../house/getHouseByStatus.do",
+            type : "post",
+            dataType : "json",
+            data : {
+                status:status
+            },
+            success : function(data) {
+                if(data.length==0){
+                    location.href="../my_house_null.html";
+                }
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+function deleteById(id){
+    $.ajax( {
+        url : "../../house/deleteById.do?id="+id,
+        type : "post",
+        dataType : "json",
+        data : {},
+        success : function(data) {
+            if(data==1){
+                $.pop.tips("删除成功");
+                location.reload();
+            }
+        },
+        error : function() {
+        }
+    });
+}
+</script>
+</body>
+</html>

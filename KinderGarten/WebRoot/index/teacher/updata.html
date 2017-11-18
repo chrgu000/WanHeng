@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+				<link rel="stylesheet" href="../css/bootstrap.min.css">
+				<link rel="stylesheet" href="../css/fullscreenstyle.css">
+				<link rel="stylesheet" href="../css/style.css">
+				<link rel="stylesheet" href="../css/teacher_style.css">
+		<link rel="stylesheet" type="text/css" href="../css/webuploader.css">
+		<link rel="stylesheet" type="text/css" href="../css/diyUpload.css">
+		<style type="text/css">
+.img-div {
+	border: 1px solid #ddd;
+	float: left;
+	line-height: 1;
+	margin-left: 5px;
+	overflow: hidden;
+}
+
+
+</style>
+	</head>
+	<body style="background: #f5f4f9;">
+		<div class="loading" style="display: none;"></div>
+		<div class="back">
+			<div class="back_btn" onclick="goBack()">
+				<img src="../img/left_icon.png" class="img-responsive"/>
+			</div>
+			<div class="back_center">
+				照片上传
+			</div>
+			
+		</div>
+		<div class="update">
+			<div class="top">
+				<span>上传到</span>
+				<div class="nice-select" name="nice-select">
+					<input type="text" id="type" value="蒙氏工作" readonly="">
+					<ul style="display: none; padding-left: 0px;">
+						<li data-value="1" style="width: 100%;">蒙氏工作</li>
+						<li data-value="2" style="width: 100%;">户外感知	</li>
+						<li data-value="3" style="width: 100%;">创想记录	</li>
+					</ul>
+				</div>
+			</div>
+			<div class="pic">
+			<textarea rows="3" cols="20" name="content" id="content"
+					placeholder="请输入..."></textarea>
+				<div id="box">
+					<div id="test"></div>
+				</div>
+				
+<!--				<div class="pic_btn">-->
+<!--					<input type="text" size="20" name="upfile" id="upfile"-->
+<!--						style="display: none">-->
+<!--					<input type="button" class="" id="add_pic" onclick="path.click()">-->
+<!--					<input type="file" id="path" name="file" multiple="multiple"-->
+<!--						style="display: none" onchange="xmTanUploadImg(this)">-->
+<!--					<input name="diimgs" id="pics" type="hidden" />-->
+<!--				</div>-->
+			</div>
+		</div>
+		<script src="../js/jquery.min.js">
+</script>
+		<script src="../js/vue.min.js">
+</script>
+		<script src="../js/data.js">
+</script>
+		<script src="../js/ajaxfileupload.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script src="../js/style.js">
+</script>
+		<script src="../js/jquery.js">
+</script>
+		<script type="text/javascript" src="../js/diyUpload.js">
+</script>
+		<script type="text/javascript"
+			src="../js/webuploader.html5only.min.js">
+</script>
+	<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script src="../js/teacher_cookie.js">
+</script>
+		<script type="text/javascript">
+var baby_id = getQueryString("baby_id");
+var n=0;
+$('#test').diyUpload( {
+	url : '../../UploadFile.do',
+	success : function(data) {
+		n++;
+		var type = $("#type").val();
+		var content = $("#content").val();
+		var type_id;
+		if (type.trim() == "蒙氏工作") {
+			type_id = 1;
+		} else if (type.trim() == "户外感知") {
+			type_id = 2;
+		} else {
+			type_id = 3;
+		}
+		console.log(data);
+		$.ajax( {
+			url : "../../picture/addBabyPicture.do",
+			type : "post",
+			data : {
+				baby_id : baby_id,
+				type_id : type_id,
+				path : data._raw,
+				content : content
+			},
+			dataType : "json",
+			success : function(data) {
+			},
+			error : function() {
+			}
+		});
+        var num=$(".fileBoxUl li").length;
+        if(num==n){
+        	$.pop.tips("成功上传图片");
+			setTimeout(function() {
+				location.href = "pic_list.html?id=" + baby_id;
+			}, 500)
+        }
+	},
+	error : function(err) {
+		console.info(err);
+	}
+});
+$('#as').diyUpload( {
+	url : 'server/fileupload.php',
+	success : function(data) {
+		console.info(data);
+	},
+	error : function(err) {
+		console.info(err);
+	},
+	buttonText : '选择文件',
+	chunked : true,
+	// 分片大小
+	chunkSize : 512 * 1024,
+	//最大上传的文件数量, 总文件大小,单个文件大小(单位字节);
+	fileNumLimit : 50,
+	fileSizeLimit : 500000 * 1024,
+	fileSingleSizeLimit : 50000 * 1024,
+	accept : {}
+});
+</script>
+		<script type="text/javascript">
+//选择图片，马上预览  
+function xmTanUploadImg(obj) {
+	$("#imgboxid").html('');
+	var fl = obj.files.length;
+	for ( var i = 0; i < fl; i++) {
+		var file = obj.files[i];
+		var reader = new FileReader();
+
+		//读取文件过程方法  
+
+		reader.onloadstart = function(e) {
+			console.log("开始读取....");
+		}
+		reader.onprogress = function(e) {
+			console.log("正在读取中....");
+		}
+		reader.onabort = function(e) {
+			console.log("中断读取....");
+		}
+		reader.onerror = function(e) {
+			console.log("读取异常....");
+		}
+		reader.onload = function(e) {
+			console.log("成功读取....");
+
+			var imgstr = '<img style="width:64px;height:64px;" src="' + e.target.result + '"/>';
+			var oimgbox = document.getElementById("imgboxid");
+			var ndiv = document.createElement("div");
+
+			ndiv.innerHTML = imgstr;
+			ndiv.className = "img-div";
+			oimgbox.appendChild(ndiv);
+
+		}
+
+		reader.readAsDataURL(file);
+		//alert(1);  
+	}
+}
+function ajaxFileUpload() {
+	if (!$("#imgboxid").html().trim()) {
+		$.pop.tips("请选择照片");
+	} else {
+		$.pop.load(true, "上传中...");
+		$.ajaxFileUpload( {
+			url : '../../UploadFile.do',// servlet请求路径 
+			type : "post",
+			secureuri : false,
+			fileElementId : 'path',// 上传控件的id  
+			dataType : 'text',
+			success : function(data, status) {
+				$.pop.load(false, null);
+				if (data == "error") {
+					$.pop.tips("文件非图片格式");
+				} else {
+					var type = $("#type").val();
+					var content = $("#content").val();
+					var type_id;
+					if (type.trim() == "成长印记") {
+						type_id = 1;
+					} else if (type.trim() == "户外感知") {
+						type_id = 2;
+					} else {
+						type_id = 3;
+					}
+					$.ajax( {
+						url : "../../picture/addBabyPicture.do",
+						type : "post",
+						data : {
+							baby_id : baby_id,
+							type_id : type_id,
+							path : data,
+							content : content
+						},
+						dataType : "json",
+						success : function(data) {
+							$.pop.tips("成功上传图片");
+							setTimeout(function() {
+								location.href = "pic_list.html?id=" + baby_id;
+							}, 500)
+						},
+						error : function() {
+						}
+					});
+				}
+			},
+			error : function(data, status, e) {
+				return false;
+			}
+		});
+	}
+}
+</script>
+	</body>
+</html>

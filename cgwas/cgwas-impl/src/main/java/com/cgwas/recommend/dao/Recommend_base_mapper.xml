@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.recommend.dao">
+
+	<sql id="columns">
+		id, priority, type, reason, status, name, relation_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{priority}, #{type}, #{reason}, #{status}, #{name},
+		#{relation_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="priority != null and priority != ''">
+			and priority = #{priority}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="reason != null and reason != ''">
+			and reason = #{reason}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="relation_id != null and relation_id != ''">
+			and relation_id = #{relation_id}
+		</if>
+	</sql>
+
+	<insert id="saveRecommend" parameterType="com.cgwas.recommend.entity.Recommend"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_recommend (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveRecommendVo" parameterType="com.cgwas.recommend.entity.RecommendVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_recommend (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteRecommend">
+		delete from u_recommend
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteRecommendVo">
+		delete from u_recommend
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleRecommend">
+		delete from u_recommend
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleRecommendVo">
+		delete from u_recommend
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadRecommend" resultType="com.cgwas.recommend.entity.RecommendVo">
+		select
+		<include refid="columns" />
+		from u_recommend
+		where id=#{id}
+	</select>
+
+	<select id="selectRecommend" resultType="com.cgwas.recommend.entity.RecommendVo">
+		select
+		<include refid="columns" />
+		from u_recommend
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateRecommend">
+		update u_recommend
+		<set>
+			id=#{id},
+			priority=#{priority},
+			type=#{type},
+			reason=#{reason},
+			status=#{status},
+			name=#{name},
+			relation_id=#{relation_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateRecommendVo">
+		update u_recommend
+		<set>
+			id=#{id},
+			priority=#{priority},
+			type=#{type},
+			reason=#{reason},
+			status=#{status},
+			name=#{name},
+			relation_id=#{relation_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullRecommend">
+		update u_recommend
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="priority != null and priority != ''">
+				priority=#{priority},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="relation_id != null and relation_id != ''">
+				relation_id=#{relation_id}
+			</if>
+		</set>
+		where relation_id=#{relation_id} and type=#{type}
+	</update>
+
+	<update id="updateIgnoreNullRecommendVo">
+		update u_recommend
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="priority != null and priority != ''">
+				priority=#{priority},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="relation_id != null and relation_id != ''">
+				relation_id=#{relation_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleRecommend">
+		update u_recommend
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="priority != null and priority != ''">
+				priority=#{priority},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="relation_id != null and relation_id != ''">
+				relation_id=#{relation_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleRecommendVo">
+		update u_recommend
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="priority != null and priority != ''">
+				priority=#{priority},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="relation_id != null and relation_id != ''">
+				relation_id=#{relation_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 更改用户推荐状态 -->
+	<update id="updateUserAndCompanyRecommend">
+		update u_recommend
+		<set>
+			<if test="priority != null and priority != ''">
+				priority=#{priority},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+		</set>
+		where id=#{id} and type = #{type}
+	</update>
+	<!-- 得到修改用户推荐列表 -->
+	<select id="getUserListForRecommend" resultType="com.cgwas.recommend.entity.UserRecommend">
+		SELECT
+		a.id,
+		a.nickname,
+		c.`name`,
+		c.sex,
+		c.birth,
+		a.tel,
+		e.company_name,
+		d.relation,
+		f.priority,
+		f.reason,
+		b.`status`
+		FROM
+		u_user AS a
+		LEFT JOIN
+		u_user_auth_info AS b ON a.id = b.user_id
+		LEFT JOIN u_user_info AS c ON
+		a.id = c.user_id
+		LEFT JOIN u_user_company AS d ON a.id = d.use_id
+		LEFT
+		JOIN u_company AS e ON d.company_id = e.id
+		LEFT JOIN u_recommend AS f
+		ON a.id = f.relation_id
+		where 1=1
+		<choose>
+			<when test="userRecommend.id!=null">
+				and a.id=#{userRecommend.id}
+			</when>
+			<when test="userRecommend.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{userRecommend.nickname},'%')
+			</when>
+			<when test="userRecommend.name!=null">
+				and c.name like
+				CONCAT('%',#{userRecommend.name},'%')
+			</when>
+			<when test="userRecommend.sex!=null">
+				and c.sex like
+				CONCAT('%',#{userRecommend.sex},'%')
+			</when>
+			<when test="userRecommend.tel!=null">
+				and a.tel like
+				CONCAT('%',#{userRecommend.tel},'%')
+			</when>
+			<when test="userRecommend.company_name!=null">
+				and e.company_name like
+				CONCAT('%',#{userRecommend.company_name},'%')
+			</when>
+			<when test="userRecommend.relation!=null">
+				and d.relation like
+				CONCAT('%',#{userRecommend.relation},'%')
+			</when>
+			<when test="userRecommend.reason!=null">
+				and f.reason like
+				CONCAT('%',#{userRecommend.reason},'%')
+			</when>
+			<when test="userRecommend.status!=null">
+				and b.status like
+				CONCAT('%',#{userRecommend.status},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到修改公司推荐列表 -->
+	<select id="getCompanyListForRecommend" resultType="com.cgwas.recommend.entity.CompanyRecommend">
+		SELECT
+		a.id,
+		c.nickname,
+		a.company_name,
+		a.legal_person,
+		a.establish_date,
+		a.registered_assets,
+		a.`status`,
+		c.tel,
+		d.priority,
+		e.`status`,
+		d.reason
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_user AS c ON b.use_id = c.id
+		LEFT JOIN u_recommend AS d ON
+		a.id = d.relation_id
+		LEFT JOIN u_company_auth_info AS e ON e.company_id
+		= a.id
+		WHERE
+		b.relation = '1'
+		<choose>
+			<when test="companyRecommend.id!=null">
+				and a.id=#{companyRecommend.id}
+			</when>
+			<when test="companyRecommend.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{companyRecommend.nickname},'%')
+			</when>
+			<when test="companyRecommend.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{companyRecommend.company_name},'%')
+			</when>
+			<when test="companyRecommend.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{companyRecommend.legal_person},'%')
+			</when>
+			<when test="companyRecommend.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{companyRecommend.registered_assets},'%')
+			</when>
+			<when test="companyRecommend.status!=null">
+				and a.status like
+				CONCAT('%',#{companyRecommend.status},'%')
+			</when>
+			<when test="companyRecommend.tel!=null">
+				and c.tel like
+				CONCAT('%',#{companyRecommend.tel},'%')
+			</when>
+			<when test="companyRecommend.priority!=null">
+				and d.priority like
+				CONCAT('%',#{companyRecommend.priority},'%')
+			</when>
+			<when test="companyRecommend.status1!=null">
+				and e.status like
+				CONCAT('%',#{companyRecommend.status1},'%')
+			</when>
+
+			<when test="companyRecommend.reason!=null">
+				and d.reason like
+				CONCAT('%',#{companyRecommend.reason},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			<choose>
+				<when test="page.sortColumn=='status'">
+					ORDER BY a.`status` DESC
+				</when>
+				<when test="page.sortColumn=='status1'">
+					ORDER BY e.`status` DESC
+				</when>
+				<otherwise>
+					ORDER BY ${page.sortColumn} DESC
+				</otherwise>
+			</choose>
+
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			<choose>
+				<when test="page.sortColumn=='status'">
+					ORDER BY a.`status` ASC
+				</when>
+				<when test="page.sortColumn=='status1'">
+					ORDER BY e.`status` ASC
+				</when>
+				<otherwise>
+					ORDER BY ${page.sortColumn} ASC
+				</otherwise>
+			</choose>
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到修改用户推荐列表（数量） -->
+	<select id="getUserListForRecommendCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_auth_info AS b ON a.id =
+		b.user_id
+		LEFT JOIN u_user_info AS c ON a.id = c.user_id
+		LEFT JOIN
+		u_user_company
+		AS d ON a.id = d.use_id
+		LEFT JOIN u_company AS e ON
+		d.company_id = e.id
+		LEFT JOIN u_recommend AS f ON a.id = f.relation_id
+		where 1=1
+		<choose>
+			<when test="userRecommend.id!=null">
+				and a.id=#{userRecommend.id}
+			</when>
+			<when test="userRecommend.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{userRecommend.nickname},'%')
+			</when>
+			<when test="userRecommend.name!=null">
+				and c.name like
+				CONCAT('%',#{userRecommend.name},'%')
+			</when>
+			<when test="userRecommend.sex!=null">
+				and c.sex like
+				CONCAT('%',#{userRecommend.sex},'%')
+			</when>
+			<when test="userRecommend.tel!=null">
+				and a.tel like
+				CONCAT('%',#{userRecommend.tel},'%')
+			</when>
+			<when test="userRecommend.company_name!=null">
+				and e.company_name like
+				CONCAT('%',#{userRecommend.company_name},'%')
+			</when>
+			<when test="userRecommend.relation!=null">
+				and d.relation like
+				CONCAT('%',#{userRecommend.relation},'%')
+			</when>
+			<when test="userRecommend.reason!=null">
+				and f.reason like
+				CONCAT('%',#{userRecommend.reason},'%')
+			</when>
+			<when test="userRecommend.status!=null">
+				and b.status like
+				CONCAT('%',#{userRecommend.status},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 得到修改公司推荐列表(数量) -->
+	<select id="getCompanyListForRecommendCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id
+		=
+		b.company_id
+		LEFT JOIN u_user AS c ON b.use_id = c.id
+		LEFT JOIN
+		u_recommend AS d ON a.id = d.relation_id
+		LEFT JOIN u_company_auth_info
+		AS e ON e.company_id = a.id
+		WHERE
+		b.relation = '1'
+		<choose>
+			<when test="companyRecommend.id!=null">
+				and a.id=#{companyRecommend.id}
+			</when>
+			<when test="companyRecommend.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{companyRecommend.nickname},'%')
+			</when>
+			<when test="companyRecommend.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{companyRecommend.company_name},'%')
+			</when>
+			<when test="companyRecommend.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{companyRecommend.legal_person},'%')
+			</when>
+			<when test="companyRecommend.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{companyRecommend.registered_assets},'%')
+			</when>
+			<when test="companyRecommend.status!=null">
+				and a.status like
+				CONCAT('%',#{companyRecommend.status},'%')
+			</when>
+			<when test="companyRecommend.tel!=null">
+				and c.tel like
+				CONCAT('%',#{companyRecommend.tel},'%')
+			</when>
+			<when test="companyRecommend.priority!=null">
+				and d.priority like
+				CONCAT('%',#{companyRecommend.priority},'%')
+			</when>
+			<when test="companyRecommend.status1!=null">
+				and e.status like
+				CONCAT('%',#{companyRecommend.status1},'%')
+			</when>
+
+			<when test="companyRecommend.reason!=null">
+				and d.reason like
+				CONCAT('%',#{companyRecommend.reason},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 根据id得到推荐详情  -->
+	<select id="getRecommendById" resultType="com.cgwas.recommend.entity.Recommend">
+		select * FROM u_recommend where relation_id=#{relation_id} and
+		type=#{type} LIMIT 0,1
+	</select>
+
+</mapper>

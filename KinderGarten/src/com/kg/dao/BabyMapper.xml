@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.BabyDao">
+	<insert id="addBaby" keyProperty="id" useGeneratedKeys="true">
+		insert into
+		kg_baby(username,small_name,password,garden_id,tel,isStudy,state,join_time,sex)values(#{username},#{small_name},#{password},#{garden_id},#{tel},#{isStudy},#{state},#{join_time},#{sex})
+	</insert>
+	<update id="updateBaby">
+		update kg_baby
+		<set>
+			<if test="username!=null and username!=''">
+				username=#{username},
+</if>
+<if test="code!=null and code!=''">
+				code=#{code},
+</if>
+<if test="small_name!=null and small_name!=''">
+				small_name=#{small_name},
+</if>
+<if test="address!=null and address!=''">
+				address=#{address},
+</if>
+<if test="content!=null and content!=''">
+				content=#{content},
+</if>
+			<if test="tel!=null and tel!=''">
+				tel=#{tel},
+</if>
+			<if test="password!=null and password!=''">
+				password=#{password},
+</if>
+			<if test="garden_id!=null and garden_id!=''">
+				garden_id=#{garden_id},
+</if>
+			<if test="teacher_id!=null and teacher_id!=''">
+				teacher_id=#{teacher_id},
+			</if>
+			<if test="sex!=null and sex!=''">
+				sex=#{sex},
+</if>
+			<if test="endDate!=null and endDate!=''">
+				endDate=#{endDate},
+</if>
+			<if test="birth_date!=null and birth_date!=''">
+				birth_date=#{birth_date},
+</if>
+			<if test="expectation!=null and expectation!=''">
+				expectation=#{expectation},
+</if>
+<if test="introduce!=null and introduce!=''">
+				introduce=#{introduce},
+</if>
+			<if test="header_pic_path!=null and header_pic_path!=''">
+				header_pic_path=#{header_pic_path},
+</if>
+			<if test="father_name!=null and father_name!=''">
+				father_name=#{father_name},
+</if>
+			<if test="father_tel!=null and father_tel!=''">
+				father_tel=#{father_tel},
+</if>
+			<if test="mother_name!=null and mother_name!=''">
+				mother_name=#{mother_name},
+</if>
+			<if test="mother_tel!=null and mother_tel!=''">
+				mother_tel=#{mother_tel},
+</if>
+			<if test="emergency_contact_name!=null and emergency_contact_name!=''">
+				emergency_contact_name=#{emergency_contact_name},
+</if>
+			<if test="emergency_contact_tel!=null and emergency_contact_tel!=''">
+				emergency_contact_tel=#{emergency_contact_tel},
+</if>
+			<if test="state!=null">
+				state=#{state},
+</if>
+			<if test="isStudy!=null">
+				isStudy=#{isStudy},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_baby where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getBabyById" resultType="Baby">
+		select * from kg_baby where
+		id=#{id}
+	</select>
+	<select id="getBaby" resultMap="BabyMap">
+		select * from kg_baby where
+		id=#{id}
+	</select>
+	<resultMap type="Baby" id="BabyMap">
+		<association property="garden" column="garden_id"
+			javaType="Garden" select="getGardenById" />
+	</resultMap>
+	<select id="getBabyByPage" resultMap="BabyMaps">
+		select * from kg_baby
+		<where>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+			<if test="garden_id!=null and garden_id!=''">
+				and garden_id=#{garden_id}
+		</if>
+		<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+			<if test="state!=null ">
+				and state=#{state}
+		</if>
+			<if test="teacher_id!=null and teacher_id!=''">
+				and teacher_id=#{teacher_id}
+		</if>
+			<if test="isStudy!=null and isStudy!=''">
+				and isStudy=#{isStudy}
+		</if>
+		</where>
+		order by isStudy desc,id desc ,garden_id,teacher_id limit
+		#{begin},#{pageSize}
+	</select>
+	<resultMap type="Baby" id="BabyMaps">
+		<association property="teacher" column="teacher_id"
+			javaType="Teacher" select="getTeacherById" />
+		<association property="garden" column="garden_id"
+			javaType="Garden" select="getGardenById" />
+	</resultMap>
+	<select id="getTeacherById" resultType="Teacher">
+		select * from kg_teacher
+		where
+		id=#{teacher_id}
+	</select>
+	<select id="getGardenById" resultType="Garden">
+		select * from kg_garden
+		where id=#{garden_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_baby
+		<where>
+		<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+			<if test="garden_id!=null and garden_id!=''">
+				and garden_id=#{garden_id}
+		</if>
+			<if test="teacher_id!=null and teacher_id!=''">
+				and teacher_id=#{teacher_id}
+		</if>
+			<if test="isStudy!=null and isStudy!=''">
+				and isStudy=#{isStudy}
+		</if>
+			<if test="state!=null">
+				and state=#{state}
+		</if>
+		</where>
+	</select>
+	<select id="getBabyByGardenIds" resultType="Baby">
+		select * from kg_baby
+		<where>
+			garden_id in
+			<foreach collection="ids" open="(" separator="," close=")"
+				item="id">#{id}</foreach>
+		</where>
+	</select>
+	<select id="getBabyByTeacherIds" resultType="Baby">
+		select * from kg_baby
+		<where>
+			teacher_id=#{id}
+			<if test="isStudy!=null and isStudy!=''">
+			and isStudy=#{isStudy}
+			</if>
+			and state=1
+		</where>
+		order by isStudy desc
+	</select>
+	<select id="getBabyByTeacher" resultType="Baby">
+	select * from kg_baby
+		<where>
+			teacher_id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+		</where>
+	</select>
+	<select id="findAllBaby" resultType="Baby">
+		select * from kg_baby
+	</select>
+	<select id="findAllBabyIsStudy" resultType="Baby">
+		select * from kg_baby where isStudy =1 and state=1
+ 	</select>
+	<select id="login" resultType="Baby">
+		select * from kg_baby where
+		tel=#{tel} and password=#{password}
+	</select>
+	<select id="updatePwdByTel">
+		update kg_baby set password=#{password} where
+		tel=#{tel}
+	</select>
+	<select id="getBabyByIds" resultType="Baby">
+	select * from kg_baby where id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+	</select>
+</mapper>

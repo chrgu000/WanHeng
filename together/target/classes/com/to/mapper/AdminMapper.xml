@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.to.dao.AdminDao">
+	<resultMap type="Admin" id="adminMap">
+		<result property="joinTime" column="join_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP" />
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP" />
+		<association property="role" column="role_id" javaType="Role" select="findRoleById">
+		</association>
+	</resultMap>
+    <select id="findRoleById" resultType="Role">
+	   select id,name from to_role where id=#{role_id}
+	</select>
+	<select id="login" resultMap="adminMap">
+		select id,username,role_id,password from to_admin where username=#{username}
+		<if test="password !=null and password !=''">
+			and password=#{password}
+		</if>
+	</select>
+	<insert id="save">
+		insert into
+		to_admin(username,password,role_id,join_time,modified_time)values(#{username},#{password},#{roleId},#{joinTime},#{modifiedTime})
+	</insert>
+	<update id="update">
+		update to_admin
+		<set>
+		<if test="username!=null and username!=''">
+				username=#{username},
+</if>
+			<if test="password!=null and password!=''">
+				password=#{password},
+</if>
+			<if test="roleId!=null and roleId!=''">
+				role_id=#{roleId},
+</if>
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				modified_time=#{modifiedTime},
+			</if>
+
+			<if test="ip !=null and ip !=''">
+				ip=#{ip},
+			</if>
+			<if test="token !=null and token !=''">
+				token=#{token},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from to_admin where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="adminMap">
+		select id,username,role_id,password,ip,token from to_admin
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="adminMap">
+		select id,username,role_id,join_time,modified_time from to_admin
+		<where>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	 
+	 
+	<select id="getRows" resultType="int">
+		select count(*) from to_admin
+		<where>
+			<if test="username!=null and username!=''">
+				 username like "%"#{username}"%"
+		</if>
+		</where>
+	</select>
+	<select id="getPermissions" resultType="string">
+		select m.url from
+		to_admin a left join to_role_module rm on
+		a.role_id=rm.role_id left
+		join to_module m on rm.module_id=m.mid
+		where a.username=#{username}
+	</select>
+	<select id="getAdminByUsername" resultMap="adminMap">
+		select id,username,role_id,password from
+		to_admin where username=#{username}
+	</select>
+</mapper>

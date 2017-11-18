@@ -1,0 +1,1547 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun -->
+<mapper namespace="com.cgwas.modeltask.dao">
+
+	<sql id="columnsAs">
+		t1.id, t1.project_id, t1.is_parent_poject, t1.class_id,
+		t1.name, t1.pattern_number, t1.model_type_id, t1.publish_type_id,
+		t1.making_requirement, t1.reference_material, t1.plan_time,
+		t1.actual_working_hours, t1.price, t1.begin_time, t1.end_time,
+		t1.weight, t1.remark, t1.commit_path, t1.extraction_path,
+		t1.degree_id, t1.task_status, t1.stage, t1.user_id, t1.creater_id,
+		t1.create_time, t1.modified_time,
+		t1.check_status,t1.company_id,t1.company_stage,t1.company_status,
+		t1.frameRateContent
+	</sql>
+	<select id="getClazzById" resultType="com.cgwas.clazz.entity.Clazz">
+		select * from p_clazz where
+		id=#{class_id}
+	</select>
+	<select id="getDetails" resultMap="taskMap2">
+		select * from p_model_task
+		where id=#{task_id}
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="taskMap2">
+		<id column="id" property="id" />
+		<association property="modeltype" column="model_type_id"
+			javaType="com.cgwas.modeltype.entity.ModelType" select="getModelTypeById" />
+		<association property="clazz" column="class_id"
+			javaType="com.cgwas.clazz.entity.Clazz" select="getClazzById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<!-- 当前操作者是公司 -->
+	<select id="getTaskByStageOrStatusCompany" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject,
+		company_stage,company_status FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject,
+		company_stage,company_status FROM p_animation_light_task) a1 left join
+		p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="status!=null and status!='' and status!='待评价' and status!='已完成'">
+				and a1.task_status=#{status}
+			</if>
+			<if test="stage!=null and stage!='' and stage!='待评价' and stage!='已完成'">
+				and a1.stage=#{stage}
+			</if>
+			<if test="stage=='待评价' or stage=='已完成'">
+				and a1.company_stage=#{stage}
+			</if>
+			<if test="status=='待评价' or status=='已完成'">
+				and a1.company_status=#{status}
+			</if>
+			<if test="company_id!=null">
+				and a1.company_id=#{company_id}
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者是公司员工又是团队成员OK7 -->
+	<select id="getTaskByStageOrStatus7" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,company_stage,company_status,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,company_stage,company_status,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage!=null and stage!='' and stage!='发布中'">
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					<if test="stage=='待评价'">
+						and a1.company_stage='待评价'
+					</if>
+					<if test="stage=='已完成'">
+						and a1.company_stage='已完成'
+					</if>
+					<if test="stage!='待评价' and stage!='已完成'">
+						and a1.stage=#{stage}
+					</if>
+					or (a1.is_parent_poject=0 and a1.project_id
+					in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					<if test="stage=='待评价'">
+						and a1.company_stage='待评价'
+					</if>
+					<if test="stage=='已完成'">
+						and a1.company_stage='已完成'
+					</if>
+					<if test="stage!='待评价' and stage!='已完成'">
+						and a1.stage=#{stage}
+					</if>
+					)
+					or(a1.stage=#{stage} and
+					a1.user_id=#{user_id})
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					<if test="stage=='待评价'">
+						and a1.company_stage='待评价'
+					</if>
+					<if test="stage=='已完成'">
+						and a1.company_stage='已完成'
+					</if>
+					<if test="stage!='待评价' and stage!='已完成'">
+						and a1.stage=#{stage}
+					</if>
+					or(a1.stage=#{stage} and
+					a1.user_id=#{user_id})
+					
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					<if test="stage=='待评价'">
+						and a1.company_stage='待评价'
+					</if>
+					<if test="stage=='已完成'">
+						and a1.company_stage='已完成'
+					</if>
+					<if test="stage!='待评价' and stage!='已完成'">
+						and a1.stage=#{stage}
+					</if>
+					or(a1.stage=#{stage} and
+					a1.user_id=#{user_id})
+					
+				</if>
+			</if>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				and a1.stage='发布中' and (a1.publish_type_id=2
+				and (a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					or(
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					or (a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					)
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					or( a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+				</if>
+				)
+				or a1.publish_type_id=1 or (a1.publish_type_id=3 and
+				a1.user_id=#{user_id}))
+			</if>
+			<if test="stage=='发布中' and status!=null and status!='' and status!='指派中'">
+				and a1.stage='发布中' and (a1.publish_type_id=2 and
+				a1.task_status=#{status} and (a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					or(
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					or (a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					)
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					or( a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+				</if>
+				))
+				or(a1.task_status=#{status} and a1.stage=#{stage} and
+				a1.publish_type_id=1)
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if test="status!=null and status!='' and status!='指派中'">
+				<if test="status=='待评价' or status=='已完成'">
+					and a1.task_status=#{status} or a1.company_status=#{status}
+				</if>
+				<if test="status!='待评价' and status!='已完成'">
+					and a1.task_status=#{status}
+				</if>
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者是公司员工OK6 -->
+	<select id="getTaskByStageOrStatus6" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				a1.stage='发布中' AND (a1.publish_type_id=1 OR
+				(a1.publish_type_id=2 and
+				a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				)or (a1.task_status='指派中' and a1.user_id=#{user_id}))
+			</if>
+			<if test="stage=='发布中' and status=='发布中' or status=='领取中'">
+				and a1.task_status=#{status} AND a1.publish_type_id=1 and
+				a1.stage=#{stage} OR
+				(a1.publish_type_id=2 and a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				and a1.task_status=#{status} and a1.stage=#{stage})
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status='指派中' and a1.user_id=#{user_id}
+			</if>
+			<if test="stage!=null and stage!='' and stage!='发布中'">
+				and a1.user_id=#{user_id} and a1.stage=#{stage}
+			</if>
+			<if test="status!='发布中'  and status!='领取中' and status!=null and status!=''">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if
+				test="stage=='发布中' and status!=null and status!='' and status!='发布中' and status!='领取中' and status!='指派中'">
+				and 1=2
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者是团队成员5 -->
+	<select id="getTaskByStageOrStatus5" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,company_stage,company_status,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,company_stage,company_status,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage=='发布中' and (status=='' or status==null)">
+				a1.stage='发布中' and (a1.task_status='发布中' or a1.task_status='领取中')
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+				</if>
+				or (a1.task_status='指派中' and a1.user_id=#{user_id})
+				or
+				(a1.publish_type_id=1 and a1.stage='发布中')
+			</if>
+			<if test="stage!='发布中' and (status=='' or status==null)">
+				<if test="stage=='待评价'">
+					and a1.company_stage='待评价'
+				</if>
+				<if test="stage=='已完成'">
+					and a1.company_stage='已完成'
+				</if>
+				<if test="stage!='待评价' and stage!='已完成'">
+					and a1.stage=#{stage}
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+				</if>
+				or (user_id=#{user_id} and a1.stage=#{stage})
+			</if>
+			<if test="status!=null and status!='' and stage!='发布中'">
+				<if test="status=='待评价' or status=='已完成'">
+					and a1.company_status=#{status}
+				</if>
+				<if test="status!='待评价' and status!='已完成'">
+					and a1.task_status=#{status}
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+				</if>
+				or (a1.user_id=#{user_id} and a1.task_status=#{status})
+			</if>
+			<if test="status=='发布中' or status=='领取中'">
+				and a1.task_status=#{status} and a1.publish_type_id=1 or
+				(a1.task_status=#{status}
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+				</if>
+				)
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者是制作者和团队成员4 -->
+	<select id="getTaskByStageOrStatus4" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage!=null and stage!='' and stage!='发布中' and user_id!=null">
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					(a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage} or (a1.stage=#{stage} and
+					a1.user_id=#{user_id}))
+					or (a1.is_parent_poject=0 and a1.project_id
+					in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage} or (a1.stage=#{stage} and
+					a1.user_id=#{user_id})
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and (a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage} or (a1.stage=#{stage} and
+					a1.user_id=#{user_id}))
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage}
+					or (a1.stage=#{stage} and
+					a1.user_id=#{user_id}))
+				</if>
+			</if>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				and a1.stage='发布中' and ( a1.task_status!='指派中' and
+				a1.publish_type_id=2
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					(a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+					or (a1.is_parent_poject=0 and a1.project_id
+					in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage}
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and ( a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and ( a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+				</if>
+				or(a1.task_status='发布中' and a1.publish_type_id=1) or
+				(a1.task_status='领取中' and a1.publish_type_id=1) or
+				(a1.publish_type_id=3 and a1.user_id=#{user_id} and
+				a1.task_status='指派中')
+				)
+			</if>
+			<if test="stage=='发布中' and status!=null and status!=''">
+				and a1.stage='发布中' and a1.task_status=#{status}
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if test="status!=null and status!='' and status!='指派中' and stage!='发布中'">
+				and a1.task_status=#{status}
+			</if>
+			<if test="status=='发布中' or status=='领取中'">
+				and a1.task_status=#{status} and stage=#{stage}
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and (a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					)
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+				</if>
+				or(a1.task_status=#{status} and a1.publish_type_id=1 and
+				stage=#{stage})
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者即是制作者又是公司员工还是团队成员OK3 -->
+	<select id="getTaskByStageOrStatus3" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage!=null and stage!='' and stage!='发布中' and user_id!=null">
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					(a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+					or (a1.is_parent_poject=0 and a1.project_id
+					in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage}
+					) or (a1.stage=#{stage} and
+					a1.user_id=#{user_id})
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and ((a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+					or (a1.stage=#{stage} and
+					a1.user_id=#{user_id}))
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and ((a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+					or (a1.stage=#{stage} and
+					a1.user_id=#{user_id}))
+				</if>
+			</if>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				and a1.stage='发布中' and (a1.publish_type_id=2 and
+				a1.task_status!='指派中' and (a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				or
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					(
+					(a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+					or (a1.is_parent_poject=0 and a1.project_id
+					in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage}
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					( a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					( a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					and a1.stage=#{stage})
+				</if>
+				))
+				or(a1.task_status='发布中' and a1.publish_type_id=1) or
+				(a1.task_status='领取中' and a1.publish_type_id=1) or
+				(a1.publish_type_id=3 and a1.task_status='指派中'
+				and
+				a1.user_id=#{user_id})
+			</if>
+			<if test="stage=='发布中' and status!=null and status!=''">
+				and a1.stage='发布中' and a1.task_status=#{status}
+			</if>
+			<if test="status=='发布中' or status=='领取中'">
+				and a1.task_status=#{status} and stage=#{stage}
+				<if test="parentIds.size()>0 and subIds.size()>0">
+					and (
+					a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+					or (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+					)
+					)
+				</if>
+				<if test="parentIds.size()>0 and subIds.size()==0">
+					and (a1.is_parent_poject=1 and a1.project_id in
+					<foreach collection="parentIds" open="(" close=")"
+						separator="," item="id">#{id}</foreach>
+
+					)
+				</if>
+				<if test="parentIds.size()==0 and subIds.size()>0">
+					and (a1.is_parent_poject=0 and a1.project_id in
+					<foreach collection="subIds" open="(" close=")" separator=","
+						item="id">#{id}</foreach>
+
+					)
+				</if>
+				or(a1.task_status=#{status} and a1.publish_type_id=1 and
+				stage=#{stage})
+			</if>
+			<if test="status!=null and status!='' and status!='指派中' and stage!='发布中'">
+				and a1.task_status=#{status}
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if test="status!=null and status!='' and status!='指派中'">
+				and a1.task_status=#{status}
+			</if>
+
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者即是制作者又是公司员工OK 2 -->
+	<select id="getTaskByStageOrStatus2" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage!=null and stage!='' and stage!='发布中' and user_id!=null">
+				and a1.stage=#{stage} and a1.user_id=#{user_id}
+			</if>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				and a1.stage='发布中' and (a1.publish_type_id=2
+				and a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				or(a1.task_status='发布中' and a1.publish_type_id=1) or
+				(a1.task_status='领取中' and a1.publish_type_id=1) or
+				(a1.publish_type_id=3 and a1.task_status='指派中' and
+				a1.user_id=#{user_id}))
+			</if>
+			<if test="stage=='发布中' and status!=null and status!='' and status!='指派中'">
+				and a1.stage='发布中' and a1.task_status=#{status} and
+				a1.publish_type_id=1
+				or (a1.stage='发布中' and a1.publish_type_id=2 and
+				a1.company_id in
+				<foreach collection="companyIds" open="(" close=")"
+					separator="," item="id">#{id}</foreach>
+				and a1.task_status=#{status})
+			</if>
+			<if test="stage=='发布中' and status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+				and
+				a1.stage=#{stage}
+			</if>
+			<if test="status!=null and status!=''">
+				and a1.task_status=#{status}
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<!-- 当前操作者只是制作者 OK 1 -->
+	<select id="getTaskByStageOrStatus" resultMap="taskMap1">
+		SELECT * FROM (SELECT
+		id,class_id,NAME,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_model_task
+		UNION SELECT
+		id,class_id,cart,pattern_number,user_id,task_status,stage,begin_time,end_time,publish_type_id,degree_id,company_id,project_id,is_parent_poject
+		FROM p_animation_light_task) a1 left join p_clazz p1 on
+		a1.class_id=p1.id
+		<where>
+			<if test="stage=='发布中' and (status==null or status=='')">
+				and a1.stage='发布中' AND (a1.publish_type_id=1 OR
+				(a1.publish_type_id=3 and a1.task_status='指派中' AND
+				a1.user_id=#{user_id}))
+			</if>
+			<if test="stage=='发布中' and status!=null and status!=''">
+				and a1.stage='发布中'
+			</if>
+			<if test="status=='发布中' or status=='领取中'">
+				and a1.task_status=#{status} and publish_type_id!=2
+			</if>
+			<if test="status=='指派中'">
+				and a1.task_status=#{status} and a1.user_id=#{user_id}
+			</if>
+			<if test="status!=null and status!='' and status!='指派中'">
+				and a1.task_status=#{status}
+			</if>
+			<if test="user_id!=null and  stage!=null and stage!='' and stage!='发布中'">
+				and a1.stage=#{stage} and a1.user_id=#{user_id}
+			</if>
+			<if test="begin_time!=null">
+				and a1.begin_time like "%"#{begin_time}"%"
+			</if>
+			<if test="class_id!=null">
+				and a1.class_id=#{class_id}
+			</if>
+			<if
+				test="project_id!=null and is_parent_project!=null and project_id!='' and is_parent_project!=''">
+				and a1.project_id=#{project_id} and
+				a1.is_parent_poject=#{is_parent_project}
+			</if>
+		</where>
+		<if test="field=='begin_time' and  sort=='asc'">
+			order by a1.begin_time asc
+		</if>
+		<if test="field=='begin_time' and sort=='desc'">
+			order by a1.begin_time desc
+		</if>
+		<if test="field=='task_status' and sort=='asc'">
+			order by to_pinyin( a1.task_status) asc
+		</if>
+		<if test="field=='task_status' and sort=='desc'">
+			order by to_pinyin( a1.task_status) desc
+		</if>
+		<if test="field=='class' and sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="field=='class' and sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="taskMap1">
+		<association property="clazz" column="class_id"
+			javaType="com.cgwas.clazz.entity.Clazz" select="getClazzById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+		<association property="company" column="company_id"
+			javaType="com.cgwas.company.entity.Company" select="getCompanyById" />
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+	</resultMap>
+	<select id="getCompanyById" resultType="com.cgwas.company.entity.Company">
+		select * from u_company
+		where id=#{company_id}
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="modelTaskMap4">
+		<id column="id" property="id" />
+		<association property="clazz" column="class_id"
+			javaType="com.cgwas.clazz.entity.Clazz" select="getClazzById" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+	</resultMap>
+	<select id="selectModelTaskPage4" resultMap="modelTaskMap4">
+		SELECT * FROM (SELECT
+		id,name,pattern_number,timeliness,class_id,degree_id,model_type_id,
+		begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,company_stage,project_id,company_id,publishTime,getTaskNums
+		FROM
+		p_model_task t1 UNION SELECT id,pattern_number as
+		name,pattern_number,timeliness,
+		class_id,degree_id,id as
+		model_type_id,begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,company_stage,project_id,company_id,publishTime,getTaskNums
+		FROM
+		p_animation_light_task t2) t1
+		<where>
+			t1.task_status is not null and t1.stage is not null
+			<if test="psearch.clazz_id!=null">
+				and t1.class_id=#{psearch.clazz_id}
+			</if>
+			<if test="psearch.degree_id!=null">
+				and t1.degree_id=#{psearch.degree_id}
+			</if>
+			<if test="psearch.stage=='发布中'">
+				and t1.stage='发布中'
+			</if>
+			<if test="psearch.stage=='进行中'">
+				and (t1.stage='未开始' or t1.stage='进行中' or t1.stage='审核中')
+			</if>
+			<if test="psearch.stage=='已完成'">
+				and (t1.stage='待评价' or t1.stage='已完成' or
+				t1.company_stage='待评价' or t1.company_stage='已完成')
+			</if>
+			<if test="psearch.sub_project_id!=null">
+				and t1.project_id=#{psearch.sub_project_id} and t1.is_parent_poject=0
+			</if>
+			<if test="psearch.idsInfo!=null and psearch.idsInfo.ids.size()>0">
+				and t1.project_id in
+				<foreach collection="psearch.idsInfo.ids" open="(" close=")"
+					separator="," item="id">
+					#{id}
+				</foreach>
+				and t1.is_parent_poject=#{psearch.idsInfo.is_parent}
+			</if>
+		</where>
+		<if test="psearch.field=='price' and  psearch.sort=='asc'">
+			order by t1.price asc
+		</if>
+		<if test="psearch.field=='price' and psearch.sort=='desc'">
+			order by t1.price desc
+		</if>
+		<if test="psearch.field=='publish' and  psearch.sort=='asc'">
+			order by t1.publishTime asc
+		</if>
+		<if test="psearch.field=='publish' and psearch.sort=='desc'">
+			order by t1.publishTime desc
+		</if>
+		<if test="psearch.field=='getNums' and psearch.sort=='asc'">
+			order by getTaskNums asc
+		</if>
+		<if test="psearch.field=='getNums' and psearch.sort=='desc'">
+			order by getTaskNums desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectModelTaskCount4" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT
+		id,pattern_number,timeliness,class_id,degree_id,
+		begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,company_stage,project_id,company_id,publishTime,getTaskNums
+		FROM
+		p_model_task t1 UNION SELECT id,pattern_number,timeliness,
+		class_id,degree_id,begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,company_stage,project_id,company_id,publishTime,getTaskNums
+		FROM
+		p_animation_light_task t2) t1
+		<where>
+			t1.task_status is not null and t1.stage is not null
+			<if test="psearch.clazz_id!=null">
+				and t1.class_id=#{psearch.clazz_id}
+			</if>
+			<if test="psearch.degree_id!=null">
+				and t1.degree_id=#{psearch.degree_id}
+			</if>
+			<if test="psearch.stage=='发布中'">
+				and t1.stage='发布中'
+			</if>
+			<if test="psearch.stage=='进行中'">
+				and (t1.stage='未开始' or t1.stage='进行中' or t1.stage='审核中')
+			</if>
+			<if test="psearch.stage=='已完成'">
+				and (t1.stage='待评价' or t1.stage='已完成' or
+				t1.company_stage='待评价' or t1.company_stage='已完成')
+			</if>
+			<if test="psearch.sub_project_id!=null">
+				and t1.project_id=#{psearch.sub_project_id} and t1.is_parent_poject=0
+			</if>
+			<if test="psearch.idsInfo!=null and psearch.idsInfo.ids.size()>0">
+				and t1.project_id in
+				<foreach collection="psearch.idsInfo.ids" open="(" close=")"
+					separator="," item="id">
+					#{id}
+				</foreach>
+				and t1.is_parent_poject=#{psearch.idsInfo.is_parent}
+			</if>
+		</where>
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="modelTaskMap">
+		<id column="id" property="id" />
+		<association property="clazz" column="class_id"
+			javaType="com.cgwas.clazz.entity.Clazz" select="getClazzById" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<association property="pointUser" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getUserById" />
+	</resultMap>
+	<select id="selectModelTaskPage1" resultMap="modelTaskMap">
+		SELECT * FROM (SELECT id,pattern_number,timeliness,class_id,
+		begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,project_id,company_id
+		FROM
+		p_model_task t1 UNION SELECT id,pattern_number,timeliness,
+		class_id,begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,project_id,company_id
+		FROM
+		p_animation_light_task t2) t1
+		left join p_publish_type p1 on
+		t1.publish_type_id=p1.id left join p_clazz
+		p2 on t1.class_id=p2.id
+		<where>
+			t1.project_id=#{project_id}
+			and t1.company_id=#{company_id}
+			and
+			t1.is_parent_poject=#{is_parent_poject}
+			and t1.task_status is null
+			and
+			t1.stage is null
+			<if
+				test="psearch.field=='name'and psearch.search!=null and psearch.search!=''">
+				and t1.pattern_number like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='publish_type'and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_class'and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time'and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+		</where>
+		<if test="psearch.field=='name' and  psearch.sort=='asc'">
+			order by to_pinyin(t1.pattern_number) asc
+		</if>
+		<if test="psearch.field=='name' and psearch.sort=='desc'">
+			order by to_pinyin(t1.pattern_number) desc
+		</if>
+		<if test="psearch.field=='begin_time' and  psearch.sort=='asc'">
+			order by t1.begin_time asc
+		</if>
+		<if test="psearch.field=='begin_time' and psearch.sort=='desc'">
+			order by t1.begin_time desc
+		</if>
+
+		<if test="psearch.field=='publish_type' and psearch.sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="psearch.field=='publish_type' and psearch.sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+		<if test="psearch.field=='task_class' and psearch.sort=='asc'">
+			order by to_pinyin( p2.content) asc
+		</if>
+		<if test="psearch.field=='task_class' and psearch.sort=='desc'">
+			order by to_pinyin( p2.content) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectModelTaskCount1" resultType="java.lang.Long">
+		SELECT count(*) FROM (SELECT id,pattern_number,timeliness,class_id,
+		begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,project_id,company_id
+		FROM
+		p_model_task t1 UNION SELECT id,pattern_number,timeliness,
+		class_id,begin_time,end_time,create_time,plan_time,price,user_id,
+		publish_type_id,is_parent_poject,task_status,stage,project_id,company_id
+		FROM
+		p_animation_light_task t2) t1
+		left join p_publish_type p1 on
+		t1.publish_type_id=p1.id left join p_clazz
+		p2 on t1.class_id=p2.id
+		<where>
+			t1.project_id=#{project_id}
+			and t1.company_id=#{company_id}
+			and
+			t1.is_parent_poject=#{is_parent_poject}
+			and t1.task_status is null
+			and
+			t1.stage is null
+			<if
+				test="psearch.field=='name'and psearch.search!=null and psearch.search!=''">
+				and t1.pattern_number like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='publish_type'and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_class'and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time'and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+		</where>
+	</select>
+	<select id="selectModelTaskPage" resultMap="taskMaps">
+		select t1.* ,p1.content,p2.content from p_model_task t1 left join
+		p_publish_type p1 on t1.publish_type_id=p1.id
+		left join p_model_type p2
+		on t1.model_type_id=p2.id
+		<where>
+			t1.class_id=#{psearch.clazz_id}
+			<if test="psearch.project_id!=null">
+				and t1.project_id=#{psearch.project_id}
+			</if>
+			<if test="psearch.flag==1">
+				and t1.is_parent_poject=1
+			</if>
+			<if test="psearch.flag==0">
+				and t1.is_parent_poject=0
+			</if>
+			<if
+				test="psearch.field=='name' and psearch.search!=null and psearch.search!=''">
+				and t1.name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='publish_type' and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='model_type' and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_status' and psearch.search!=null and psearch.search!=''">
+				and t1.task_status like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.project_id==null and (psearch.search==null or psearch.search=='') ">
+				<if test="map.company_id!=null">
+					and t1.company_id=#{map.company_id} and t1.stage is not
+					null
+				</if>
+				<if test="map.company_id==null">
+					<if
+						test="map.companyIds.size()==0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+						and (t1.publish_type_id=1 and t1.stage='发布中' OR
+						(t1.publish_type_id=3 AND
+						t1.user_id=#{psearch.user_id} and
+						t1.stage='发布中')) or (t1.stage!='发布中' and t1.stage is not null and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务222222 -->
+						and t1.stage='发布中' AND (t1.publish_type_id=1 OR
+						(t1.publish_type_id=2 and t1.company_id
+						in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						))or ((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中')and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()==0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						and t1.stage='发布中' and t1.publish_type_id=1
+						or(t1.task_status!='指派中' and t1.stage is not null
+						<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							and (
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							and t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							and t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						) or((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						<!-- 当前操作者既是公司员工又是团队成员:可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务以及团队所参与项目的内部任务和指派任务 -->
+						<!-- 可以看到团队所参与项目的所有非发布中任务 777777777 -->
+						and ((t1.company_id in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						and t1.publish_type_id=2 and stage='发布中') or (t1.stage is not null
+						and t1.task_status!='指派中' and
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							(
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							or (t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							or( t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						))
+						or (t1.publish_type_id=1 and t1.stage is not null and
+						t1.stage='发布中') or
+						((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+				</if>
+			</if>
+		</where>
+		<if test="psearch.field=='name' and  psearch.sort=='asc'">
+			order by to_pinyin( t1.name) asc
+		</if>
+		<if test="psearch.field=='name' and psearch.sort=='desc'">
+			order by to_pinyin( t1.name) desc
+		</if>
+		<if test="psearch.field=='begin_time' and  psearch.sort=='asc'">
+			order by t1.begin_time asc
+		</if>
+		<if test="psearch.field=='begin_time' and psearch.sort=='desc'">
+			order by t1.begin_time desc
+		</if>
+		<if test="psearch.field=='publish_type' and psearch.sort=='asc'">
+			order by to_pinyin( p1.content) asc
+		</if>
+		<if test="psearch.field=='publish_type' and psearch.sort=='desc'">
+			order by to_pinyin( p1.content) desc
+		</if>
+		<if test="psearch.field=='model_type' and psearch.sort=='asc'">
+			order by to_pinyin( p2.content) asc
+		</if>
+		<if test="psearch.field=='model_type' and psearch.sort=='desc'">
+			order by to_pinyin( p2.content) desc
+		</if>
+		<if test="psearch.field=='task_status' and psearch.sort=='asc'">
+			order by to_pinyin( t1.task_status) asc
+		</if>
+		<if test="psearch.field=='task_status' and psearch.sort=='desc'">
+			order by to_pinyin( t1.task_status) desc
+		</if>
+		limit #{firstrownum}, #{limit}
+
+	</select>
+
+	<select id="selectModelTaskCount" resultType="java.lang.Long">
+		select count(DISTINCT t1.id) from p_model_task t1 left join
+		p_publish_type p1 on t1.publish_type_id=p1.id
+		left join p_model_type p2
+		on t1.model_type_id=p2.id
+		<where>
+			t1.class_id=#{psearch.clazz_id}
+			<if test="psearch.project_id!=null">
+				and t1.project_id=#{psearch.project_id}
+			</if>
+			<if test="psearch.flag==1">
+				and t1.is_parent_poject=1
+			</if>
+			<if test="psearch.flag==0">
+				and t1.is_parent_poject=0
+			</if>
+			<if
+				test="psearch.field=='name' and psearch.search!=null and psearch.search!=''">
+				and t1.name like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='begin_time' and psearch.search!=null and psearch.search!=''">
+				and t1.begin_time like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='publish_type' and psearch.search!=null and psearch.search!=''">
+				and p1.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='model_type' and psearch.search!=null and psearch.search!=''">
+				and p2.content like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.field=='task_status' and psearch.search!=null and psearch.search!=''">
+				and t1.task_status like "%"#{psearch.search}"%"
+			</if>
+			<if
+				test="psearch.project_id==null and (psearch.search==null or psearch.search=='') ">
+				<if test="map.company_id!=null">
+					and t1.company_id=#{map.company_id} and t1.stage is not
+					null
+				</if>
+				<if test="map.company_id==null">
+					<if
+						test="map.companyIds.size()==0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是制作者：制作者能看到全部外部任务和指派给自己的指派任务11111 -->
+						and (t1.publish_type_id=1 and t1.stage='发布中' OR
+						(t1.publish_type_id=3 AND
+						t1.user_id=#{psearch.user_id} and
+						t1.stage='发布中')) or (t1.stage!='发布中' and t1.stage is not null and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and map.parentIds.size()==0 and map.subIds.size()==0">
+						<!-- 当前操作者是公司员工：可以看到发布中的所有外部任务和自己所属公司的内部任务和指派给自己的任务222222 -->
+						and t1.stage='发布中' AND (t1.publish_type_id=1 OR
+						(t1.publish_type_id=2 and t1.company_id
+						in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						))or ((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中')and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()==0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						and t1.stage='发布中' and t1.publish_type_id=1
+						or(t1.task_status!='指派中' and t1.stage is not null
+						<!-- 当前操作者是团队成员：可以看到团队所参与项目的所有任务 3333333 -->
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							and (
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							and t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							and t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+						</if>
+						) or((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+					<if
+						test="map.companyIds.size()>0 and (map.parentIds.size()>0 or map.subIds.size()>0)">
+						<!-- 当前操作者既是公司员工又是团队成员:可以看到发布中的所有外部任务和自己所属公司的内部任务和指派任务以及团队所参与项目的内部任务和指派任务 -->
+						<!-- 可以看到团队所参与项目的所有非发布中任务 777777777 -->
+						and ((t1.company_id in
+						<foreach collection="map.companyIds" open="(" close=")"
+							separator="," item="id">#{id}</foreach>
+						and t1.publish_type_id=2 and stage='发布中') or (t1.stage is not null
+						and t1.task_status!='指派中' and
+						<if test="map.parentIds.size()>0 and map.subIds.size()>0">
+							(
+							t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							or (t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+							)
+						</if>
+						<if test="map.parentIds.size()>0 and map.subIds.size()==0">
+							or (t1.is_parent_poject=1 and t1.project_id in
+							<foreach collection="map.parentIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						<if test="map.parentIds.size()==0 and map.subIds.size()>0">
+							or( t1.is_parent_poject=0 and t1.project_id in
+							<foreach collection="map.subIds" open="(" close=")"
+								separator="," item="id">#{id}</foreach>
+							)
+						</if>
+						))
+						or (t1.publish_type_id=1 and t1.stage='发布中') or
+						((t1.stage!='发布中' and t1.stage is not null or
+						t1.task_status='指派中') and
+						t1.user_id=#{psearch.user_id})
+					</if>
+				</if>
+			</if>
+		</where>
+	</select>
+	<select id="getModelTypeById" resultType="com.cgwas.modeltype.entity.ModelType">
+		select * from
+		p_model_type where id=#{model_type_id}
+	</select>
+	<select id="getPublishTypeById" resultType="com.cgwas.publishtype.entity.PublishType">
+		select * from
+		p_publish_type where id=#{publish_type_id}
+	</select>
+	<select id="getUserById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select u2.* from u_user u1
+		left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id=#{user_id}
+	</select>
+	<select id="getDegreeTypeById" resultType="com.cgwas.degree.entity.Degree">
+		select * from p_degree
+		where id=#{degree_id}
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="taskMaps">
+		<id column="id" property="id" />
+		<association property="modeltype" column="model_type_id"
+			javaType="com.cgwas.modeltype.entity.ModelType" select="getModelTypeById" />
+		<association property="publishtype" column="publish_type_id"
+			javaType="com.cgwas.publishtype.entity.PublishType" select="getPublishTypeById" />
+		<!-- <association property="pointUser" column="user_id" -->
+		<!-- javaType="com.cgwas.userInfo.entity.UserInfo" select="getUserById" 
+			/> -->
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+		<association property="degree" column="degree_id"
+			javaType="com.cgwas.degree.entity.Degree" select="getDegreeTypeById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<select id="getSoftwaresById" resultType="com.cgwas.companySoftware.entity.CompanySoftwareVo">
+		select p1.* from
+		p_company_software p1 left join p_company_software_model p2
+		on
+		p1.id=p2.company_software_id where p2.for_id=#{id} and
+		p2.model_type='m_task'
+	</select>
+	<resultMap type="com.cgwas.modeltask.entity.ModelTaskVo" id="taskMap">
+		<id column="id" property="id" />
+		<association property="maker" column="user_id"
+			javaType="com.cgwas.userInfo.entity.UserInfo" select="getMakerById" />
+		<collection property="companysoftwares" column="id"
+			javaType="arrayList" ofType="com.cgwas.companySoftware.entity.CompanySoftwareVo"
+			select="getSoftwaresById"></collection>
+	</resultMap>
+	<select id="getModelTaskById" resultMap="taskMap">
+		select *
+		from
+		p_model_task t1 where id=#{id}
+	</select>
+</mapper>

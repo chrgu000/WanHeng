@@ -1,0 +1,83 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<style>
+[v-cloak] {
+	display: none;
+}
+</style>
+	</head>
+	<body v-cloak>
+
+<div class="back">
+    <div class="back_btn" onclick="window.location.href='class_style.html'"><img src="img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center" id="garden">教师介绍</div>
+</div>
+
+		<div class="baby_photo">
+			<div v-if="data.header_pic_path" class="photo_title" style="border-radius:12%"><img :src="'..'+data.header_pic_path" class="img-responsive"></div>
+		<div class="name" id="username">
+				{{data.username}}
+			</div>
+			<small>{{data.garden.name}}</small>
+		</div>
+		<div class="teacher">
+			<h4>
+				个人简介
+			</h4>
+			<p>
+				{{data.introduce}}
+			</p>
+		</div>
+		<script src="js/jquery.min.js">
+</script>
+		<script src="js/vue.min.js">
+</script>
+		<script src="js/data.js">
+</script>
+		<script src="js/style.js">
+</script>
+<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+		<script type="text/javascript">
+$(function() {
+	$.ajax( {
+		url : "../teacher/getTeacher.do",
+		type : "post",
+		data : {},
+		dataType : "json",
+		success : function(data) {
+			if(data.sex=="男"){
+				$("#username").addClass("boy");
+			}
+			new Vue( {
+				el : "body",
+				data : {
+					data : data
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+</script>
+	</body>
+</html>

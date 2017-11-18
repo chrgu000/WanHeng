@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companySpace.dao">
+
+	<sql id="columns">
+		id, init_space, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{init_space}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="init_space != null and init_space != ''">
+			and init_space = #{init_space}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanySpace" parameterType="com.cgwas.companySpace.entity.CompanySpace" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_company_space (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanySpaceVo" parameterType="com.cgwas.companySpace.entity.CompanySpaceVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_company_space (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCompanySpace">
+		delete from z_company_space
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanySpaceVo">
+		delete from z_company_space
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCompanySpace">
+		delete from z_company_space
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanySpaceVo">
+		delete from z_company_space
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCompanySpace" resultType="com.cgwas.companySpace.entity.CompanySpaceVo">
+		select 
+		<include refid="columns"/>
+		from z_company_space
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCompanySpace" resultType="com.cgwas.companySpace.entity.CompanySpaceVo">
+		select 
+		<include refid="columns"/>
+		from z_company_space
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	<select id="getInitSpace" resultType="com.cgwas.companySpace.entity.CompanySpaceVo">
+		select id, init_space from z_company_space 
+		where company_id=0 ORDER BY id DESC LIMIT 1
+	</select>
+
+	<update id="updateCompanySpace">
+		update z_company_space
+		<set>
+			id=#{id}, 
+			init_space=#{init_space}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCompanySpaceVo">
+		update z_company_space
+		<set>
+			id=#{id}, 
+			init_space=#{init_space}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCompanySpace">
+		update z_company_space
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="init_space != null and init_space != ''">
+			init_space=#{init_space}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCompanySpaceVo">
+		update z_company_space
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="init_space != null and init_space != ''">
+			init_space=#{init_space}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCompanySpace">
+		update z_company_space
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="init_space != null and init_space != ''">
+			init_space=#{init_space}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCompanySpaceVo">
+		update z_company_space
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="init_space != null and init_space != ''">
+			init_space=#{init_space}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

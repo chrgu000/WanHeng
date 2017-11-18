@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.logInfo.dao">
+
+	<sql id="columns">
+		id, user_name, content, table_name, log_type, user_id, access_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{user_name}, #{content}, #{table_name}, #{log_type}, #{user_id}, #{access_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="user_name != null and user_name != ''">
+			and user_name = #{user_name}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="table_name != null and table_name != ''">
+			and table_name = #{table_name}
+		</if>
+		<if test="log_type != null and log_type != ''">
+			and log_type = #{log_type}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="access_time != null">
+			and access_time = #{access_time}
+		</if>
+	</sql>
+
+	<insert id="saveLogInfo" parameterType="com.cgwas.logInfo.entity.LogInfo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_log_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveLogInfoVo" parameterType="com.cgwas.logInfo.entity.LogInfoVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_log_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteLogInfo">
+		delete from s_log_info
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteLogInfoVo">
+		delete from s_log_info
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleLogInfo">
+		delete from s_log_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleLogInfoVo">
+		delete from s_log_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadLogInfo" resultType="com.cgwas.logInfo.entity.LogInfoVo">
+		select 
+		<include refid="columns"/>
+		from s_log_info
+		where id=#{id} 
+	</select>
+	
+	<select id="selectLogInfo" resultType="com.cgwas.logInfo.entity.LogInfoVo">
+		select 
+		<include refid="columns"/>
+		from s_log_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateLogInfo">
+		update s_log_info
+		<set>
+			id=#{id}, 
+			user_name=#{user_name}, 
+			content=#{content}, 
+			table_name=#{table_name}, 
+			log_type=#{log_type}, 
+			user_id=#{user_id}, 
+			access_time=#{access_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateLogInfoVo">
+		update s_log_info
+		<set>
+			id=#{id}, 
+			user_name=#{user_name}, 
+			content=#{content}, 
+			table_name=#{table_name}, 
+			log_type=#{log_type}, 
+			user_id=#{user_id}, 
+			access_time=#{access_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullLogInfo">
+		update s_log_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="user_name != null and user_name != ''">
+			user_name=#{user_name}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="table_name != null and table_name != ''">
+			table_name=#{table_name}, 
+		</if>
+		<if test="log_type != null and log_type != ''">
+			log_type=#{log_type}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="access_time != null">
+			access_time=#{access_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullLogInfoVo">
+		update s_log_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="user_name != null and user_name != ''">
+			user_name=#{user_name}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="table_name != null and table_name != ''">
+			table_name=#{table_name}, 
+		</if>
+		<if test="log_type != null and log_type != ''">
+			log_type=#{log_type}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="access_time != null">
+			access_time=#{access_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleLogInfo">
+		update s_log_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="user_name != null and user_name != ''">
+			user_name=#{user_name}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="table_name != null and table_name != ''">
+			table_name=#{table_name}, 
+			</if>
+			<if test="log_type != null and log_type != ''">
+			log_type=#{log_type}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="access_time != null">
+			access_time=#{access_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleLogInfoVo">
+		update s_log_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="user_name != null and user_name != ''">
+			user_name=#{user_name}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="table_name != null and table_name != ''">
+			table_name=#{table_name}, 
+			</if>
+			<if test="log_type != null and log_type != ''">
+			log_type=#{log_type}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="access_time != null">
+			access_time=#{access_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

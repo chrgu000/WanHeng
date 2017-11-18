@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.MerchantDao">
+	<select id="findAllMerchant" resultType="Merchant">
+		select * from
+		jxc_merchant
+	</select>
+	<select id="findAllMerchantByPage" resultMap="MerchantMaps">
+		select * from jxc_merchant m left join jxc_sight_spot s on
+		m.sight_spot_id=s.id
+		<where>
+			<if test="title_id!=null and !title_id.equals('')">
+				and m.title_id=#{title_id}
+			</if>
+			<if test="name!=null and !name.equals('')">
+				and s.name like "%"#{name}"%"
+			</if>
+			<if test="isFree!=null and !isFree.equals('')">
+				and isFree=#{isFree}
+			</if>
+			<if test="price_id!=null and !price_id.equals('')">
+				and price_id=#{price_id}
+			</if>
+			<if test="city_id!=null and !city_id.equals('')">
+				and m.city_id=#{city_id}
+			</if>
+			<if test="area_id!=null and !area_id.equals('')">
+				and m.area_id=#{area_id}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Merchant" id="MerchantMaps">
+		<association property="city" column="city_id" javaType="City"
+			select="findCityById"></association>
+			<association property="area" column="area_id" javaType="Area"
+			select="findAreaById"></association>
+		<association property="sightspot" column="sight_spot_id"
+			javaType="SightSpot" select="findSightSpotById"></association>
+	</resultMap>
+	<select id="findCityById" resultType="City">
+		select * from jxc_city
+		where id=#{city_id}
+	</select>
+	<select id="findAreaById" resultType="Area">
+		select * from jxc_area
+		where id=#{area_id}
+	</select>
+	<select id="findSightSpotById" resultType="SightSpot">
+		select * from
+		jxc_sight_spot where id=#{sight_spot_id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from
+		jxc_merchant m left join jxc_sight_spot s on
+		m.sight_spot_id=s.id
+		<where>
+			<if test="title_id!=null and !title_id.equals('')">
+				and m.title_id=#{title_id}
+			</if>
+			<if test="name!=null and !name.equals('')">
+				and s.name like "%"#{name}"%"
+			</if>
+			<if test="isFree!=null and !isFree.equals('')">
+				and isFree=#{isFree}
+			</if>
+			<if test="price_id!=null and !price_id.equals('')">
+				and price_id=#{price_id}
+			</if>
+			<if test="city_id!=null and !city_id.equals('')">
+				and m.city_id=#{city_id}
+			</if>
+		</where>
+	</select>
+
+	<select id="findMerchantById" resultMap="MerchantMap">
+		select * from
+		jxc_merchant
+		where id=#{id}
+	</select>
+	<resultMap type="Merchant" id="MerchantMap">
+		<id column="id" property="id" />
+		<association property="sightspot" column="sight_spot_id"
+			javaType="SightSpot" select="findSightSpotById"></association>
+			<association property="city" column="city_id" javaType="City" select="findCityById"/>
+			<association property="area" column="area_id" javaType="Area" select="findAreaById"/>
+		<collection property="markIds" column="id" javaType="arrayList"
+			ofType="int" select="findMarkIdsByMerchantId"></collection>
+		<collection property="evaluates" column="id" javaType="arrayList"
+			ofType="Evaluate" select="findEvalauteByMerchantId"></collection>
+		<collection property="pictures" column="id" javaType="arrayList"
+			ofType="Picture" select="findPicturesByMerchantId"></collection>
+			<collection property="titles" column="sight_spot_id" javaType="arrayList" ofType="Title" select="findTitlesBySightSpotId"></collection>
+			<collection property="titleIds" column="id"  javaType="arrayList" ofType="int" select="findTitleIdsByMerchantId"/>
+	</resultMap>
+	<select id="findTitleIdsByMerchantId" resultType="int">
+	select title_id from jxc_merchant_title where merchant_id=#{id} 
+	</select>
+	<select id="findMarkIdsByMerchantId" resultType="int">
+		select mark_id
+		from jxc_mark_merchant where merchant_id=#{id}
+	</select>
+	<select id="findEvalauteByMerchantId" resultType="Evaluate">
+		select * from
+		jxc_evaluate where merchant_id=#{id}
+	</select>
+	<select id="findPicturesByMerchantId" resultType="Picture">
+		select * from
+		jxc_picture where merchant_id=#{id}
+	</select>
+	<select id="findTitlesBySightSpotId" resultType="Title">
+	select * from jxc_title t left join jxc_sight_spot_title s on t.id=s.title_id where s.sight_spot_id=#{sight_spot_id}
+	</select>
+	<select id="findMerchantsBySelect" resultMap="Merchantmaps">
+		select distinct m.* from jxc_merchant m left join jxc_mark_merchant mm
+		on m.id=mm.merchant_id left join jxc_merchant_title t on mm.merchant_id=t.merchant_id
+		<where>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				and m.city_id=#{city_id}
+			</if>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				and m.title like "%"#{title}"%"
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				and m.price_id=#{price_id}
+			</if>
+			<if test="mark_id!=null&amp;&amp;!mark_id.equals('')">
+				and mm.mark_id=#{mark_id}
+			</if>
+			<if test="title_id!=null&amp;&amp;title_id!=1&amp;&amp;!title_id.equals('')">
+				and t.title_id=#{title_id}
+			</if>
+			<if test="title_id==1">
+				and t.title_id in(1,4)
+			</if>
+		</where>
+	</select>
+	<resultMap type="Merchant" id="Merchantmaps">
+		<id column="id" property="id" />
+		<collection property="marks" javaType="arrayList" ofType="Mark"
+			column="id" select="findMarksByMerchantId" />
+	</resultMap>
+	<select id="findMarksByMerchantId" resultType="Mark">
+		select m.* from
+		jxc_mark m left join jxc_mark_merchant mm on m.id=mm.mark_id
+		where
+		mm.merchant_id=#{id}
+	</select>
+	<select id="getMerchantsByPage" resultMap="Merchants">
+		select distinct m.* from jxc_merchant m left join jxc_mark_merchant j on
+		m.id=j.merchant_id left join jxc_merchant_title t on j.merchant_id=t.merchant_id
+		<where>
+			<if test="mark_id!=null&amp;&amp;!mark_id.equals('')">
+				and j.mark_id=#{mark_id}
+			</if>
+				and t.title_id in(1,4)
+			<if test="sight_spot_id!=null&amp;&amp;!sight_spot_id.equals('')">
+				and m.sight_spot_id=#{sight_spot_id}
+			</if>
+		</where>
+	</select>
+	<select id="findTitlesByMerchantId" resultType="Title">
+	select * from jxc_title t left join jxc_merchant_title m on t.id=m.title_id where m.merchant_id=#{merchant_id}
+	</select>
+	<resultMap type="Merchant" id="Merchants">
+	<id column="id" property="id"/>
+	<collection property="marks" column="id" javaType="arrayList" ofType="Mark" select="findMarksByMerchantId"/>
+	</resultMap>
+	<insert id="addMerchantMark">
+		insert into jxc_mark_merchant(mark_id,merchant_id)
+		values(#{mark_id},#{merchant_id})
+	</insert>
+	<insert id="addMerchantTitle">
+		insert into jxc_merchant_title(title_id,merchant_id)
+		values(#{title_id},#{merchant_id})
+	</insert>
+	<insert id="addMerchant" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		jxc_merchant(city_id,price_id,title,sub_title,content,details,original_price,favourable_price,path,num,longitude,latitude,isOk,sight_spot_id,predetermine)
+		values
+		(#{city_id},#{price_id},#{title},#{sub_title},#{content},#{details},#{original_price},#{favourable_price},
+		#{path},#{num},#{longitude},#{latitude},#{isOk},#{sight_spot_id},#{predetermine})
+	</insert>
+	<update id="updateMerchant">
+		update jxc_merchant
+		<set>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				city_id=#{city_id},
+			</if>
+				<if test="area_id!=null&amp;&amp;!area_id.equals('')">
+				area_id=#{area_id},
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				price_id=#{price_id},
+			</if>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				title=#{title},
+			</if>
+			<if test="sub_title!=null&amp;&amp;!sub_title.equals('')">
+				sub_title=#{sub_title},
+			</if>
+			<if test="content!=null&amp;&amp;!content.equals('')">
+				content=#{content},
+			</if>
+			<if test="details!=null&amp;&amp;!details.equals('')">
+				details=#{details},
+			</if>
+			<if test="original_price!=null&amp;&amp;!original_price.equals('')">
+				original_price=#{original_price},
+			</if>
+			<if test="favourable_price!=null&amp;&amp;!favourable_price.equals('')">
+				favourable_price=#{favourable_price},
+			</if>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+			<if test="longitude!=null&amp;&amp;!longitude.equals('')">
+				longitude=#{longitude},
+			</if>
+			<if test="latitude!=null&amp;&amp;!latitude.equals('')">
+				latitude=#{latitude},
+			</if>
+			<if test="isOk!=null&amp;&amp;!isOk.equals('')">
+				isOk=#{isOk},
+			</if>
+			<if test="sight_spot_id!=null&amp;&amp;!sight_spot_id.equals('')">
+				sight_spot_id=#{sight_spot_id},
+			</if>
+			<if test="predetermine!=null&amp;&amp;!predetermine.equals('')">
+				predetermine=#{predetermine},
+			</if>
+
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteMerchantMark">
+		delete from jxc_mark_merchant where
+		merchant_id=#{merchant_id}
+	</delete>
+	<delete id="deleteMerchantTitle">
+	delete from jxc_merchant_title where merchant_id=#{merchant_id}
+	</delete>
+	<delete id="deleteMerchantById">
+		delete from jxc_merchant where id=#{id}
+	</delete>
+</mapper>

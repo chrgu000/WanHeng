@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.RoleDao">
+	<insert id="save">
+		insert into
+		dq_role(name) 	values(#{name})
+	</insert>
+	<update id="update">
+		update dq_role
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_role where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteRoleModule">
+	 delete from dq_role_module where role_id in 
+	       <foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="Role">
+		select * from dq_role
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="Role">
+		select * from dq_role
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_role
+	</select>
+	<select id="getRoleByName" resultType="Role">
+	 select * from dq_role where name=#{name}
+	</select>
+	<select id="getAllRole" resultType="Role">
+	 select * from dq_role
+	</select>
+</mapper>

@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.educationalBackground.dao">
+
+	<sql id="columns">
+		id, academy_begin_date, academy_end_date, academy_name,
+		department, degree, user_id,create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{academy_begin_date}, #{academy_end_date},
+		#{academy_name}, #{department}, #{degree}, #{user_id},#{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="academy_begin_date != null">
+			and academy_begin_date = #{academy_begin_date}
+		</if>
+		<if test="academy_end_date != null">
+			and academy_end_date = #{academy_end_date}
+		</if>
+		<if test="academy_name != null and academy_name != ''">
+			and academy_name = #{academy_name}
+		</if>
+		<if test="department != null and department != ''">
+			and department = #{department}
+		</if>
+		<if test="degree != null and degree != ''">
+			and degree = #{degree}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveEducationalBackground"
+		parameterType="com.cgwas.educationalBackground.entity.EducationalBackground"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_educational_background (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveEducationalBackgroundVo"
+		parameterType="com.cgwas.educationalBackground.entity.EducationalBackgroundVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_educational_background (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteEducationalBackground">
+		delete from u_educational_background
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteEducationalBackgroundVo">
+		delete from u_educational_background
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleEducationalBackground">
+		delete from u_educational_background
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleEducationalBackgroundVo">
+		delete from u_educational_background
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadEducationalBackground"
+		resultType="com.cgwas.educationalBackground.entity.EducationalBackgroundVo">
+		select
+		<include refid="columns" />
+		from u_educational_background
+		where id=#{id}
+	</select>
+
+	<select id="selectEducationalBackground"
+		resultType="com.cgwas.educationalBackground.entity.EducationalBackgroundVo">
+		select
+		<include refid="columns" />
+		from u_educational_background
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateEducationalBackground">
+		update u_educational_background
+		<set>
+			id=#{id},
+			academy_begin_date=#{academy_begin_date},
+			academy_end_date=#{academy_end_date},
+			academy_name=#{academy_name},
+			department=#{department},
+			degree=#{degree},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateEducationalBackgroundVo">
+		update u_educational_background
+		<set>
+			id=#{id},
+			academy_begin_date=#{academy_begin_date},
+			academy_end_date=#{academy_end_date},
+			academy_name=#{academy_name},
+			department=#{department},
+			degree=#{degree},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullEducationalBackground">
+		update u_educational_background
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="academy_begin_date != null">
+				academy_begin_date=#{academy_begin_date},
+			</if>
+			<if test="academy_end_date != null">
+				academy_end_date=#{academy_end_date},
+			</if>
+			<if test="academy_name != null and academy_name != ''">
+				academy_name=#{academy_name},
+			</if>
+			<if test="department != null and department != ''">
+				department=#{department},
+			</if>
+			<if test="degree != null and degree != ''">
+				degree=#{degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullEducationalBackgroundVo">
+		update u_educational_background
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="academy_begin_date != null">
+				academy_begin_date=#{academy_begin_date},
+			</if>
+			<if test="academy_end_date != null">
+				academy_end_date=#{academy_end_date},
+			</if>
+			<if test="academy_name != null and academy_name != ''">
+				academy_name=#{academy_name},
+			</if>
+			<if test="department != null and department != ''">
+				department=#{department},
+			</if>
+			<if test="degree != null and degree != ''">
+				degree=#{degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleEducationalBackground">
+		update u_educational_background
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="academy_begin_date != null">
+				academy_begin_date=#{academy_begin_date},
+			</if>
+			<if test="academy_end_date != null">
+				academy_end_date=#{academy_end_date},
+			</if>
+			<if test="academy_name != null and academy_name != ''">
+				academy_name=#{academy_name},
+			</if>
+			<if test="department != null and department != ''">
+				department=#{department},
+			</if>
+			<if test="degree != null and degree != ''">
+				degree=#{degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleEducationalBackgroundVo">
+		update u_educational_background
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="academy_begin_date != null">
+				academy_begin_date=#{academy_begin_date},
+			</if>
+			<if test="academy_end_date != null">
+				academy_end_date=#{academy_end_date},
+			</if>
+			<if test="academy_name != null and academy_name != ''">
+				academy_name=#{academy_name},
+			</if>
+			<if test="department != null and department != ''">
+				department=#{department},
+			</if>
+			<if test="degree != null and degree != ''">
+				degree=#{degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据ID得到学习经历信息 -->
+	<select id="getEducationalBackgroundByUserId"
+		resultType="com.cgwas.educationalBackground.entity.EducationalBackground">
+		select * from
+		u_educational_background
+		where user_id=#{user_id} ORDER BY academy_end_date DESC
+	</select>
+	<!-- 更具用户ID和信息ID修改用户教育经历信息 -->
+	<update id="updateEducationalBackgroundByUserId">
+		update u_educational_background
+		<set>
+			<if test="academy_begin_date != null">
+				academy_begin_date=#{academy_begin_date},
+			</if>
+			<if test="academy_end_date != null">
+				academy_end_date=#{academy_end_date},
+			</if>
+			<if test="academy_name != null and academy_name != ''">
+				academy_name=#{academy_name},
+			</if>
+			<if test="department != null and department != ''">
+				department=#{department},
+			</if>
+			<if test="degree != null and degree != ''">
+				degree=#{degree},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time}
+			</if>
+		</set>
+		where user_id=#{user_id} and id = #{id}
+	</update>
+</mapper>

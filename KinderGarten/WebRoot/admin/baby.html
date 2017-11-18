@@ -1,0 +1,722 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="css/date.min.css" rel="stylesheet" type="text/css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+<style>
+    /**内容超出 出现滚动条 **/
+    .bui-stdmod-body{
+      overflow-x : hidden;
+      overflow-y : auto;
+    }
+  </style>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+			<form action="../footprint/exportFootprint.do" id="form" method="post">
+			<input type="hidden" name="baby_id" id="baby_id">
+			</form>
+				<form id="searchForm" class="form-horizontal span24">
+					<div class="row" style="width: 1200px">
+						<div class="control-group span8">
+							<label class="control-label">
+								学生名称
+							</label>
+							<div class="controls">
+								<input type="text" class="control-text" name="key">
+								<input type="text" style="display: none" />
+							</div>
+						</div>
+						<div id="garden1">
+							<label class="control-label"
+								style="width: 30px; margin-left: 0px; padding-left: 0px; float: left">
+								园区
+							</label>
+							<div class="controls">
+								<select style="height: 33px" v-model="selected" name="garden_id"
+									onchange="getTeachers(this.value)">
+									<option value="">
+										---请选择---
+									</option>
+									<option v-for="option in options" v-bind:value="option.id">
+										{{option.name}}
+									</option>
+								</select>
+							</div>
+						</div>
+						<div id="teacher1">
+							<label class="control-label"
+								style="width: 30px; margin-left: 0px; padding-left: 0px; float: left">
+								教师
+							</label>
+							<div class="controls">
+								<select style="height: 33px" name="teacher_id">
+									<option value="">
+										---请选择---
+									</option>
+								</select>
+							</div>
+						</div>
+						<div id="garden1">
+							<label class="control-label"
+								style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+								审核状态
+							</label>
+							<div class="controls"
+								style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+								<select style="height: 33px" v-model="selected" name="state">
+									<option value="">
+										---请选择---
+									</option>
+									<option value="1">
+										已通过
+									</option>
+									<option value="0">
+										未通过
+									</option>
+								</select>
+							</div>
+						</div>
+					</div>
+					<div id="garden1">
+						<label class="control-label"
+							style="width: 100px; margin-left: 10px; padding-right: 10px; float: left">
+							是否离园
+						</label>
+						<div class="controls"
+							style="width: 60px; margin-left: 0px; padding-left: 0px; float: left">
+							<select style="height: 33px" name="isStudy">
+								<option value="">
+									---请选择---
+								</option>
+								<option value="1">
+									未离园
+								</option>
+								<option value="0">
+									已离园
+								</option>
+							</select>
+						</div>
+					</div>
+					<div class="span3 offset" style="padding-right: 0px; float: right;">
+						<button type="button" id="btnSearch" class="button button-primary">
+							搜索
+						</button>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid"></div>
+			</div>
+		</div>
+		<div id="content" style="display: none" class="body">
+			<form id="form" class="form-horizontal">
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							课程截止日期
+						</label>
+						<div class="controls">
+							<input type="text" class="beginTime" class="kbtn"
+								placeholder="请选择日期" id="date" name="endDate" />
+							<div id="datePlugin"></div>
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							生日
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								id="birth_date" name=" birth_date" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							性别
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text" name="sex"
+								id="sex" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							父亲名称
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								id="father_name" name="father_name" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							父亲联系方式
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								name="father_tel" id="father_tel" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							母亲名称
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								id="mother_name" name="mother_name" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							母亲联系方式
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								name="mother_tel" id="mother_tel" readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							紧急联系人名称
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								id="emergency_contact_name" name="emergency_contact_name"
+								readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							紧急联系人联系方式
+						</label>
+						<div class="controls">
+							<input type="text" class="input-normal control-text"
+								name="emergency_contact_tel" id="emergency_contact_tel"
+								readonly="readonly">
+						</div>
+					</div>
+				</div>
+				<div class="row" id="garden">
+					<div class="control-group span8">
+						<label class="control-label">
+							园区
+						</label>
+						<select name="garden_id" v-model="selected"  id="garden_id"  onchange="getTeachers(this.value)"
+							style="height: 25px; margin-left: 10px;width:150px"
+							class="nput-normal control-text" id="garden2">
+							<option v-for="option in data" v-bind:value="option.id">
+								{{option.name}}
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span8">
+						<label class="control-label">
+							教师
+						</label>
+						<select name="teacher_id" id="teacher"
+							style="height: 25px; margin-left: 10px;"
+							class="nput-normal control-text">
+							<option value="">
+								---请选择---
+							</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="control-group span15">
+						<label class="control-label">
+							简介：
+						</label>
+						<div class="controls control-row4">
+							<textarea class="input-large" cols="20" rows="80"
+								name="introduce" type="text" readonly="readonly"></textarea>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<script src="js/jquery.min.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="js/date.js">
+</script>
+		<script type="text/javascript" src="js/iscroll.js">
+</script>
+		<script type="text/javascript">
+var garden_id = getQueryString("garden_id");
+var teacher_id = getQueryString("teacher_id");
+if (garden_id != null && garden_id != '') {
+	$("[name='garden_id']").attr('disabled', 'disabled');
+	setTimeout(function() {
+		$("[name='garden_id']").val(garden_id);
+	}, 500)
+	getTeachers(garden_id);
+}
+if (teacher_id != null && teacher_id != '') {
+	$("[name='teacher_id']").attr('disabled', 'disabled');
+	setTimeout(function() {
+		$("[name='teacher_id']").val(teacher_id);
+	}, 500);
+}
+$(function() {
+	$.ajax( {
+		url : "../admin/getAdmin.do",
+		type : "post",
+		dataType : "json",
+		data : {},
+		success : function(data) {
+			gd_id = data.garden_id;
+			if (gd_id != null && gd_id != '') {
+				garden_id = gd_id;
+				$("[name='garden_id']").attr('disabled', 'disabled');
+				setTimeout(function() {
+					$("[name='garden_id']").val(gd_id);
+				}, 100);
+				getTeachers(garden_id);
+			}
+
+		},
+		error : function() {
+		}
+	});
+});
+function exportFootprint(id){
+ $("#baby_id").val(id);
+ $("#form").submit();
+}
+var store;
+BUI
+		.use(
+				[ 'common/search' ,'common/page'],
+				function(Search, Grid, Data,Form,Tooltip) {
+					var Grid = BUI.Grid;
+					var Grid = BUI.Grid;
+					var enumObj = {
+						"0" : "未通过",
+						"1" : "已通过"
+					};
+						var enumObj1= {
+						"0" : "已离园",
+						"1" : "未离园"
+					};
+					var columns = [
+							{
+								title : '学生名称',
+								dataIndex : 'username',
+								width : 80
+							},
+							{
+								title : '手机号',
+								dataIndex : 'tel',
+								width : 100,
+							},
+								{
+								title : '头像',
+								dataIndex : 'header_pic_path',
+								width : 120,
+								renderer : function(value, obj) {
+									var delStr = "<img src='.."+obj.header_pic_path+"' style='width:100px;height:100px'>";
+									return delStr ;
+							}
+							},
+							{
+								title : '所属园区',
+								dataIndex : '',
+								width : 100,
+								renderer : function(value, obj) {
+								if(obj.garden==null){
+									return "";
+								}
+								return obj.garden.name;
+								}
+							}
+							,
+							{
+								title : '注册时间',
+								dataIndex : '',
+								width : 120,
+								renderer : function(value, obj) {
+								if(obj.join_time==null){
+									return "";
+								}
+    							return obj.join_time;
+								}
+							},
+							{
+								title : '老师',
+								dataIndex : '',
+								width : 100,
+								renderer : function(value, obj) {
+								if(obj.teacher==null){
+									return "";
+								}
+    							return obj.teacher.username;
+								}
+							},
+							{
+								title : '是否离园',
+								dataIndex : 'isStudy',
+								width :70,
+								renderer : BUI.Grid.Format
+										.enumRenderer(enumObj1)
+							},
+							{
+								title : '审核状态',
+								dataIndex : 'state',
+								width : 70,
+								renderer : BUI.Grid.Format
+										.enumRenderer(enumObj)
+							},
+							{
+								title : '操作',
+								dataIndex : '',
+								width : 150,
+								renderer : function(value, obj) {
+								var delStr = '<br/><span class="grid-command btn-del" title="删除学生信息">删除</span>',
+									 editStr1 = '<span class="grid-command"   onclick="changeState('+obj.state+","+obj.id+')"title="审核状态">审核</span>',
+									editStr2 =  Search.createLink({ //链接使用 此方式
+									id : 'edit1' + obj.id,
+									title : '查看照片',
+									text : '查看照片',
+									href : '../admin/picture.html?baby_id='+obj.id
+									}),
+									editStr3 =  Search.createLink({ //链接使用 此方式
+									id : 'edit2' + obj.id,
+									title : '查看日志',
+									text : '查看日志',
+									href : '../admin/log.html?baby_id='+obj.id+'&flag=0'
+									}),
+									editStr4 =  Search.createLink({ //链接使用 此方式
+									id : 'edit3' + obj.id,
+									title : '查看足迹',
+									text : '查看足迹',
+									href : '../admin/footprint.html?baby_id='+obj.id+'&flag=0'
+									}),
+									editStr6 = '<span class="grid-command"   onclick="exportFootprint('+obj.id+')" title="导出足迹">导出足迹</span>',
+									editStr5 = '<span class="grid-command"   onclick="getMoreInfo('+obj.id+')" title="分配信息">分配信息</span>';
+									
+									return editStr2+editStr3+editStr4+delStr+editStr5+editStr6+editStr1;
+								}
+							} ];
+					 store = Search.createStore('../baby/loadBaby.do', {
+						proxy : {
+							save : {},
+							method : 'POST'
+						},
+						params:{
+							 g_id:garden_id,
+							 t_id:teacher_id
+						},
+						pageIndex : 0,
+						pageSize : 20,
+						autoSync : true
+					//保存数据后，自动更新
+							});
+					var gridCfg = Search.createGridCfg(columns, {
+						forceFit : true,
+						tbar : {
+							items : [ {
+								text : '<i class="icon-remove"></i>删除',
+								btnCls : 'button button-small',
+								handler : delFunction
+							} ]
+						},
+						loadMask : true, //加载数据时显示屏蔽层
+						plugins : [BUI.Grid.Plugins.CheckSelection ]
+					// 插件形式引入多选表格
+							});
+					var search = new Search( {
+						store : store,
+						gridCfg : gridCfg
+					});
+					var grid = search.get('grid');
+					function updFunction() {
+						var selections = grid.getSelection();
+						var ids = [];
+						BUI.each(selections, function(selections) {
+							ids.push(selections.id);
+						});
+						if (ids.length > 1) {
+							BUI.Message.Alert('只能选择一条记录', 'warning');
+						} else if (ids.length <= 0) {
+							BUI.Message.Alert('请选择要编辑的记录', 'warning');
+						} else {
+							location.href="baby_update.html?id="+ids[0];
+						}
+					}
+					function delFunction() {
+						var selections = grid.getSelection();
+						delItems(selections);
+					}
+					function delItems(items) {
+						var ids = [];
+						BUI.each(items, function(item) {
+							ids.push(item.id);
+						});
+						if (ids.length) {
+							BUI.Message.Confirm('确定要删除选中记录吗?', function() {
+								$.ajax( {
+									url : '../baby/deleteBaby.do',
+									dataType : "json",
+									data : {
+										"ids" : ids.toString()
+									},
+									type : "post",
+									async : true,
+									success : function(data) {
+										if (data.hasError == false) {
+											store.load();
+										} else {
+											BUI.Message.Alert(data.errInfo,
+													'warning');
+										}
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrow) {
+										BUI.Message.Alert('系统繁忙,请稍候'
+												+ XMLHttpRequest.status + ","
+												+ XMLHttpRequest.readyState,
+												+"," + textStatus, 'warning')
+									}
+								});
+							}, 'questions');
+						} else {
+							BUI.Message.Alert('请选择记录', function() {
+							}, 'warning');
+						}
+					}
+					grid.on('cellclick', function(ev) {
+						var sender = $(ev.domTarget);
+						if (sender.hasClass('btn-del')) {
+							var record = ev.record;
+							delItems( [ record ]);
+						}
+					});
+				});
+$(function() {
+	$.ajax( {
+		url : "../admin/getAllGarden.do",
+		dataType : "json",
+		type : "post",
+		data : {},
+		success : function(data) {
+			new Vue( {
+				el : '#garden1',
+				data : {
+					selected : '',
+					options : data
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+function getGarden(value){
+	if(value==2){
+	$("#garden2").show();
+	}else{
+		$("#garden2").hide();
+	}
+}
+function check(){
+var value=$("#garden").val();
+if(!value){
+	BUI.Message.Alert("请为管理员选择园区","warning");
+	return  false;
+}
+return true;
+}
+ function getTeachers(id){
+	 	$.ajax( {
+		url : "../baby/getTeachersByGardenId.do",
+		dataType : "json",
+		type : "post",
+		data : {id:id},
+		success : function(data) {
+			 $("[name='teacher_id']").html('');
+			  $("[name='teacher_id']").html('<option value="">---请选择---</option>');
+			 for(var i=0;i<data.length;i++){
+				 var obj=data[i];
+				 $("[name='teacher_id']").append('<option value="'+obj.id+'">'+obj.username+'</option>');
+			 }
+		},
+		error : function() {
+		}
+	});
+ }
+  function changeState(state,id){
+    BUI.Message.Confirm('确认审核吗?',function(){
+    	$.ajax({
+					 url:"../baby/getBabyEndDateAndTeacherInfo.do",
+					 type:"post",
+					 dataType:"json",
+					 data:{id:id},
+					 success:function(data){
+						 if(data==1){
+							 BUI.Message.Alert("请为学生分配老师和课程截止日期","warning");
+						 }else{
+							 $.ajax({
+								 url:"../baby/b_changeState.do",
+								 type:"post",
+								 dataType:"json",
+								 data:{state:state,id:id},
+								 success:function(data){
+									store.load();
+									 if(data.hasError){
+										 BUI.Message.Alert(data.errInfo);
+									 }else{
+										 BUI.Message.Alert("审核成功!","warning");
+									 }
+								 },
+								 error:function(){
+								 }
+							 });
+						 }
+					 },
+					 error:function(){}});
+		  });
+	  }
+   var dialog;
+   var baby_id;
+   function update(baby_id){
+	   var endDate=$("#date").val();
+	   var teacher_id=$("#teacher").val();
+	   var garden_id=$("#garden_id").val();
+	   	$.ajax( {
+		url : "../baby/updBabyById.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			id : baby_id,
+			teacher_id:teacher_id,
+			endDate:endDate,
+			garden_id:garden_id
+		},
+		success : function(data) {
+		 location.reload();
+},
+error:function(){}
+});
+   }
+function getMoreInfo(id){
+	baby_id=id;
+	$.ajax( {
+		url : "../baby/getBabyById.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			"id" : baby_id
+		},
+		success : function(data) {
+			$("#date").val(data.endDate);
+			var garden_id=data.garden.id;
+		$.ajax( {
+				url : "../admin/getAllGarden.do",
+				dataType : "json",
+				type : "post",
+				data : {},
+				success : function(data) {
+					new Vue( {
+						el : '#garden',
+						data : {
+							selected : garden_id,
+							data : data
+						}
+					});
+					setTimeout(function(){
+						$("#garden2").val(garden_id);
+					},500);
+				},
+				error : function() {
+				}
+	});
+			$.ajax( {
+				url : "../teacher/getTeachersByGardenId.do",
+				type : "post",
+				dataType : "json",
+				data : {
+					"garden_id" : data.garden.id
+				},
+				success : function(data) {
+					$("#teacher").html('');
+					$("#teacher").append("---请选择---");
+					for(var i=0;i<data.length;i++){
+						var obj=data[i];
+						$("#teacher").append("<option value='"+obj.id+"'>"+obj.username+"</option>");
+					}
+				},
+				error:function(){}});
+			    setTimeout(function(){
+				var form = $('form')[1];
+                BUI.FormHelper.setFields(form,data);
+                $("#teacher").val(data.teacher_id);
+                dialog.show();
+			},500);
+},
+error:function(){}
+});
+}
+          BUI.use(['bui/overlay','bui/form'],function(Overlay,Form){
+		    dialog= new Overlay.Dialog({
+            title:'分配信息',
+            width:500,
+            height:630,
+            //配置DOM容器的编号
+            contentId:'content',
+            success:function () {
+              update(baby_id);
+              this.close();
+            }
+          });
+      });
+    $('.beginTime').date();
+    $(".body .kbtn").click(function() {
+	$(this).css("width", "100%");
+	$(this).css("border", "1")
+})
+</script>
+		<body>
+</html>

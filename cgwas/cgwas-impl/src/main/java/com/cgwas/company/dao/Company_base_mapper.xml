@@ -1,0 +1,848 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.company.dao">
+
+	<sql id="columns">
+		id, company_name, company_type, legal_person,
+		idcard_pic_path, head_pic_path, code, registered_assets,
+		establish_date, company_begin_date, company_end_date, province, city,
+		register_office, date_approved, status, business_scope, regist_date,
+		is_delete, area, address, param4, param5, param6, param7
+	</sql>
+	<sql id="vals">
+		#{id}, #{company_name}, #{company_type}, #{legal_person},
+		#{idcard_pic_path}, #{head_pic_path}, #{code}, #{registered_assets},
+		#{establish_date}, #{company_begin_date}, #{company_end_date},
+		#{province}, #{city}, #{register_office}, #{date_approved}, #{status},
+		#{business_scope}, #{regist_date}, #{is_delete}, #{area}, #{address},
+		#{param4}, #{param5}, #{param6}, #{param7}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="company_name != null and company_name != ''">
+			and company_name = #{company_name}
+		</if>
+		<if test="company_type != null and company_type != ''">
+			and company_type = #{company_type}
+		</if>
+		<if test="legal_person != null and legal_person != ''">
+			and legal_person = #{legal_person}
+		</if>
+		<if test="idcard_pic_path != null and idcard_pic_path != ''">
+			and idcard_pic_path = #{idcard_pic_path}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			and head_pic_path = #{head_pic_path}
+		</if>
+		<if test="code != null and code != ''">
+			and code = #{code}
+		</if>
+		<if test="registered_assets != null and registered_assets != ''">
+			and registered_assets = #{registered_assets}
+		</if>
+		<if test="establish_date != null">
+			and establish_date = #{establish_date}
+		</if>
+		<if test="company_begin_date != null">
+			and company_begin_date = #{company_begin_date}
+		</if>
+		<if test="company_end_date != null">
+			and company_end_date = #{company_end_date}
+		</if>
+		<if test="province != null and province != ''">
+			and province = #{province}
+		</if>
+		<if test="city != null and city != ''">
+			and city = #{city}
+		</if>
+		<if test="register_office != null and register_office != ''">
+			and register_office = #{register_office}
+		</if>
+		<if test="date_approved != null">
+			and date_approved = #{date_approved}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+		<if test="business_scope != null and business_scope != ''">
+			and business_scope = #{business_scope}
+		</if>
+		<if test="regist_date != null">
+			and regist_date = #{regist_date}
+		</if>
+		<if test="is_delete != null and is_delete != ''">
+			and is_delete = #{is_delete}
+		</if>
+		<if test="area != null and area != ''">
+			and area = #{area}
+		</if>
+		<if test="address != null and address != ''">
+			and address = #{address}
+		</if>
+		<if test="param4 != null and param4 != ''">
+			and param4 = #{param4}
+		</if>
+		<if test="param5 != null and param5 != ''">
+			and param5 = #{param5}
+		</if>
+		<if test="param6 != null and param6 != ''">
+			and param6 = #{param6}
+		</if>
+		<if test="param7 != null and param7 != ''">
+			and param7 = #{param7}
+		</if>
+	</sql>
+
+	<insert id="saveCompany" parameterType="com.cgwas.company.entity.Company"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCompanyVo" parameterType="com.cgwas.company.entity.CompanyVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCompany">
+		delete from u_company
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCompanyVo">
+		delete from u_company
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCompany">
+		delete from u_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCompanyVo">
+		delete from u_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCompany" resultType="com.cgwas.company.entity.CompanyVo">
+		select
+		<include refid="columns" />
+		from u_company
+		where id=#{id}
+	</select>
+
+	<select id="selectCompany" resultType="com.cgwas.company.entity.CompanyVo">
+		select
+		<include refid="columns" />
+		from u_company
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompany">
+		update u_company
+		<set>
+			id=#{id},
+			company_name=#{company_name},
+			company_type=#{company_type},
+			legal_person=#{legal_person},
+			idcard_pic_path=#{idcard_pic_path},
+			head_pic_path=#{head_pic_path},
+			code=#{code},
+			registered_assets=#{registered_assets},
+			establish_date=#{establish_date},
+			company_begin_date=#{company_begin_date},
+			company_end_date=#{company_end_date},
+			province=#{province},
+			city=#{city},
+			register_office=#{register_office},
+			date_approved=#{date_approved},
+			status=#{status},
+			business_scope=#{business_scope},
+			regist_date=#{regist_date},
+			is_delete=#{is_delete},
+			area=#{area},
+			address=#{address},
+			param4=#{param4},
+			param5=#{param5},
+			param6=#{param6},
+			param7=#{param7}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateCompanyVo">
+		update u_company
+		<set>
+			id=#{id},
+			company_name=#{company_name},
+			company_type=#{company_type},
+			legal_person=#{legal_person},
+			idcard_pic_path=#{idcard_pic_path},
+			head_pic_path=#{head_pic_path},
+			code=#{code},
+			registered_assets=#{registered_assets},
+			establish_date=#{establish_date},
+			company_begin_date=#{company_begin_date},
+			company_end_date=#{company_end_date},
+			province=#{province},
+			city=#{city},
+			register_office=#{register_office},
+			date_approved=#{date_approved},
+			status=#{status},
+			business_scope=#{business_scope},
+			regist_date=#{regist_date},
+			is_delete=#{is_delete},
+			area=#{area},
+			address=#{address},
+			param4=#{param4},
+			param5=#{param5},
+			param6=#{param6},
+			param7=#{param7}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullCompany">
+		update u_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="company_type != null and company_type != ''">
+				company_type=#{company_type},
+			</if>
+			<if test="legal_person != null and legal_person != ''">
+				legal_person=#{legal_person},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="code != null and code != ''">
+				code=#{code},
+			</if>
+			<if test="registered_assets != null and registered_assets != ''">
+				registered_assets=#{registered_assets},
+			</if>
+			<if test="establish_date != null">
+				establish_date=#{establish_date},
+			</if>
+			<if test="company_begin_date != null">
+				company_begin_date=#{company_begin_date},
+			</if>
+			<if test="company_end_date != null">
+				company_end_date=#{company_end_date},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="register_office != null and register_office != ''">
+				register_office=#{register_office},
+			</if>
+			<if test="date_approved != null">
+				date_approved=#{date_approved},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="business_scope != null and business_scope != ''">
+				business_scope=#{business_scope},
+			</if>
+			<if test="regist_date != null">
+				regist_date=#{regist_date},
+			</if>
+			<if test="is_delete != null and is_delete != ''">
+				is_delete=#{is_delete},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="param4 != null and param4 != ''">
+				param4=#{param4},
+			</if>
+			<if test="param5 != null and param5 != ''">
+				param5=#{param5},
+			</if>
+			<if test="param6 != null and param6 != ''">
+				param6=#{param6},
+			</if>
+			<if test="param7 != null and param7 != ''">
+				param7=#{param7}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullCompanyVo">
+		update u_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="company_type != null and company_type != ''">
+				company_type=#{company_type},
+			</if>
+			<if test="legal_person != null and legal_person != ''">
+				legal_person=#{legal_person},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="code != null and code != ''">
+				code=#{code},
+			</if>
+			<if test="registered_assets != null and registered_assets != ''">
+				registered_assets=#{registered_assets},
+			</if>
+			<if test="establish_date != null">
+				establish_date=#{establish_date},
+			</if>
+			<if test="company_begin_date != null">
+				company_begin_date=#{company_begin_date},
+			</if>
+			<if test="company_end_date != null">
+				company_end_date=#{company_end_date},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="register_office != null and register_office != ''">
+				register_office=#{register_office},
+			</if>
+			<if test="date_approved != null">
+				date_approved=#{date_approved},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="business_scope != null and business_scope != ''">
+				business_scope=#{business_scope},
+			</if>
+			<if test="regist_date != null">
+				regist_date=#{regist_date},
+			</if>
+			<if test="is_delete != null and is_delete != ''">
+				is_delete=#{is_delete},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="param4 != null and param4 != ''">
+				param4=#{param4},
+			</if>
+			<if test="param5 != null and param5 != ''">
+				param5=#{param5},
+			</if>
+			<if test="param6 != null and param6 != ''">
+				param6=#{param6},
+			</if>
+			<if test="param7 != null and param7 != ''">
+				param7=#{param7}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCompany">
+		update u_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="company_type != null and company_type != ''">
+				company_type=#{company_type},
+			</if>
+			<if test="legal_person != null and legal_person != ''">
+				legal_person=#{legal_person},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="code != null and code != ''">
+				code=#{code},
+			</if>
+			<if test="registered_assets != null and registered_assets != ''">
+				registered_assets=#{registered_assets},
+			</if>
+			<if test="establish_date != null">
+				establish_date=#{establish_date},
+			</if>
+			<if test="company_begin_date != null">
+				company_begin_date=#{company_begin_date},
+			</if>
+			<if test="company_end_date != null">
+				company_end_date=#{company_end_date},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="register_office != null and register_office != ''">
+				register_office=#{register_office},
+			</if>
+			<if test="date_approved != null">
+				date_approved=#{date_approved},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="business_scope != null and business_scope != ''">
+				business_scope=#{business_scope},
+			</if>
+			<if test="regist_date != null">
+				regist_date=#{regist_date},
+			</if>
+			<if test="is_delete != null and is_delete != ''">
+				is_delete=#{is_delete},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="param4 != null and param4 != ''">
+				param4=#{param4},
+			</if>
+			<if test="param5 != null and param5 != ''">
+				param5=#{param5},
+			</if>
+			<if test="param6 != null and param6 != ''">
+				param6=#{param6},
+			</if>
+			<if test="param7 != null and param7 != ''">
+				param7=#{param7}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCompanyVo">
+		update u_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="company_type != null and company_type != ''">
+				company_type=#{company_type},
+			</if>
+			<if test="legal_person != null and legal_person != ''">
+				legal_person=#{legal_person},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="code != null and code != ''">
+				code=#{code},
+			</if>
+			<if test="registered_assets != null and registered_assets != ''">
+				registered_assets=#{registered_assets},
+			</if>
+			<if test="establish_date != null">
+				establish_date=#{establish_date},
+			</if>
+			<if test="company_begin_date != null">
+				company_begin_date=#{company_begin_date},
+			</if>
+			<if test="company_end_date != null">
+				company_end_date=#{company_end_date},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="register_office != null and register_office != ''">
+				register_office=#{register_office},
+			</if>
+			<if test="date_approved != null">
+				date_approved=#{date_approved},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="business_scope != null and business_scope != ''">
+				business_scope=#{business_scope},
+			</if>
+			<if test="regist_date != null">
+				regist_date=#{regist_date},
+			</if>
+			<if test="is_delete != null and is_delete != ''">
+				is_delete=#{is_delete},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="param4 != null and param4 != ''">
+				param4=#{param4},
+			</if>
+			<if test="param5 != null and param5 != ''">
+				param5=#{param5},
+			</if>
+			<if test="param6 != null and param6 != ''">
+				param6=#{param6},
+			</if>
+			<if test="param7 != null and param7 != ''">
+				param7=#{param7}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<!-- 更改公司基本信息 -->
+	<update id="updateCompanyByCompanyId">
+		update u_company
+		<set>
+			<if test="company_name != null and company_name != ''">
+				company_name=#{company_name},
+			</if>
+			<if test="company_type != null and company_type != ''">
+				company_type=#{company_type},
+			</if>
+			<if test="legal_person != null and legal_person != ''">
+				legal_person=#{legal_person},
+			</if>
+			<if test="idcard_pic_path != null and idcard_pic_path != ''">
+				idcard_pic_path=#{idcard_pic_path},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="code != null and code != ''">
+				code=#{code},
+			</if>
+			<if test="registered_assets != null and registered_assets != ''">
+				registered_assets=#{registered_assets},
+			</if>
+			<if test="establish_date != null">
+				establish_date=#{establish_date},
+			</if>
+			<if test="company_begin_date != null">
+				company_begin_date=#{company_begin_date},
+			</if>
+			<if test="company_end_date != null">
+				company_end_date=#{company_end_date},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="register_office != null and register_office != ''">
+				register_office=#{register_office},
+			</if>
+			<if test="date_approved != null">
+				date_approved=#{date_approved},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="business_scope != null and business_scope != ''">
+				business_scope=#{business_scope},
+			</if>
+			<if test="regist_date != null">
+				regist_date=#{regist_date},
+			</if>
+			<if test="is_delete != null and is_delete != ''">
+				is_delete=#{is_delete},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="param4 != null and param4 != ''">
+				param4=#{param4},
+			</if>
+			<if test="param5 != null and param5 != ''">
+				param5=#{param5},
+			</if>
+			<if test="param6 != null and param6 != ''">
+				param6=#{param6},
+			</if>
+			<if test="param7 != null and param7 != ''">
+				param7=#{param7}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 根据id得到公司信息 -->
+	<select id="selectCompanyById" resultType="com.cgwas.company.entity.Company">
+		select
+		*
+		from u_company
+		where id=#{id}
+	</select>
+	<!-- 批量删除公司 -->
+	<update id="batchDeleteCompany">
+		update u_company
+		<set>
+			is_delete = 'Y'
+		</set>
+		where id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</update>
+	<!-- 根据人员id获取公司信息 -->
+	<select id="selectCompanyByUserId" resultType="com.cgwas.company.entity.Company">
+		SELECT
+		a.id,
+		a.company_name,
+		a.legal_person,
+		a.head_pic_path,
+		a.company_begin_date
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_user AS c ON c.id = b.use_id
+		WHERE
+		c.id = #{user_id}
+	</select>
+	<!-- 得到可管理 公司列表 -->
+	<select id="getAdminCompanyList" resultType="com.cgwas.company.entity.AdminCompany">
+		SELECT
+		a.id,
+		c.nickname,
+		a.company_name,
+		f.name as legal_person,
+		a.company_begin_date,
+		a.registered_assets,
+		a.`status`,
+		c.tel,
+		d.`status`
+		AS status1,
+		c.last_login_time,
+		a.province,
+		a.city,
+		a.area,
+		a.address
+		FROM
+		u_company AS a
+		LEFT
+		JOIN u_user_company AS b ON a.id
+		= b.company_id
+		LEFT
+		JOIN u_user AS c
+		ON c.id = b.use_id
+		LEFT JOIN
+		u_user_auth_info AS d ON
+		c.id = d.user_id
+		LEFT JOIN u_company_auth_info
+		as e ON e.company_id = a.id
+		LEFT JOIN u_user_info as f on f.user_id =
+		c.id
+		where 1 = 1 and a.is_delete='N' AND e.`status` = '已认证' and
+		d.`status` = '已认证'
+		<choose>
+			<when test="adminCompany.id!=null">
+				and a.id=#{adminCompany.id}
+			</when>
+			<when test="adminCompany.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{adminCompany.nickname},'%')
+			</when>
+			<when test="adminCompany.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{adminCompany.company_name},'%')
+			</when>
+			<when test="adminCompany.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{adminCompany.legal_person},'%')
+			</when>
+			<when test="adminCompany.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{adminCompany.registered_assets},'%')
+			</when>
+			<when test="adminCompany.status!=null">
+				and a.status = #{adminCompany.status}
+			</when>
+			<when test="adminCompany.tel!=null">
+				and c.tel like
+				CONCAT('%',#{adminCompany.tel},'%')
+			</when>
+			<when test="adminCompany.status1!=null">
+				and d.status like
+				CONCAT('%',#{adminCompany.status1},'%')
+			</when>
+			<when test="adminCompany.province!=null">
+				and a.province = #{adminCompany.province}
+			</when>
+			<when test="adminCompany.city!=null">
+				and a.city = #{adminCompany.city}
+			</when>
+			<when test="adminCompany.area!=null">
+				and a.area = #{adminCompany.area}
+			</when>
+			<when test="adminCompany.address!=null">
+				and a.address like
+				CONCAT('%',#{adminCompany.address},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到可管理公司列表(数量) -->
+	<select id="getAdminCompanyListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_company AS a
+		LEFT
+		JOIN u_user_company AS b ON a.id =
+		b.company_id
+		LEFT JOIN u_user AS c
+		ON c.id = b.use_id
+		LEFT JOIN
+		u_user_auth_info AS d ON c.id = d.user_id
+		LEFT JOIN u_company_auth_info
+		as e ON e.company_id = a.id
+		where 1 = 1 and
+		a.is_delete='N' AND
+		e.`status` = '已认证' and d.`status` = '已认证'
+		<choose>
+			<when test="adminCompany.id!=null">
+				and a.id=#{adminCompany.id}
+			</when>
+			<when test="adminCompany.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{adminCompany.nickname},'%')
+			</when>
+			<when test="adminCompany.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{adminCompany.company_name},'%')
+			</when>
+			<when test="adminCompany.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{adminCompany.legal_person},'%')
+			</when>
+			<when test="adminCompany.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{adminCompany.registered_assets},'%')
+			</when>
+			<when test="adminCompany.status!=null">
+				and a.status = #{adminCompany.status}
+			</when>
+			<when test="adminCompany.tel!=null">
+				and c.tel like
+				CONCAT('%',#{adminCompany.tel},'%')
+			</when>
+			<when test="adminCompany.status1!=null">
+				and d.status like
+				CONCAT('%',#{adminCompany.status1},'%')
+			</when>
+			<when test="adminCompany.province!=null">
+				and a.province = #{adminCompany.province}
+			</when>
+			<when test="adminCompany.city!=null">
+				and a.city = #{adminCompany.city}
+			</when>
+			<when test="adminCompany.area!=null">
+				and a.area = #{adminCompany.area}
+			</when>
+			<when test="adminCompany.address!=null">
+				and a.address like
+				CONCAT('%',#{adminCompany.address},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 获取用户拥有公司关系 -->
+	<select id="getHaveCompanyByUserId" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		*
+		FROM
+		u_user_company as a
+		LEFT JOIN u_company_auth_info as b on
+		a.company_id = b.company_id
+		WHERE
+		use_id = #{user_id}
+		AND relation = 1
+		<if test="status != null and status == '其它'">
+			and b.`status` != '已认证'
+		</if>
+		<if test="status != null and status != '其它'">
+			and b.`status` = '已认证'
+		</if>
+
+	</select>
+
+</mapper>

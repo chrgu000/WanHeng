@@ -1,0 +1,456 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.privilegeInfo.dao">
+
+	<sql id="columns">
+		id, privilege_name, privilege_type, privilege_detail, privilege_url, privilege_mark, privilege_icon, sort, parent_id, create_date, layer
+	</sql>
+	<sql id="vals">
+		#{id}, #{privilege_name}, #{privilege_type}, #{privilege_detail}, #{privilege_url}, #{privilege_mark}, #{privilege_icon}, #{sort}, #{parent_id}, #{create_date}, #{layer}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="privilege_name != null and privilege_name != ''">
+			and privilege_name = #{privilege_name}
+		</if>
+		<if test="privilege_type != null and privilege_type != ''">
+			and privilege_type = #{privilege_type}
+		</if>
+		<if test="privilege_detail != null and privilege_detail != ''">
+			and privilege_detail = #{privilege_detail}
+		</if>
+		<if test="privilege_url != null and privilege_url != ''">
+			and privilege_url = #{privilege_url}
+		</if>
+		<if test="privilege_mark != null and privilege_mark != ''">
+			and privilege_mark = #{privilege_mark}
+		</if>
+		<if test="privilege_icon != null and privilege_icon != ''">
+			and privilege_icon = #{privilege_icon}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			and parent_id = #{parent_id}
+		</if>
+		<if test="create_date != null">
+			and create_date = #{create_date}
+		</if>
+		<if test="layer != null and layer != ''">
+			and layer = #{layer}
+		</if>
+	</sql>
+
+	<insert id="savePrivilegeInfo" parameterType="com.cgwas.privilegeInfo.entity.PrivilegeInfo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_privilege_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="savePrivilegeInfoVo" parameterType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_privilege_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<delete id="deletePrivilegeInfo">
+		delete from s_privilege_info
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deletePrivilegeInfoVo">
+		delete from s_privilege_info
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteAllPrivilegeInfo">
+		delete from s_privilege_info
+		where id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach>
+	</delete>
+
+	<delete id="deleteByExamplePrivilegeInfo">
+		delete from s_privilege_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExamplePrivilegeInfoVo">
+		delete from s_privilege_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadPrivilegeInfo" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		select 
+		<include refid="columns"/>
+		from s_privilege_info
+		where id=#{id} 
+	</select>
+	
+	<select id="selectPrivilegeInfo" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		SELECT id, privilege_name, privilege_detail, privilege_url, privilege_mark, privilege_icon
+		FROM s_privilege_info
+		WHERE 1=1
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="parent_id != null">
+			and parent_id = #{parent_id}
+		</if>
+		ORDER BY sort DESC
+	</select>
+	
+	<!--根据团队角色id获取权限列表  -->
+	<select id="selectPrivilegeByGRoleId" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		SELECT spi.id, spi.privilege_name, spi.privilege_detail, spi.privilege_url, spi.privilege_mark, spi.privilege_icon
+		FROM s_privilege_info spi
+		LEFT JOIN p_g_role_privilege pgrp ON pgrp.privilege_id=spi.id
+		WHERE pgrp.role_id=#{role_id}
+	</select>
+	
+	<!-- 根据角色id获取权限id集合 -->
+	<select id="selectPIdsByRoleId" resultType="java.lang.Long">
+		SELECT DISTINCT srp.privilege_id FROM s_role_privilege srp 
+		LEFT JOIN u_user_role uur ON uur.role_id=srp.role_id
+		LEFT JOIN s_privilege_info spi ON spi.id=srp.privilege_id
+   		LEFT JOIN u_company_position ucp ON ucp.id=srp.role_id
+  		LEFT JOIN u_employee ue ON ue.position_id=ucp.id
+		WHERE (uur.user_id=#{user_id} AND srp.role_type='ROLE_TYPE') OR (ue.user_id=#{user_id} AND srp.role_type='POSITION_TYPE')
+	</select>
+	
+	<!-- 根据用户id获取权限id集合 -->
+	<select id="selectPIdsByUserId" resultType="java.lang.Long">
+		SELECT uup.privilege_id FROM u_user_privilege uup
+		WHERE uup.user_id=#{user_id}
+	</select>
+	
+	<!-- 团队角色权限列表 -->
+	<select id="selectPrivilegeByGRole" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		select spi.id,spi.privilege_name,spi.parent_id,spi.layer
+		<if test="role_id != null">
+			,IF(pgrp.privilege_id is not null,'true','false') flag
+		</if>
+		<if test="role_id == null">
+			,'false' flag
+		</if>
+		from s_privilege_info spi
+		<if test="role_id != null">
+			LEFT JOIN p_g_role_privilege pgrp ON pgrp.privilege_id=spi.id AND pgrp.role_id=#{role_id}
+		</if>
+		WHERE spi.parent_id=16
+		ORDER BY spi.id 
+	</select>
+	
+	<!-- 角色权限列表 -->
+	<select id="selectPrivilegeByRoleId" resultType="Map">
+		select spi.id,spi.privilege_name,spi.parent_id,spi.layer
+		<if test="role_id != null">
+			,IF(srp.role_id is not null,'true','false') flag
+		</if>
+		<if test="role_id == null">
+			,'false' flag
+		</if>
+		from s_privilege_info spi
+		<if test="role_id != null">
+			LEFT JOIN s_role_privilege srp ON srp.privilege_id=spi.id AND srp.role_id=#{role_id} AND srp.role_type='ROLE_TYPE' 
+		</if>
+		ORDER BY spi.id 
+	</select>
+	
+	<!-- 用户权限列表 -->
+	<select id="selectPrivilegeByUserId" resultType="Map">
+		select DISTINCT spi.id,spi.privilege_name,spi.parent_id,spi.privilege_type,spi.layer
+		<if test="user_id != null">
+			,IF(uup.privilege_id is not null,'true','false') flag
+		</if>
+		<if test="user_id == null">
+			,'false' flag
+		</if>
+		from s_privilege_info spi
+		<if test="user_id != null">
+			LEFT JOIN u_user_privilege uup ON uup.privilege_id=spi.id AND uup.user_id=#{user_id}
+		</if>
+		WHERE spi.parent_id!=16
+		ORDER BY spi.id 
+	</select>
+	
+	<!-- 职称权限列表 -->
+	<select id="selectPrivilegeByPositionId" resultType="Map">
+		select DISTINCT spi.id,spi.privilege_name,spi.parent_id,spi.layer
+		<if test="role_id != null">
+			,IF(srp1.role_id is not null,'true','false') flag
+		</if>
+		<if test="role_id == null">
+			,'false' flag
+		</if>
+		from s_privilege_info spi 
+		LEFT JOIN s_role_privilege srp ON srp.privilege_id=spi.id 
+		<if test="role_id != null">
+			LEFT JOIN s_role_privilege srp1 
+			ON srp1.privilege_id=srp.privilege_id 
+			AND srp1.role_id =#{role_id} AND srp1.role_type='POSITION_TYPE'
+		</if>
+		WHERE spi.parent_id!=16 AND srp.role_type='ROLE_TYPE' AND srp.role_id=2
+		ORDER BY spi.id
+	</select>
+	
+	<!-- 获取员工权限 -->
+	<select id="isPrivilegeByUrl" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		SELECT DISTINCT spi.id,spi.privilege_name,spi.parent_id,spi.privilege_url,spi.privilege_mark,spi.sort
+		FROM s_privilege_info spi 
+		LEFT JOIN s_role_privilege srp ON srp.privilege_id=spi.id AND srp.role_type='POSITION_TYPE'
+		LEFT JOIN u_employee ue ON ue.position_id =srp.role_id
+		LEFT JOIN u_user_privilege uup ON uup.privilege_id=spi.id
+		WHERE (ue.user_id=#{user_id} 
+		<if test="privilege_url != null  and privilege_url != ''">
+			AND spi.privilege_url=#{privilege_url} 
+		</if>
+		<if test="parent_id != null   and parent_id != ''">
+			AND spi.parent_id=#{parent_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			AND ue.company_id=#{company_id}
+		</if>
+		) 
+		<if test="parent_id != null   and parent_id != ''">
+			OR (uup.user_id=#{user_id} AND spi.parent_id=#{parent_id})
+		</if>
+		ORDER BY spi.sort desc
+	</select>
+	
+	<select id="selectPrivilegeByCheck" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		select spi.id, privilege_name, privilege_detail, privilege_url, privilege_mark, privilege_icon from s_privilege_info spi
+		where 1=1
+		<if test="privilegeIds != null">
+			AND id in <foreach collection="privilegeIds" open="(" close=")"  item="id" separator=",">#{id}</foreach> 
+		</if>
+		
+		<if test="parent_id != null">
+			AND spi.parent_id=#{parent_id} 
+		</if>
+		
+		<if test="privilege_type != null and privilege_type != ''">
+			AND spi.privilege_type=#{privilege_type}
+		</if>
+		ORDER BY spi.sort desc
+	</select>
+
+	<!-- 根据用户获取相应项目文件权限列表 -->
+	<select id="selectPrivilegeListByUser" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		SELECT DISTINCT spi.id,privilege_name,privilege_url, privilege_mark FROM s_privilege_info spi
+		LEFT JOIN p_g_role_privilege pgrp ON pgrp.privilege_id=spi.id 
+		WHERE pgrp.role_id in (SELECT pgr.id FROM p_g_role pgr
+		LEFT JOIN p_group_user pgu ON pgu.role_id=pgr.id
+		WHERE  pgu.user_id=#{user_id} AND pgu.is_parent_project=#{is_parent_poject} AND pgu.project_id=#{project_id})
+		ORDER BY spi.id
+	</select>
+
+	<update id="updatePrivilegeInfo">
+		update s_privilege_info
+		<set>
+			id=#{id}, 
+			privilege_name=#{privilege_name}, 
+			privilege_type=#{privilege_type}, 
+			privilege_detail=#{privilege_detail}, 
+			privilege_url=#{privilege_url}, 
+			privilege_mark=#{privilege_mark}, 
+			privilege_icon=#{privilege_icon}, 
+			sort=#{sort}, 
+			parent_id=#{parent_id}, 
+			create_date=#{create_date}, 
+			layer=#{layer}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updatePrivilegeInfoVo">
+		update s_privilege_info
+		<set>
+			id=#{id}, 
+			privilege_name=#{privilege_name}, 
+			privilege_type=#{privilege_type}, 
+			privilege_detail=#{privilege_detail}, 
+			privilege_url=#{privilege_url}, 
+			privilege_mark=#{privilege_mark}, 
+			privilege_icon=#{privilege_icon}, 
+			sort=#{sort}, 
+			parent_id=#{parent_id}, 
+			create_date=#{create_date}, 
+			layer=#{layer}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullPrivilegeInfo">
+		update s_privilege_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_name != null and privilege_name != ''">
+			privilege_name=#{privilege_name}, 
+		</if>
+		<if test="privilege_type != null and privilege_type != ''">
+			privilege_type=#{privilege_type}, 
+		</if>
+		<if test="privilege_detail != null and privilege_detail != ''">
+			privilege_detail=#{privilege_detail}, 
+		</if>
+		<if test="privilege_url != null and privilege_url != ''">
+			privilege_url=#{privilege_url}, 
+		</if>
+		<if test="privilege_mark != null and privilege_mark != ''">
+			privilege_mark=#{privilege_mark}, 
+		</if>
+		<if test="privilege_icon != null and privilege_icon != ''">
+			privilege_icon=#{privilege_icon}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="create_date != null">
+			create_date=#{create_date}, 
+		</if>
+		<if test="layer != null and layer != ''">
+			layer=#{layer}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullPrivilegeInfoVo">
+		update s_privilege_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="privilege_name != null and privilege_name != ''">
+			privilege_name=#{privilege_name}, 
+		</if>
+		<if test="privilege_type != null and privilege_type != ''">
+			privilege_type=#{privilege_type}, 
+		</if>
+		<if test="privilege_detail != null and privilege_detail != ''">
+			privilege_detail=#{privilege_detail}, 
+		</if>
+		<if test="privilege_url != null and privilege_url != ''">
+			privilege_url=#{privilege_url}, 
+		</if>
+		<if test="privilege_mark != null and privilege_mark != ''">
+			privilege_mark=#{privilege_mark}, 
+		</if>
+		<if test="privilege_icon != null and privilege_icon != ''">
+			privilege_icon=#{privilege_icon}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="create_date != null and sort != ''">
+			create_date=#{create_date}, 
+		</if>
+		<if test="layer != null">
+			layer=#{layer}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExamplePrivilegeInfo">
+		update s_privilege_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_name != null and privilege_name != ''">
+			privilege_name=#{privilege_name}, 
+			</if>
+			<if test="privilege_type != null and privilege_type != ''">
+			privilege_type=#{privilege_type}, 
+			</if>
+			<if test="privilege_detail != null and privilege_detail != ''">
+			privilege_detail=#{privilege_detail}, 
+			</if>
+			<if test="privilege_url != null and privilege_url != ''">
+			privilege_url=#{privilege_url}, 
+			</if>
+			<if test="privilege_mark != null and privilege_mark != ''">
+			privilege_mark=#{privilege_mark}, 
+			</if>
+			<if test="privilege_icon != null and privilege_icon != ''">
+			privilege_icon=#{privilege_icon}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="layer != null and layer != ''">
+			layer=#{layer}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExamplePrivilegeInfoVo">
+		update s_privilege_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="privilege_name != null and privilege_name != ''">
+			privilege_name=#{privilege_name}, 
+			</if>
+			<if test="privilege_type != null and privilege_type != ''">
+			privilege_type=#{privilege_type}, 
+			</if>
+			<if test="privilege_detail != null and privilege_detail != ''">
+			privilege_detail=#{privilege_detail}, 
+			</if>
+			<if test="privilege_url != null and privilege_url != ''">
+			privilege_url=#{privilege_url}, 
+			</if>
+			<if test="privilege_mark != null and privilege_mark != ''">
+			privilege_mark=#{privilege_mark}, 
+			</if>
+			<if test="privilege_icon != null and privilege_icon != ''">
+			privilege_icon=#{privilege_icon}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="layer != null and layer != ''">
+			layer=#{layer}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

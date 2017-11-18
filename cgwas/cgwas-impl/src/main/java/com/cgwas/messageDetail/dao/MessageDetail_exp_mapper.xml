@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.messageDetail.dao">
+	<sql id="columnsAs">
+		id, read_state, sort, send_id, user_id, message_id, send_time, read_time
+	</sql>
+
+	<select id="selectMessageDetailPage" resultType="com.cgwas.messageDetail.entity.MessageDetailVo">
+		SELECT id, read_state, sort, send_id, user_id, message_id, send_time, read_time from s_message_detail
+		where 1=1
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectMessageDetailCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from s_message_detail
+		where 1=1
+	</select>
+
+</mapper>

@@ -1,0 +1,227 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.message.dao">
+
+	<sql id="columns">
+		id, message_type, content, title,send_time,for_id,manipulate_status
+	</sql>
+	<sql id="vals">
+		#{id}, #{message_type}, #{content}, #{title}, #{send_time},#{for_id},#{manipulate_status}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="title != null and title != ''">
+			and title = #{title}
+		</if>
+		<if test="message_type != null and message_type != ''">
+			and message_type = #{message_type}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="manipulate_status != null and manipulate_status != ''">
+			and manipulate_status = #{manipulate_status}
+		</if>
+		<if test="send_time != null">
+			and send_time = #{send_time}
+		</if>
+	</sql>
+
+	<insert id="saveMessage" parameterType="com.cgwas.message.entity.Message" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_message (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveMessageVo" parameterType="com.cgwas.message.entity.MessageVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_message (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteMessage">
+		delete from s_message
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteMessageVo">
+		delete from s_message
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleMessage">
+		delete from s_message
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleMessageVo">
+		delete from s_message
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadMessage" resultType="com.cgwas.message.entity.MessageVo">
+		select 
+		<include refid="columns"/>
+		from s_message
+		where id=#{id} 
+	</select>
+	
+	<select id="selectMessage" resultType="com.cgwas.message.entity.MessageVo">
+		select 
+		<include refid="columns"/>
+		from s_message
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateMessage">
+		update s_message
+		<set>
+			id=#{id}, 
+			title=#{title},
+			message_type=#{message_type}, 
+			content=#{content}, 
+			send_time=#{send_time},
+			manipulate_status = #{manipulate_status}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMessageVo">
+		update s_message
+		<set>
+			id=#{id}, 
+			title=#{title},
+			message_type=#{message_type}, 
+			content=#{content}, 
+			send_time=#{send_time},
+			manipulate_status = #{manipulate_status}
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateIgnoreNullMessage">
+		update s_message
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="title != null and title != ''">
+			title = #{title},
+		</if>
+		<if test="message_type != null and message_type != ''">
+			message_type=#{message_type}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="manipulate_status != null and manipulate_status != ''">
+			manipulate_status = #{manipulate_status},
+		</if>
+		<if test="send_time != null">
+			send_time=#{send_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullMessageVo">
+		update s_message
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="title != null and title != ''">
+			title = #{title},
+		</if>
+		<if test="message_type != null and message_type != ''">
+			message_type=#{message_type}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="manipulate_status != null and manipulate_status != ''">
+			manipulate_status = #{manipulate_status},
+		</if>
+		<if test="send_time != null">
+			send_time=#{send_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleMessage">
+		update s_message
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="title != null and title != ''">
+			title = #{title},
+			</if>
+			<if test="message_type != null and message_type != ''">
+			message_type=#{message_type}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="manipulate_status != null and manipulate_status != ''">
+			manipulate_status = #{manipulate_status},
+			</if>
+			<if test="send_time != null">
+			send_time=#{send_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleMessageVo">
+		update s_message
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="title != null and title != ''">
+			title = #{title},
+			</if>
+			<if test="message_type != null and message_type != ''">
+			message_type=#{message_type}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="manipulate_status != null and manipulate_status != ''">
+			manipulate_status = #{manipulate_status},
+			</if>
+			<if test="send_time != null">
+			send_time=#{send_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<select id="getArbitrateMessageCount" resultType="java.lang.Long">
+		SELECT  count(*)
+		FROM s_message
+		
+		WHERE message_type=8
+		<if
+			test="for_id!= null and for_id!= ''">
+			 and for_id=#{for_id}
+		</if>
+		
+		
+	</select>
+
+</mapper>

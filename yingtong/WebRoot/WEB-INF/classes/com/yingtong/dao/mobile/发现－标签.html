@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<title>聚乡村</title>
+
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0;" name="viewport" />
+<meta content="yes" name="apple-mobile-web-app-capable" /> 
+<meta content="black" name="apple-mobile-web-app-status-bar-style" /> 
+<meta content="telephone=no" name="format-detection" />
+
+<link rel="stylesheet" type="text/css" href="css/css.css">
+<link rel="stylesheet" href="css/swiper.min.css">
+
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/fastclick.js"></script>
+</head>
+<body style="background:#fff;">
+
+<div id="all">
+	<div class="faxian">
+    	<div class="swiper-container">
+            <div class="swiper-wrapper">
+                <div class="swiper-slide"><img src="images/faxian.png"></div>
+                <div class="swiper-slide"><img src="images/faxian.png"></div>
+                <div class="swiper-slide"><img src="images/faxian.png"></div>
+            </div>
+            <!-- Add Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
+    </div>
+    
+    <div class="faxian1">
+    	<a href="#">景区</a>
+        <a href="#" class="cur">亲子</a>
+        <a href="#">情侣</a>
+        <a href="#">养生</a>
+        <a href="#">氧吧</a>
+        <a href="#">云海</a>
+    </div>
+    
+    <div class="biaoqian">
+    	<dl>
+        	<dt>标签</dt>
+        	<dd>
+            	<a href="#" class="cur">瑜伽</a>
+            	<a href="#">氧吧</a>
+            	<a href="#">云海</a>
+            	<a href="#">情侣</a>
+            	<a href="#">瑜伽</a>
+            	<a href="#">氧吧</a>
+            	<a href="#">云海</a>
+            	<a href="#">情侣</a>
+            	<a href="#">瑜伽</a>
+            	<a href="#">氧吧</a>
+            	<a href="#">云海</a>
+            	<a href="#">情侣</a>
+            </dd>
+        </dl>
+    </div>
+    
+    
+    
+    <div class="bottom">
+    	<ul>
+        	<li><a href="#" class="btn1"><p>首页</p></a></li>
+        	<li class="cur"><a href="#" class="btn2"><p>发现</p></a></li>
+        	<li><a href="#" class="btn3"><p>聚景</p></a></li>
+        	<li><a href="#" class="btn4"><p>我的</p></a></li>
+        </ul>
+    </div>
+</div>
+<style type="text/css">
+.swiper-pagination{ font-size:1px;}
+.swiper-pagination-bullet{ background:rgba(255,255,255,0.5);}
+.swiper-pagination-bullet-active{ background:#2BA31B;}
+</style>
+<script src="js/swiper.min.js"></script>
+<script>
+var swiper = new Swiper('.swiper-container', {
+	pagination: '.swiper-pagination',
+	paginationClickable: true,
+	loop: true,
+	autoplay:3000
+});
+</script>
+<script src="js/js.js"></script>
+</body>
+</html>

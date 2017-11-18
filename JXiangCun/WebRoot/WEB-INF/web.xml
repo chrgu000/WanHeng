@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee
+                      http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd"
+	version="3.1">
+	<filter>
+		<filter-name>encoding</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>UTF-8</param-value>
+		</init-param>
+	</filter>
+<filter-mapping>
+		<filter-name>encoding</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>spring</servlet-name><!-- 约定 -servlet.xml -->
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<load-on-startup>3</load-on-startup>
+	</servlet>
+	 
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+		<url-pattern>*.do</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>spring</servlet-name>
+		<url-pattern>*.json</url-pattern>
+	</servlet-mapping>
+
+	<servlet>
+		<servlet-name>UploadImage</servlet-name>
+		<servlet-class>com.elkan.kindeditor.upload.UploadImage</servlet-class>
+		<!-- 上传图片保存的目录 -->
+		<init-param>
+			<param-name>UPLOAD_PATH</param-name>
+			<param-value>uploadImg/</param-value>
+		</init-param>
+		<!-- 限制上传图片的大小，单位字节(缺省值为1MB) -->
+		<init-param>
+			<param-name>MAX_SIZE</param-name>
+			<param-value>1024000</param-value>
+		</init-param>
+		<init-param>
+			<!-- 上传图片的类型(缺省值为gif, jpg, jpeg, png, bmp) -->
+			<param-name>IMAGETYPES</param-name>
+			<param-value>jpg,png,bmp,jpeg,gif</param-value>
+		</init-param>
+		<!-- 上传图片的宽度，大于此宽度时图片会被压缩(缺省为不限定) -->
+		<init-param>
+			<param-name>MAX_WIDTH</param-name>
+			<param-value></param-value>
+		</init-param>
+		<!-- 上传图片的高度，大于此高度时图片会被压缩(缺省为不限定) -->
+		<init-param>
+			<param-name>MAX_HEIGHT</param-name>
+			<param-value></param-value>
+		</init-param>
+	</servlet>
+	<!-- 图片上传管理的SERVLET -->
+	<servlet>
+		<servlet-name>UploadImageManager</servlet-name>
+		<servlet-class>com.elkan.kindeditor.upload.UploadImageManager</servlet-class>
+		<!-- 上传图片保存的目录 -->
+		<init-param>
+			<param-name>UPLOAD_PATH</param-name>
+			<param-value>uploadImg/</param-value>
+		</init-param>
+	</servlet>
+	<!-- 附件上传的SERVLET -->
+	<servlet>
+		<servlet-name>UploadAccessory</servlet-name>
+		<servlet-class>com.elkan.kindeditor.upload.UploadAccessory</servlet-class>
+		<!-- 上传附件保存的目录 -->
+		<init-param>
+			<param-name>UPLOAD_PATH</param-name>
+			<param-value>uploadAttach/</param-value>
+		</init-param>
+		<!-- 上传附件的大小，单位字节(缺省为1MB) -->
+		<init-param>
+			<param-name>MAX_SIZE</param-name>
+			<param-value>10000000</param-value>
+		</init-param>
+		<!-- 上传文件的类型(缺省为doc, xls, ppt, pdf, txt, rar, zip) -->
+		<init-param>
+			<param-name>FILETYPES</param-name>
+			<param-value>doc,xls,ppt,zip,rar,txt</param-value>
+		</init-param>
+	</servlet>
+
+ <servlet>
+    <description>DownloadServlet</description>
+    <display-name>DownloadServlet</display-name>
+    <servlet-name>initToken</servlet-name>
+    <servlet-class>com.jxc.cn.initToken</servlet-class>
+     <load-on-startup>8</load-on-startup>
+  </servlet>
+	<servlet-mapping>
+		<servlet-name>UploadImage</servlet-name>
+		<url-pattern>/uploadImage.html</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UploadImageManager</servlet-name>
+		<url-pattern>/uploadImgManager.html</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+		<servlet-name>UploadAccessory</servlet-name>
+		<url-pattern>/uploadAccessory.html</url-pattern>
+	</servlet-mapping>
+<servlet-mapping>
+    <servlet-name>initToken</servlet-name>
+    <url-pattern>/servlet/initToken</url-pattern>
+  </servlet-mapping>
+		<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring-servlet.xml</param-value>
+	</context-param>
+	<welcome-file-list>
+		<welcome-file>index.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

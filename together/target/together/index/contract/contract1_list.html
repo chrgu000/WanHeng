@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>我的合同</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="contract_top">
+    <ul>
+        <li ><a href="contract_list.html">履约合同</a></li>
+        <li class="active"><a onclick="getCompactsByStatus(2)">历史合同</a></li>
+    </ul>
+</div>
+<div id="com">
+<div class="contract" v-for="compact in data" v-cloak>
+    <img src="../img/address.png" class="img-responsive">
+    <div class="address">
+        <p><span>{{compact.house.city}}</span><small>{{compact.house.gardenName}} {{compact.house.title}}</small></p>
+    </div>
+    <div class="contract_table" >
+        <h5>合同概要</h5>
+       <div class="contract_table_center">
+               <ul>
+               <li><p>房号</p><p>{{compact.houseNum}}</p></li>
+               <li><p>合同编号</p><p>{{compact.compactNum}}</p></li>
+               <li><p>姓名</p><p>{{compact.name}}</p></li>
+               <li><p>电话</p><p>{{compact.tel}}</p></li>
+               <li><p>身份证号码</p><p>{{compact.idCardNum}}</p></li>
+               <li><p>租赁期限</p><p><s>{{compact.startTime}}</s><s>至</s><s>{{compact.endTime}}</s></p></li>
+               <li><span>付款方式</span><span>{{compact.payWay.content}}</span><span>押金</span><span>{{compact.deposit}}</span></li>
+               <li><span>物业费</span><span>{{compact.condoWay}}</span><span>水费</span><span>{{compact.waterWay}}</span></li>
+               <li><span>电费</span><span>{{compact.powerWay}}</span><span>燃气费</span><span>{{compact.gasWay}}</span></li>
+               <li>房租收款时间</li>
+                   <li><span v-for="payTime in compact.payTimes">{{payTime}}</span></li>
+           </ul>
+       </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript" src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/style.js"></script>
+<script src="../js/vue.min.js"></script>
+<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="../js/cookie.js"></script>
+<script type="text/javascript">
+    $(function(){
+        getCompactsByStatus(2);
+    });
+    var vm=new Vue({
+        el:'#com',
+        data:{
+            data:null
+        }
+    });
+    function getCompactsByStatus(status){
+        $.ajax({
+            url:"../../compact/getCompactsByStatus.do",
+            type:"post",
+            dataType:"json",
+            data:{
+                status:status
+            },
+            success:function(data){
+                vm.data=data;
+            },
+            error : function() {
+            }
+        });
+    }
+
+</script>
+</body>
+</html>

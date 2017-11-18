@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.frameRateCompany.dao">
+
+	<sql id="columns">
+		id, content, title, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{title}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="title != null and title != ''">
+			and title = #{title}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveFrameRateCompany" parameterType="com.cgwas.frameRateCompany.entity.FrameRateCompany" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_frame_rate_company (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveFrameRateCompanyVo" parameterType="com.cgwas.frameRateCompany.entity.FrameRateCompanyVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_frame_rate_company (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteFrameRateCompany">
+		delete from p_frame_rate_company
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteFrameRateCompanyVo">
+		delete from p_frame_rate_company
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleFrameRateCompany">
+		delete from p_frame_rate_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleFrameRateCompanyVo">
+		delete from p_frame_rate_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadFrameRateCompany" resultType="com.cgwas.frameRateCompany.entity.FrameRateCompanyVo">
+		select 
+		<include refid="columns"/>
+		from p_frame_rate_company
+		where id=#{id} 
+	</select>
+	
+	<select id="selectFrameRateCompany" resultType="com.cgwas.frameRateCompany.entity.FrameRateCompanyVo">
+		select 
+		<include refid="columns"/>
+		from p_frame_rate_company
+	</select>
+
+	<update id="updateFrameRateCompany">
+		update p_frame_rate_company
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			title=#{title}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateFrameRateCompanyVo">
+		update p_frame_rate_company
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			title=#{title}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullFrameRateCompany">
+		update p_frame_rate_company
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="title != null and title != ''">
+			title=#{title}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullFrameRateCompanyVo">
+		update p_frame_rate_company
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="title != null and title != ''">
+			title=#{title}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleFrameRateCompany">
+		update p_frame_rate_company
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="title != null and title != ''">
+			title=#{title}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleFrameRateCompanyVo">
+		update p_frame_rate_company
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="title != null and title != ''">
+			title=#{title}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+<select id="getFrameRateId" resultType="java.lang.Long">
+select id from p_frame_rate_company where title=#{frameRate} and (company_id=#{company_id} or company_id=0)
+</select>
+</mapper>

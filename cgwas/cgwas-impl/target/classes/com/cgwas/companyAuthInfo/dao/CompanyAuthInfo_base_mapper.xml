@@ -1,0 +1,423 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.companyAuthInfo.dao">
+
+	<sql id="columns">
+		id, charter_path, status, company_id, creat_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{charter_path}, #{status}, #{company_id},
+		#{creat_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="charter_path != null and charter_path != ''">
+			and charter_path = #{charter_path}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="creat_time != null">
+			and creat_time = #{creat_time}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyAuthInfo" parameterType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_auth_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCompanyAuthInfoVo" parameterType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_auth_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCompanyAuthInfo">
+		delete from u_company_auth_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCompanyAuthInfoVo">
+		delete from u_company_auth_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCompanyAuthInfo">
+		delete from u_company_auth_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCompanyAuthInfoVo">
+		delete from u_company_auth_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCompanyAuthInfo" resultType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfoVo">
+		select
+		<include refid="columns" />
+		from u_company_auth_info
+		where id=#{id}
+	</select>
+
+	<select id="selectCompanyAuthInfo" resultType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfoVo">
+		select
+		<include refid="columns" />
+		from u_company_auth_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompanyAuthInfo">
+		update u_company_auth_info
+		<set>
+			id=#{id},
+			charter_path=#{charter_path},
+			status=#{status},
+			company_id=#{company_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateCompanyAuthInfoVo">
+		update u_company_auth_info
+		<set>
+			id=#{id},
+			charter_path=#{charter_path},
+			status=#{status},
+			company_id=#{company_id},
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullCompanyAuthInfo">
+		update u_company_auth_info
+		<set>
+			<if test="charter_path != null and charter_path != ''">
+				charter_path=#{charter_path},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id} or company_id=#{company_id}
+	</update>
+
+	<update id="updateIgnoreNullCompanyAuthInfoVo">
+		update u_company_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="charter_path != null and charter_path != ''">
+				charter_path=#{charter_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCompanyAuthInfo">
+		update u_company_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="charter_path != null and charter_path != ''">
+				charter_path=#{charter_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCompanyAuthInfoVo">
+		update u_company_auth_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="charter_path != null and charter_path != ''">
+				charter_path=#{charter_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据公司ID得到公司认证信息 -->
+	<select id="getCompanyAuthInfoByCompanyId" resultType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfo">
+		select *
+		from
+		u_company_auth_info where company_id = #{company_id}
+	</select>
+	<!-- 更具公司ID更改公司认证信息 -->
+	<update id="updateCompanyAuthInfoByCompanyId">
+		update u_company_auth_info
+		<set>
+			<if test="charter_path != null and charter_path != ''">
+				charter_path=#{charter_path},
+			</if>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+			<if test="creat_time != null">
+				creat_time=#{creat_time}
+			</if>
+			<if test="company_id != null">
+				company_id=#{company_id}
+			</if>
+			
+		</set>
+		where company_id=#{company_id}
+	</update>
+	<!-- 认证公司认证信息 -->
+	<update id="authenticationCompanyAuthInfo">
+		update u_company_auth_info
+		<set>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+		</set>
+		where company_id=#{company_id}
+	</update>
+	<!-- 根据公司ID得到公司认证信息 -->
+	<select id="selectCompanyAuthInfoByCompanyId" resultType="com.cgwas.companyAuthInfo.entity.CompanyAuthInfo">
+		select
+		*
+		from u_company_auth_info
+		where company_id=#{company_id}
+	</select>
+	<!-- 得到可认证 公司列表 -->
+	<select id="getCompanyAuthInfoList"
+		resultType="com.cgwas.companyAuthInfo.entity.AttestationCompanyAuthInfo">
+		SELECT
+		a.id,
+		c.nickname,
+		a.company_name,
+		f.`name` as legal_person,
+		a.company_begin_date,
+		a.registered_assets,
+		a.`status`,
+		c.tel,
+		d.`status`
+		AS status1,
+		c.last_login_time,
+		a.province,
+		a.city,
+		a.area,
+		a.address
+		FROM
+		u_company AS a
+		LEFT
+		JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT
+		JOIN u_user AS c
+		ON c.id = b.use_id
+		LEFT JOIN u_user_auth_info AS d ON
+		c.id = d.user_id
+		LEFT JOIN u_company_auth_info as e on e.company_id =
+		a.id
+		LEFT JOIN u_user_info as f on c.id = f.user_id
+		where 1 = 1 and
+		a.is_delete = 'N'and e.status !='已认证' AND e.status !='不通过' and
+		d.`status` !='不通过'
+		<choose>
+			<when test="attestationCompanyAuthInfo.id!=null">
+				and a.id=#{attestationCompanyAuthInfo.id}
+			</when>
+			<when test="attestationCompanyAuthInfo.nickname!=null">
+				and c.nickname=#{attestationCompanyAuthInfo.nickname}
+			</when>
+			<when test="attestationCompanyAuthInfo.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{attestationCompanyAuthInfo.company_name},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{attestationCompanyAuthInfo.legal_person},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{attestationCompanyAuthInfo.registered_assets},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.status!=null">
+				and a.status = #{attestationCompanyAuthInfo.status}
+			</when>
+			<when test="attestationCompanyAuthInfo.tel!=null">
+				and c.tel like
+				CONCAT('%',#{attestationCompanyAuthInfo.tel},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.province!=null">
+				and a.province =
+				#{attestationCompanyAuthInfo.province}
+			</when>
+			<when test="attestationCompanyAuthInfo.city!=null">
+				and a.city = #{attestationCompanyAuthInfo.city}
+			</when>
+			<when test="attestationCompanyAuthInfo.area!=null">
+				and a.area = #{attestationCompanyAuthInfo.area}
+			</when>
+			<when test="attestationCompanyAuthInfo.address!=null">
+				and a.address like
+				CONCAT('%',#{attestationCompanyAuthInfo.address},'%')
+			</when>
+
+		</choose>
+		<if test="page.sortColumn==null">
+			ORDER BY e.creat_time DESC
+		</if>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 得到可认证 公司列表(数量) -->
+	<select id="getCompanyAuthInfoListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_company AS a
+		LEFT
+		JOIN u_user_company AS b ON a.id =
+		b.company_id
+		LEFT JOIN u_user AS c
+		ON c.id = b.use_id
+		LEFT JOIN
+		u_user_auth_info AS d ON c.id = d.user_id
+		LEFT JOIN u_company_auth_info
+		as e on e.company_id = a.id
+		where 1 = 1 and a.is_delete = 'N' and
+		e.status !='已认证' AND e.status !='不通过' and d.`status` = !'不通过'
+		<choose>
+			<when test="attestationCompanyAuthInfo.id!=null">
+				and a.id=#{attestationCompanyAuthInfo.id}
+			</when>
+			<when test="attestationCompanyAuthInfo.nickname!=null">
+				and c.nickname=#{attestationCompanyAuthInfo.nickname}
+			</when>
+			<when test="attestationCompanyAuthInfo.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{attestationCompanyAuthInfo.company_name},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.legal_person!=null">
+				and a.legal_person like
+				CONCAT('%',#{attestationCompanyAuthInfo.legal_person},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.registered_assets!=null">
+				and a.registered_assets like
+				CONCAT('%',#{attestationCompanyAuthInfo.registered_assets},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.status!=null">
+				and a.status = #{attestationCompanyAuthInfo.status}
+			</when>
+			<when test="attestationCompanyAuthInfo.tel!=null">
+				and c.tel like
+				CONCAT('%',#{attestationCompanyAuthInfo.tel},'%')
+			</when>
+			<when test="attestationCompanyAuthInfo.province!=null">
+				and a.province =
+				#{attestationCompanyAuthInfo.province}
+			</when>
+			<when test="attestationCompanyAuthInfo.city!=null">
+				and a.city = #{attestationCompanyAuthInfo.city}
+			</when>
+			<when test="attestationCompanyAuthInfo.area!=null">
+				and a.area = #{attestationCompanyAuthInfo.area}
+			</when>
+			<when test="attestationCompanyAuthInfo.address!=null">
+				and a.address like
+				CONCAT('%',#{attestationCompanyAuthInfo.address},'%')
+			</when>
+
+		</choose>
+	</select>
+	<!-- 获取法人信息 -->
+	<select id="getCompanyLegalPerson" resultType="com.cgwas.companyAuthInfo.entity.CompanyLegalPerson">
+		SELECT
+		b.id,
+		c.`name`,
+		b.tel,
+		c.email,
+		c.qq,
+		c.weixin,
+		d.idcard_pic_path,
+		d.idcard_pic_path_back,
+		d.idcard
+		FROM
+		u_user_company AS a
+		LEFT JOIN u_user
+		AS b ON a.use_id = b.id
+		LEFT JOIN u_user_info AS c ON c.user_id = b.id
+		LEFT JOIN u_user_auth_info AS d ON b.id = d.user_id
+		WHERE
+		a.company_id =
+		#{company_id}
+		AND relation = '1' LIMIT 0,1
+	</select>
+
+
+</mapper>

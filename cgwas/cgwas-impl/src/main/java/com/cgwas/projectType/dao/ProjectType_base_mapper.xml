@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.projectType.dao">
+<select id="getTypeId" resultType="java.lang.Long">
+select id from p_project_type where content=#{type}
+</select>
+	<sql id="columns">
+		id, content
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+	</sql>
+
+	<insert id="saveProjectType" parameterType="com.cgwas.projectType.entity.ProjectType" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_type (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveProjectTypeVo" parameterType="com.cgwas.projectType.entity.ProjectTypeVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_type (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteProjectType">
+		delete from p_project_type
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteProjectTypeVo">
+		delete from p_project_type
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleProjectType">
+		delete from p_project_type
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleProjectTypeVo">
+		delete from p_project_type
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadProjectType" resultType="com.cgwas.projectType.entity.ProjectTypeVo">
+		select 
+		<include refid="columns"/>
+		from p_project_type
+		where id=#{id} 
+	</select>
+	
+	<select id="selectProjectType" resultType="com.cgwas.projectType.entity.ProjectTypeVo">
+		select 
+		<include refid="columns"/>
+		from p_project_type
+	</select>
+
+	<update id="updateProjectType">
+		update p_project_type
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateProjectTypeVo">
+		update p_project_type
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullProjectType">
+		update p_project_type
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullProjectTypeVo">
+		update p_project_type
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleProjectType">
+		update p_project_type
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleProjectTypeVo">
+		update p_project_type
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.menuInfo.dao">
+
+	<sql id="columns">
+		id, menu_name, parent_id, sort
+	</sql>
+	<sql id="vals">
+		#{id}, #{menu_name}, #{parent_id}, #{sort}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="menu_name != null and menu_name != ''">
+			and menu_name = #{menu_name}
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			and parent_id = #{parent_id}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+	</sql>
+
+	<insert id="saveMenuInfo" parameterType="com.cgwas.menuInfo.entity.MenuInfo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_menu_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveMenuInfoVo" parameterType="com.cgwas.menuInfo.entity.MenuInfoVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_menu_info (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteAllMenuInfo">
+		delete from s_menu_info
+		where id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach> 
+	</delete>
+	
+	<delete id="deleteMenuInfoVo">
+		delete from s_menu_info
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleMenuInfo">
+		delete from s_menu_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleMenuInfoVo">
+		delete from s_menu_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadMenuInfo" resultType="com.cgwas.menuInfo.entity.MenuInfoVo">
+		select 
+		<include refid="columns"/>
+		from s_menu_info
+		where id=#{id} 
+	</select>
+	
+	<select id="selectMenuInfo" resultType="com.cgwas.menuInfo.entity.MenuInfoVo">
+		select 
+		<include refid="columns"/>
+		from s_menu_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateMenuInfo">
+		update s_menu_info
+		<set>
+			id=#{id}, 
+			menu_name=#{menu_name}, 
+			parent_id=#{parent_id}, 
+			sort=#{sort}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateMenuInfoVo">
+		update s_menu_info
+		<set>
+			id=#{id}, 
+			menu_name=#{menu_name}, 
+			parent_id=#{parent_id}, 
+			sort=#{sort}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullMenuInfo">
+		update s_menu_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="menu_name != null and menu_name != ''">
+			menu_name=#{menu_name}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullMenuInfoVo">
+		update s_menu_info
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="menu_name != null and menu_name != ''">
+			menu_name=#{menu_name}, 
+		</if>
+		<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+		</if>
+		<if test="sort != null and sort != ''">
+			sort=#{sort}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleMenuInfo">
+		update s_menu_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="menu_name != null and menu_name != ''">
+			menu_name=#{menu_name}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleMenuInfoVo">
+		update s_menu_info
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="menu_name != null and menu_name != ''">
+			menu_name=#{menu_name}, 
+			</if>
+			<if test="parent_id != null and parent_id != ''">
+			parent_id=#{parent_id}, 
+			</if>
+			<if test="sort != null and sort != ''">
+			sort=#{sort}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration
+  PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="Address" type="com.jxc.entity.Address" />
+		<typeAlias alias="Admin" type="com.jxc.entity.Admin" />
+		<typeAlias alias="City" type="com.jxc.entity.City" />
+			<typeAlias alias="News" type="com.jxc.entity.News" />
+		<typeAlias alias="Area" type="com.jxc.entity.Area" />
+		<typeAlias alias="Distance" type="com.jxc.entity.Distance" />
+		<typeAlias alias="Evaluate" type="com.jxc.entity.Evaluate" />
+		<typeAlias alias="Mark" type="com.jxc.entity.Mark" />
+		<typeAlias alias="Merchant" type="com.jxc.entity.Merchant" />
+		<typeAlias alias="Order" type="com.jxc.entity.Order" />
+		<typeAlias alias="Picture" type="com.jxc.entity.Picture" />
+		<typeAlias alias="Power" type="com.jxc.entity.Power" />
+		<typeAlias alias="Price" type="com.jxc.entity.Price" />
+		<typeAlias alias="Product" type="com.jxc.entity.Product" />
+		<typeAlias alias="Search" type="com.jxc.entity.Search" />
+		<typeAlias alias="Selfdom" type="com.jxc.entity.Selfdom" />
+		<typeAlias alias="Sequence" type="com.jxc.entity.Sequence" />
+		<typeAlias alias="SightSpot" type="com.jxc.entity.SightSpot" />
+		<typeAlias alias="Support" type="com.jxc.entity.Support" />
+		<typeAlias alias="Ticket" type="com.jxc.entity.Ticket" />
+		<typeAlias alias="Title" type="com.jxc.entity.Title" />
+		<typeAlias alias="User" type="com.jxc.entity.User" />
+			<typeAlias alias="Invite" type="com.jxc.entity.Invite" />
+			<typeAlias alias="Inviter" type="com.jxc.entity.Inviter" />
+			<typeAlias alias="DatePrice" type="com.jxc.entity.DatePrice" />
+	</typeAliases>
+</configuration>

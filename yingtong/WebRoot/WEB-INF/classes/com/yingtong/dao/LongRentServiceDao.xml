@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.LongRentServiceDao">
+	<select id="findAllLongRentService" resultType="LongRentService">
+		select * from yt_long_rent_service
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+			<if test="email!=null&amp;&amp;!email.equals('')">
+				and email like "%"#{email}"%"
+			</if>
+		</where>
+		order by apply_time desc
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from yt_long_rent_service
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+			<if test="email!=null&amp;&amp;!email.equals('')">
+				and email like "%"#{email}"%"
+			</if>
+		</where>
+	</select>
+	<insert id="addLongRentService">
+		insert into
+		yt_long_rent_service(days,car_num,brand,buy_time,motorcycle,name,relation_person,tel,email,apply_time)
+		values(#{days},#{car_num},#{brand},#{buy_time},#{motorcycle},#{name},#{relation_person},#{tel},#{email},#{apply_time});
+	</insert>
+	<delete id="deleteLongRentServiceById">
+		delete from yt_long_rent_service where id=#{id}
+	</delete>
+	<select id="findLongRentServiceById" resultType="LongRentService">
+	 select * from yt_long_rent_service where id=#{id}
+	</select>
+	<select id="findAllLongRentServices" resultType="LongRentService">
+	select * from yt_long_rent_service
+	</select>
+</mapper>

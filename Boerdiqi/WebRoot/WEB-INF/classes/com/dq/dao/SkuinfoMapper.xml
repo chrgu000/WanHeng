@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.SkuinfoDao">
+	<!-- 	<cache type="com.cache.RedisCache"/> -->
+	<resultMap type="Skuinfo" id="skuinfoMap">
+		<id property="skuid" column="skuid" javaType="int" jdbcType="INTEGER" />
+		<result property="attr_ids" column="attr_ids" javaType="string"
+			jdbcType="VARCHAR" />
+		<result property="attr_titles" column="attr_titles" javaType="string"
+			jdbcType="VARCHAR" />
+		<result property="pid" column="pid" javaType="int" jdbcType="INTEGER" />
+		<result property="number" column="number" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="limit_number" column="limit_number" javaType="int"
+			jdbcType="INTEGER" />
+			<result property="integral" column="integral" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="favourable_price" column="favourable_price"
+			javaType="DOUBLE" jdbcType="DOUBLE" />
+		<result property="original_price" column="original_price"
+			javaType="DOUBLE" jdbcType="DOUBLE" />
+		<result property="code" column="code" javaType="string"
+			jdbcType="VARCHAR" />
+		<result property="delflag" column="delflag" javaType="int"
+			jdbcType="INTEGER" />
+		<result property="addtime" column="addtime" javaType="string"
+			jdbcType="VARCHAR" />
+	</resultMap>
+
+	<select id="getByPage" parameterType="map" resultMap="skuinfoMap">
+		select * from skuinfo
+		<where>
+			<if test="attr_ids !=null and attr_ids !=''">
+				and attr_ids=#{attr_ids}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+
+	<select id="getTotal" parameterType="map" resultType="int">
+		select count(*) from skuinfo
+		<where>
+			<if test="attr_ids !=null and attr_ids !=''">
+				and attr_ids=#{attr_ids}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+
+	<insert id="add" parameterType="Skuinfo" keyProperty="parid"
+		useGeneratedKeys="true">
+		insert into
+		skuinfo(attr_ids,attr_titles,pid,number,limit_number,favourable_price,original_price,integral,code,delflag,addtime)
+		values(#{attr_ids},#{attr_titles},#{pid},#{number},#{limit_number},#{favourable_price},#{original_price},#{integral},#{code},#{delflag},#{addtime})
+	</insert>
+
+	<update id="upd" parameterType="Skuinfo">
+		update skuinfo
+		<set>
+			<if test="attr_ids !=null and attr_ids !=''">attr_ids=#{attr_ids},</if>
+			<if test="attr_titles !=null and attr_titles !=''">attr_titles=#{attr_titles},</if>
+			<if test="pid !=null and pid !=''">pid=#{pid},</if>
+			<if test="number !=null">number=#{number},</if>
+			<if test="limit_number !=null">limit_number=#{limit_number},</if>
+			<if test="original_price !=null">original_price=#{original_price},</if>
+			<if test="favourable_price !=null">favourable_price=#{favourable_price},</if>
+			<if test="integral !=null">integral=#{integral},</if>
+			<if test="code!=null">code=#{code},</if>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where skuid=#{skuid}
+	</update>
+
+	<delete id="del">
+		delete from skuinfo where parid=#{parid}
+	</delete>
+
+	<select id="findById" resultType="Skuinfo">
+		select * from skuinfo where
+		parid=#{parid}
+	</select>
+
+	<select id="getByMap" parameterType="map" resultMap="skuinfoMap">
+		select * from skuinfo
+		<where>
+			<if test="attr_ids !=null and attr_ids !=''">
+				and attr_ids=#{attr_ids}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+	</select>
+
+	<select id="findByMap" parameterType="map" resultMap="skuinfoMap">
+		select * from skuinfo
+		<where>
+			<if test="attr_ids !=null and attr_ids !=''">
+				and attr_ids=#{attr_ids}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and pid =#{pid}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and delflag =#{delflag}
+			</if>
+		</where>
+		limit 1
+	</select>
+
+	<update id="delByPid" parameterType="map">
+		update skuinfo
+		<set>
+			<if test="attr_ids !=null and attr_ids !=''">attr_ids=#{attr_ids},</if>
+			<if test="attr_titles !=null and attr_titles !=''">attr_titles=#{attr_titles},</if>
+			<if test="pid !=null and pid !=''">pid=#{pid},</if>
+			<if test="number !=null">number=#{number},</if>
+			<if test="limit_number !=null">limit_number=#{limit_number},</if>
+			<if test="original_price !=null">original_price=#{original_price},</if>
+			<if test="favourable_price !=null">favourable_price=#{favourabe_price},</if>
+			<if test="integral!=null">integral=#{integral},</if>
+			<if test="code !=null">code=#{code},</if>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where pid=#{pid}
+	</update>
+</mapper>

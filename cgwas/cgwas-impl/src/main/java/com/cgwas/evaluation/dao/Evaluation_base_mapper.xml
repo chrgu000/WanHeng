@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.evaluation.dao">
+
+	<sql id="columns">
+		id, content, evaluation_num
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{evaluation_num}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="evaluation_num != null and evaluation_num != ''">
+			and evaluation_num = #{evaluation_num}
+		</if>
+	</sql>
+
+	<insert id="saveEvaluation" parameterType="com.cgwas.evaluation.entity.Evaluation" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_evaluation (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveEvaluationVo" parameterType="com.cgwas.evaluation.entity.EvaluationVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_evaluation (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteEvaluation">
+		delete from p_evaluation
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteEvaluationVo">
+		delete from p_evaluation
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleEvaluation">
+		delete from p_evaluation
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleEvaluationVo">
+		delete from p_evaluation
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadEvaluation" resultType="com.cgwas.evaluation.entity.EvaluationVo">
+		select 
+		<include refid="columns"/>
+		from p_evaluation
+		where id=#{id} 
+	</select>
+	
+	<select id="selectEvaluation" resultType="com.cgwas.evaluation.entity.EvaluationVo">
+		select 
+		<include refid="columns"/>
+		from p_evaluation
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateEvaluation">
+		update p_evaluation
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			evaluation_num=#{evaluation_num}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateEvaluationVo">
+		update p_evaluation
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			evaluation_num=#{evaluation_num}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullEvaluation">
+		update p_evaluation
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="evaluation_num != null and evaluation_num != ''">
+			evaluation_num=#{evaluation_num}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullEvaluationVo">
+		update p_evaluation
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="evaluation_num != null and evaluation_num != ''">
+			evaluation_num=#{evaluation_num}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleEvaluation">
+		update p_evaluation
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="evaluation_num != null and evaluation_num != ''">
+			evaluation_num=#{evaluation_num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleEvaluationVo">
+		update p_evaluation
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="evaluation_num != null and evaluation_num != ''">
+			evaluation_num=#{evaluation_num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

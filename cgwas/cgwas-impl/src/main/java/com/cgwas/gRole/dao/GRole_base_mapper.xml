@@ -1,0 +1,319 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong -->
+<mapper namespace="com.cgwas.gRole.dao">
+	<resultMap type="com.cgwas.gRole.entity.GRoleVo" id="gRoleVoMap">
+		<id property="id" column="id" />
+		<collection property="groupUserList" column="id" javaType="arrayList"
+			ofType="com.cgwas.groupUser.entity.GroupUserVo" select="getGroupUserById"></collection>
+	</resultMap>
+	
+	<resultMap type="HashMap" id="selectGRoleMap">
+		<id property="id" column="id" />
+		<collection property="groupUserList" column="id" javaType="arrayList"
+			ofType="com.cgwas.groupUser.entity.GroupUserVo" select="getGroupUserById"></collection>
+	</resultMap>
+	<sql id="columns">
+		id, role_name, for_id, is_parent_poject, project_id, num,role_p_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{role_name}, #{for_id}, #{is_parent_poject},
+		#{project_id}, #{num}, #{role_p_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="role_name != null and role_name != ''">
+			and role_name = #{role_name}
+		</if>
+		<if test="for_id != null and for_id != ''">
+			and for_id = #{for_id}
+		</if>
+		<if test="is_parent_poject != null and is_parent_poject != ''">
+			and is_parent_poject = #{is_parent_poject}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="num != null and num != ''">
+			and num = #{num}
+		</if>
+		<if test="role_p_id != null and role_p_id != ''">
+			and role_p_id = #{role_p_id}
+		</if>
+	</sql>
+
+	<insert id="saveGRole" parameterType="com.cgwas.gRole.entity.GRole"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_g_role (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveGRoleVo" parameterType="com.cgwas.gRole.entity.GRoleVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_g_role (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteGRole">
+		delete from p_g_role
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteGRoleVo">
+		delete from p_g_role
+		where 1=1
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="is_parent_poject != null and is_parent_poject != ''">
+			and is_parent_poject = #{is_parent_poject}
+		</if>
+		<if test="role_p_id != null and role_p_id != ''">
+			and role_p_id = #{role_p_id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+	</delete>
+
+	<delete id="deleteByExampleGRole">
+		delete from p_g_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleGRoleVo">
+		delete from p_g_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	
+	<select id="loadGRole" resultType="com.cgwas.gRole.entity.GRoleVo">
+		select
+		<include refid="columns" />
+		from p_g_role
+		where id=#{id}
+	</select>
+	<select id="selectGRole" resultType="com.cgwas.gRole.entity.GRoleVo">
+		select id, role_name, for_id, num,role_p_id,is_parent_poject, project_id
+		from p_g_role
+		where 1=1
+		<include refid="conds" />
+		ORDER BY id 
+	</select>
+	<select id="selectGRoleMap" resultType="HashMap">
+		select pgr.id, pgr.role_name, pgr.for_id, pgr.num,pgr.role_p_id
+		,(select count(*) from p_group_user where role_id=pgr.id) people_num
+		,(select uui.head_pic_path from p_group_user pgu
+		LEFT JOIN u_user_info uui ON uui.user_id=pgu.user_id 
+		WHERE 1=1 
+	   <if test="is_parent_poject != null and is_parent_poject != ''">
+		   and pgu.is_parent_project = #{is_parent_poject}
+	   </if>
+	   <if test="project_id != null and project_id != ''">
+		  and pgu.project_id  = #{project_id}
+	   </if>
+		ORDER BY pgu.num LIMIT 1) head_pic_path
+		from p_g_role pgr
+		WHERE 1=1
+		<if test="is_parent_poject != null and project_id != null and is_parent_poject != '' and project_id != ''">
+			AND (pgr.is_parent_poject = #{is_parent_poject} AND pgr.project_id = #{project_id} OR (pgr.for_id = -1))
+		</if>
+		<if test="num != null and num != ''">
+			AND pgr.num = #{num}
+		</if>
+		ORDER BY pgr.id 
+	</select>
+	
+	<!-- 根据相应角色获取团队成员信息 -->
+	<select id="getGroupUserById" resultType="com.cgwas.groupUser.entity.GroupUserVo">
+		SELECT pgu.id,pgu.num,uu.tel as phone,uui.`name` as userName
+		,(year(now())-year(uui.birth)-1) + ( DATE_FORMAT(uui.birth, '%m%d') &lt;= DATE_FORMAT(NOW(), '%m%d') ) as age 
+		,uui.sex as sex FROM p_group_user pgu
+		LEFT JOIN u_user uu ON uu.id=pgu.user_id
+		LEFT JOIN u_user_info uui ON uui.user_id=uu.id
+		WHERE role_id=#{id} ORDER BY pgu.num
+	</select>
+	
+	<!-- 根据用户id获取团队角色信息 -->
+	<select id="getGRoleListByUserId" resultType="com.cgwas.gRole.entity.GRoleVo">
+		SELECT pgr.id,pgr.role_name,pgr.role_p_id from p_g_role pgr
+		LEFT JOIN p_group_user pgu ON pgu.role_id=pgr.id
+		WHERE pgu.user_id=#{user_id} AND pgu.is_parent_project=#{is_parent_poject} AND pgu.project_id=#{project_id} 
+		<if test="role_p_id != null and role_p_id != ''">
+			AND pgr.role_p_id=#{role_p_id}
+		</if>
+	</select>
+	
+	<select id="listRelevance" resultMap="gRoleVoMap">
+		select pgr.id,pgr.for_id,pgr.role_name,pgr.role_p_id from p_g_role pgr
+		where 1=1  
+		<if test="is_parent_poject != null and is_parent_poject != ''">
+			AND pgr.is_parent_poject=#{is_parent_poject}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			AND pgr.project_id = #{project_id}
+		</if>
+			AND pgr.for_id!=-1
+		 ORDER BY pgr.id 
+	</select>
+
+	<update id="updateGRole">
+		update p_g_role
+		<set>
+			id=#{id},
+			role_name=#{role_name},
+			for_id=#{for_id},
+			is_parent_poject=#{is_parent_poject},
+			project_id=#{project_id},
+			num=#{num}
+		</set>
+		where id=#{id}
+	</update>
+	
+	<update id="updateGRoleVo">
+		update p_g_role
+		<set>
+			id=#{id},
+			role_name=#{role_name},
+			for_id=#{for_id},
+			is_parent_poject=#{is_parent_poject},
+			project_id=#{project_id},
+			num=#{num}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullGRole">
+		update p_g_role
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="role_name != null and role_name != ''">
+				role_name=#{role_name},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullGRoleVo">
+		update p_g_role
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="role_name != null and role_name != ''">
+				role_name=#{role_name},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleGRole">
+		update p_g_role
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="role_name != null and role_name != ''">
+				role_name=#{role_name},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateFor_id">
+		UPDATE p_g_role SET 
+		for_id=#{for_id} 
+		<if test="num != null and num != ''">
+			,num=#{num}
+		</if>
+		WHERE id=#{id}
+	</update>
+	
+	<update id="updateByExampleGRoleVo">
+		update p_g_role
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="role_name != null and role_name != ''">
+				role_name=#{role_name},
+			</if>
+			<if test="for_id != null and for_id != ''">
+				for_id=#{for_id},
+			</if>
+			<if test="is_parent_poject != null and is_parent_poject != ''">
+				is_parent_poject=#{is_parent_poject},
+			</if>
+			<if test="project_id != null and project_id != ''">
+				project_id=#{project_id},
+			</if>
+			<if test="num != null and num != ''">
+				num=#{num}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

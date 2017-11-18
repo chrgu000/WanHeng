@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.IntegralOrderDao">
+	<insert id="save">
+		insert into
+		dq_integral_order(order_num,join_time,status,address,youbian,tel,name,user_id,integral,integral_product_id,num)
+		values(#{order_num},#{join_time},#{status},#{address},#{youbian},#{tel},#{name},#{user_id},#{integral},#{integral_product_id},#{num})
+	</insert>
+	<update id="update">
+		update dq_integral_order
+		<set>
+			<if test="sendtimes!=null and sendtimes!=''">
+				sendtimes=#{sendtimes},
+</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+</if>
+<if test="code!=null and code!=''">
+				code=#{code},
+</if>
+<if test="express!=null and express!=''">
+				express=#{express},
+</if>
+<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+<if test="youbian!=null and youbian!=''">
+				youbian=#{youbian},
+</if>
+<if test="tel!=null and tel!=''">
+				tel=#{tel},
+</if>
+<if test="address!=null and address!=''">
+				address=#{address},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from dq_integral_order where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="IntegralOrderMap">
+		select * from dq_integral_order
+		where
+		id=#{id}
+	</select>
+	<resultMap type="IntegralOrder" id="IntegralOrderMap">
+	<association property="integralProduct" column="integral_product_id" javaType="IntegralProduct" select="getIntegralProductById"/>
+	</resultMap>
+	<select id="getAllByPage" resultMap="IntegralOrderMaps">
+		select * from dq_integral_order go left join dq_user u on go.user_id=u.id
+                <where>
+                  <if test="nickname!=null and nickname!=''">
+                     and u.nickname like "%"#{nickname}"%"
+                  </if>
+                  <if test="status!=null and status!=''">
+                     and go.status=#{status}
+                  </if>
+                  <if test="user_id!=null">
+                   and user_id=#{user_id}
+                  </if>
+                </where>
+		order by go.id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="IntegralOrder" id="IntegralOrderMaps">
+	<association property="user" column="user_id" javaType="User" select="getUserById"/>
+	<association property="integralProduct" column="integral_product_id" javaType="IntegralProduct" select="getIntegralProductById"/>
+	</resultMap>
+	<select id="getUserById" resultType="User">
+	select * from dq_user where id=#{user_id}
+	</select>
+	<select id="getIntegralProductById" resultType="IntegralProduct">
+	select * from dq_integral_product where id=#{integral_product_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_integral_order go left join dq_user u on go.user_id=u.id
+                <where>
+                  <if test="nickname!=null and nickname!=''">
+                     and u.nickname like "%"#{nickname}"%"
+                  </if>
+                  <if test="status!=null and status!=''">
+                     and go.status=#{status}
+                  </if>
+                   <if test="user_id!=null">
+                   and user_id=#{user_id}
+                  </if>
+                </where>
+	</select>
+	<update id="updateByIds">
+	update dq_integral_order set delflag=2 where id in 	
+	<foreach collection="ids" open="(" close=")" separator=","
+	   item="id">#{id}
+	</foreach>
+	</update>
+</mapper>

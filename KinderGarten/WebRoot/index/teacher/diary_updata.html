@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/fullscreenstyle.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<link rel="stylesheet" href="../css/teacher_style.css">
+		<link rel="stylesheet" type="text/css" href="../css/webuploader.css">
+		<link rel="stylesheet" type="text/css" href="../css/diyUpload.css">
+		<style type="text/css">
+.loading {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	background: url(../img/loading.gif) no-repeat 0 center #fff;
+	background-size: 100% auto;
+	opacity: 0.4;
+	display: none;
+	z-index: 9999;
+}
+
+.img-div {
+	border: 1px solid #ddd;
+	float: left;
+	line-height: 1;
+	margin-left: 5px;
+	overflow: hidden;
+}
+</style>
+	</head>
+	<body style="background: #f5f4f9;">
+		<div class="loading" style="display: none;"></div>
+		<div class="back">
+			<div class="back_btn" onclick="goBack()">
+				<img src="../img/left_icon.png" class="img-responsive"/>
+			</div>
+			<div class="back_center">
+			</div>
+		</div>
+		<div class="update">
+			<div class="pic">
+				<textarea rows="5" cols="20" placeholder="请输入工作日记说明"
+					style="border: 1px solid #e4e4e4" id="content"></textarea>
+				<div id="box">
+					<div id="test"></div>
+				</div>
+			</div>
+		</div>
+		<script src="../js/jquery.min.js">
+</script>
+		<script src="../js/vue.min.js">
+</script>
+		<script src="../js/data.js">
+</script>
+		<script src="../js/ajaxfileupload.js">
+</script>
+		<script src="../js/style.js">
+</script>
+		<script src="../js/ajaxfileupload.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js">
+</script>
+		<script src="../js/jquery.js">
+</script>
+		<script type="text/javascript" src="../js/diyUpload.js">
+</script>
+		<script type="text/javascript"
+			src="../js/webuploader.html5only.min.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script type="text/javascript">
+var diary_type_id = getQueryString("diary_type_id");
+//选择图片，马上预览  
+function xmTanUploadImg(obj) {
+	$("#imgboxid").html('');
+	var fl = obj.files.length;
+	for ( var i = 0; i < fl; i++) {
+		var file = obj.files[i];
+		var reader = new FileReader();
+
+		//读取文件过程方法  
+
+		reader.onloadstart = function(e) {
+			console.log("开始读取....");
+		}
+		reader.onprogress = function(e) {
+			console.log("正在读取中....");
+		}
+		reader.onabort = function(e) {
+			console.log("中断读取....");
+		}
+		reader.onerror = function(e) {
+			console.log("读取异常....");
+		}
+		reader.onload = function(e) {
+			console.log("成功读取....");
+
+			var imgstr = '<img style="width:64px;height:64px;" src="' + e.target.result + '"/>';
+			var oimgbox = document.getElementById("imgboxid");
+			var ndiv = document.createElement("div");
+
+			ndiv.innerHTML = imgstr;
+			ndiv.className = "img-div";
+			oimgbox.appendChild(ndiv);
+
+		}
+
+		reader.readAsDataURL(file);
+		//alert(1);  
+	}
+}
+var n = 0;
+$('#test').diyUpload( {
+	url : '../../UploadFile.do',
+	success : function(data) {
+		n++;
+		var content = $("#content").val();
+		$.ajax( {
+			url : "../../diary/addDiary.do",
+			type : "post",
+			data : {
+				content : content,
+				diary_type_id : diary_type_id,
+				path : data._raw
+			},
+			dataType : "json",
+			success : function(data) {
+			},
+			error : function() {
+			}
+		});
+		var num = $(".fileBoxUl li").length;
+		if (num == n) {
+			$.pop.tips("成功上传图片");
+			setTimeout(function() {
+				location.href = "diary_pic_list.html?diary_type_id="+diary_type_id;
+			}, 500)
+		}
+	},
+	error : function(err) {
+		console.info(err);
+	}
+});
+</script>
+	</body>
+</html>

@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.SmallTypeDao">
+	<insert id="save">
+		insert into
+		dq_small_type(name,big_type_id,num,isHot)values(#{name},#{big_type_id},#{num},#{isHot})
+	</insert>
+	<update id="update">
+		update dq_small_type
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+<if test="big_type_id!=null and big_type_id!=''">
+				big_type_id=#{big_type_id},
+</if>
+<if test="num!=null and num!=''">
+				num=#{num},
+</if>
+<if test="isHot!=null and isHot!=''">
+				isHot=#{isHot},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_small_type where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="SmallType">
+		select * from dq_small_type
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="SmallTypeMaps">
+		select * from dq_small_type
+		<where>
+		<if test="big_type_id!=null">
+		 and big_type_id=#{big_type_id}
+		</if>
+		<if test="isHot!=null">
+		 and isHot=#{isHot}
+		</if>
+		</where>
+		order by big_type_id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="SmallType" id="SmallTypeMaps">
+	<association property="bigtype" column="big_type_id" javaType="BigType" select="getBigTypeById"/>
+	</resultMap>
+	<select id="getBigTypeById" resultType="BigType">
+	  select * from dq_big_type where id=#{big_type_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_small_type
+		<where>
+		<if test="big_type_id!=null">
+		 and big_type_id=#{big_type_id}
+		</if>
+		<if test="isHot!=null">
+		 and isHot=#{isHot}
+		</if>
+		</where>
+	</select>
+<select id="getSmallTypeByBigTypeId" resultType="SmallType">
+ select * from dq_small_type where big_type_id=#{big_type_id}
+</select>
+</mapper>

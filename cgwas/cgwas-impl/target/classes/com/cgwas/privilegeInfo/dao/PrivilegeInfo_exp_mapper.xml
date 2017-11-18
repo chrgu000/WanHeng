@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.privilegeInfo.dao">
+	<sql id="columnsAs">
+		id, privilege_name, privilege_type, privilege_detail, privilege_url, privilege_mark, privilege_icon, sort, parent_id, create_date, layer
+	</sql>
+
+	<select id="selectPrivilegeInfoPage" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		s_privilege_info
+		where 1=1
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectPrivilegeInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from s_privilege_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	
+
+</mapper>

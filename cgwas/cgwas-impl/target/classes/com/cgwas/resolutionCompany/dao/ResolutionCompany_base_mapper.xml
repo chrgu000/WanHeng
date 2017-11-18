@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.resolutionCompany.dao">
+<select id="getResolutionId" resultType="java.lang.Long">
+select id from p_resolution_company where title=#{resolution} and (company_id=#{company_id} or company_id=0)
+</select>
+	<sql id="columns">
+		id, title, content, company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{title}, #{content}, #{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="title != null and title != ''">
+			and title = #{title}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveResolutionCompany" parameterType="com.cgwas.resolutionCompany.entity.ResolutionCompany" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_resolution_company (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveResolutionCompanyVo" parameterType="com.cgwas.resolutionCompany.entity.ResolutionCompanyVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_resolution_company (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteResolutionCompany">
+		delete from p_resolution_company
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteResolutionCompanyVo">
+		delete from p_resolution_company
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleResolutionCompany">
+		delete from p_resolution_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleResolutionCompanyVo">
+		delete from p_resolution_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadResolutionCompany" resultType="com.cgwas.resolutionCompany.entity.ResolutionCompanyVo">
+		select 
+		<include refid="columns"/>
+		from p_resolution_company
+		where id=#{id} 
+	</select>
+	
+	<select id="selectResolutionCompany" resultType="com.cgwas.resolutionCompany.entity.ResolutionCompanyVo">
+		select 
+		<include refid="columns"/>
+		from p_resolution_company
+		 
+	</select>
+
+	<update id="updateResolutionCompany">
+		update p_resolution_company
+		<set>
+			id=#{id}, 
+			title=#{title}, 
+			content=#{content}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateResolutionCompanyVo">
+		update p_resolution_company
+		<set>
+			id=#{id}, 
+			title=#{title}, 
+			content=#{content}, 
+			company_id=#{company_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullResolutionCompany">
+		update p_resolution_company
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="title != null and title != ''">
+			title=#{title}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullResolutionCompanyVo">
+		update p_resolution_company
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="title != null and title != ''">
+			title=#{title}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleResolutionCompany">
+		update p_resolution_company
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="title != null and title != ''">
+			title=#{title}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleResolutionCompanyVo">
+		update p_resolution_company
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="title != null and title != ''">
+			title=#{title}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

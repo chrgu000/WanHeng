@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.arbitrateInfo.dao">
+
+	<sql id="columns">
+		id, arbitrate_title, arbitrate_type, arbitrate_state,
+		task_type, task_id, apply_id, create_time, audit_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{arbitrate_title}, #{arbitrate_type},
+		#{arbitrate_state}, #{task_type}, #{task_id}, #{apply_id},
+		#{create_time}, #{audit_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="arbitrate_title != null and arbitrate_title != ''">
+			and arbitrate_title = #{arbitrate_title}
+		</if>
+		<if test="arbitrate_type != null and arbitrate_type != ''">
+			and arbitrate_type = #{arbitrate_type}
+		</if>
+		<if test="arbitrate_state != null and arbitrate_state != ''">
+			and arbitrate_state = #{arbitrate_state}
+		</if>
+		<if test="task_type != null and task_type != ''">
+			and task_type = #{task_type}
+		</if>
+		<if test="task_id != null and task_id != ''">
+			and task_id = #{task_id}
+		</if>
+		<if test="apply_id != null and apply_id != ''">
+			and apply_id = #{apply_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="audit_time != null">
+			and audit_time = #{audit_time}
+		</if>
+	</sql>
+
+	<insert id="saveArbitrateInfo" parameterType="com.cgwas.arbitrateInfo.entity.ArbitrateInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_arbitrate_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveArbitrateInfoVo" parameterType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_arbitrate_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteArbitrateInfo">
+		delete from u_arbitrate_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteArbitrateInfoVo">
+		delete from u_arbitrate_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleArbitrateInfo">
+		delete from u_arbitrate_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleArbitrateInfoVo">
+		delete from u_arbitrate_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadArbitrateInfo" resultType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoVo">
+		select
+		<include refid="columns" />
+		from u_arbitrate_info
+		where id=#{id}
+	</select>
+
+	<select id="selectArbitrateInfo" resultType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoVo">
+		select
+		<include refid="columns" />
+		from u_arbitrate_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	<select id="selectArbitrateImage" resultType="com.cgwas.arbitrateUserInfo.entity.ArbitrateImage">
+		select
+		*
+		from u_arbitrate_image
+		where arbitrate_user_id=#{abitrateUser_id}
+		
+	</select>
+
+	<update id="updateArbitrateInfo">
+		update u_arbitrate_info
+		<set>
+			id=#{id},
+			arbitrate_title=#{arbitrate_title},
+			arbitrate_type=#{arbitrate_type},
+			arbitrate_state=#{arbitrate_state},
+			task_type=#{task_type},
+			task_id=#{task_id},
+			apply_id=#{apply_id},
+			create_time=#{create_time},
+			audit_time=#{audit_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateArbitrateInfoVo">
+		update u_arbitrate_info
+		<set>
+			id=#{id},
+			arbitrate_title=#{arbitrate_title},
+			arbitrate_type=#{arbitrate_type},
+			arbitrate_state=#{arbitrate_state},
+			task_type=#{task_type},
+			task_id=#{task_id},
+			apply_id=#{apply_id},
+			create_time=#{create_time},
+			audit_time=#{audit_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullArbitrateInfo">
+		update u_arbitrate_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="arbitrate_title != null and arbitrate_title != ''">
+				arbitrate_title=#{arbitrate_title},
+			</if>
+			<if test="arbitrate_type != null and arbitrate_type != ''">
+				arbitrate_type=#{arbitrate_type},
+			</if>
+			<if test="arbitrate_state != null and arbitrate_state != ''">
+				arbitrate_state=#{arbitrate_state},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="apply_id != null and apply_id != ''">
+				apply_id=#{apply_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="audit_time != null">
+				audit_time=#{audit_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullArbitrateInfoVo">
+		update u_arbitrate_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="arbitrate_title != null and arbitrate_title != ''">
+				arbitrate_title=#{arbitrate_title},
+			</if>
+			<if test="arbitrate_type != null and arbitrate_type != ''">
+				arbitrate_type=#{arbitrate_type},
+			</if>
+			<if test="arbitrate_state != null and arbitrate_state != ''">
+				arbitrate_state=#{arbitrate_state},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="apply_id != null and apply_id != ''">
+				apply_id=#{apply_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="audit_time != null">
+				audit_time=#{audit_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleArbitrateInfo">
+		update u_arbitrate_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="arbitrate_title != null and arbitrate_title != ''">
+				arbitrate_title=#{arbitrate_title},
+			</if>
+			<if test="arbitrate_type != null and arbitrate_type != ''">
+				arbitrate_type=#{arbitrate_type},
+			</if>
+			<if test="arbitrate_state != null and arbitrate_state != ''">
+				arbitrate_state=#{arbitrate_state},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="apply_id != null and apply_id != ''">
+				apply_id=#{apply_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="audit_time != null">
+				audit_time=#{audit_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleArbitrateInfoVo">
+		update u_arbitrate_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="arbitrate_title != null and arbitrate_title != ''">
+				arbitrate_title=#{arbitrate_title},
+			</if>
+			<if test="arbitrate_type != null and arbitrate_type != ''">
+				arbitrate_type=#{arbitrate_type},
+			</if>
+			<if test="arbitrate_state != null and arbitrate_state != ''">
+				arbitrate_state=#{arbitrate_state},
+			</if>
+			<if test="task_type != null and task_type != ''">
+				task_type=#{task_type},
+			</if>
+			<if test="task_id != null and task_id != ''">
+				task_id=#{task_id},
+			</if>
+			<if test="apply_id != null and apply_id != ''">
+				apply_id=#{apply_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="audit_time != null">
+				audit_time=#{audit_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取仲裁数量 -->
+	<select id="getArbitrateInfoCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_arbitrate_info
+		
+		WHERE 
+		<if
+			test="arbitrate_state != null and arbitrate_state != ''">
+			arbitrate_state=#{arbitrate_state}
+		</if>
+		<if
+			test="arbitrate_state == null">
+			1=1
+		</if>
+		
+	</select>
+
+	<!-- 条件搜索仲裁内容 -->
+	<select id="getArbitrateInfoList" resultType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoDetail">
+	SELECT a.id id,a.create_time start_time,a.arbitrate_type arbitrate_type,a.arbitrate_title arbitrate_title,
+	a.arbitrate_state arbitrate_state,a.audit_time audit_time,
+	IF(f.company_name is null,d.`nickname`,f.company_name) aname,
+	IF(g.company_name is null,e.`nickname`,g.company_name) dname
+	FROM u_arbitrate_info a
+	LEFT JOIN u_arbitrate_user_info b ON a.id=b.arbitrate_id
+	LEFT JOIN u_arbitrate_user_info c ON a.id=c.arbitrate_id
+	LEFT JOIN u_user d ON b.user_id=d.id
+	LEFT JOIN u_user e ON c.user_id=e.id
+	LEFT JOIN u_company f ON b.company_id=f.id
+	LEFT JOIN u_company g ON c.company_id=g.id
+	WHERE b.user_type='A'AND c.user_type='D' 
+		
+		<choose>
+			<when test="arbitrateInfoDetail.id!=null">
+				and a.id=#{arbitrateInfoDetail.id}
+			</when>
+			<when test="arbitrateInfoDetail.nickname!=null" >
+				and (e.name like CONCAT('%',#{arbitrateInfoDetail.nickname},'%') OR d.name like CONCAT('%',#{arbitrateInfoDetail.nickname},'%'))
+						
+					
+			</when>
+			<when test="arbitrateInfoDetail.company_name!=null" >
+				
+			   and (f.company_name like CONCAT('%',#{arbitrateInfoDetail.company_name},'%') OR g.company_name like CONCAT('%',#{arbitrateInfoDetail.company_name},'%'))
+					
+			</when>
+			
+			<when test="arbitrateInfoDetail.arbitrate_type!=null">
+				and arbitrate_type =
+				#{arbitrateInfoDetail.arbitrate_type}
+			</when>
+			<!-- <when test="arbitrateInfoDetail.arbitrate_content!=null">
+				and b.arbitrate_content like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_content},'%')
+			</when> -->
+			<when test="arbitrateInfoDetail.arbitrate_state!=null">
+				and arbitrate_state like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_state},'%')
+			</when>
+		</choose>
+		<!-- <if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if> -->
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 条件搜索仲裁内容数量 -->
+	<!-- <select id="getArbitrateInfoListCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_arbitrate_info AS a
+		LEFT JOIN u_arbitrate_user_info
+		AS b ON a.id
+		= b.arbitrate_id
+		LEFT JOIN u_user AS c ON c.id = b.user_id
+		LEFT JOIN
+		u_company AS d ON d.id = b.company_id
+		WHERE
+		<if
+			test="arbitrateInfoDetail.user_type != null and arbitrateInfoDetail.user_type != ''">
+			b.user_type = #{arbitrateInfoDetail.user_type}
+		</if>
+		<if test="arbitrateInfoDetail.user_type == null">
+			b.user_type in ('A','D')
+		</if>
+		<choose>
+			<when test="arbitrateInfoDetail.id!=null">
+				and a.id=#{arbitrateInfoDetail.id}
+			</when>
+			<when test="arbitrateInfoDetail.nickname!=null">
+				and c.nickname like
+				CONCAT('%',#{arbitrateInfoDetail.nickname},'%')
+			</when>
+			<when test="arbitrateInfoDetail.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{arbitrateInfoDetail.company_name},'%')
+			</when>
+			<when test="arbitrateInfoDetail.arbitrate_type!=null">
+				and a.arbitrate_type =
+				#{arbitrateInfoDetail.arbitrate_type}
+			</when>
+			<when test="arbitrateInfoDetail.arbitrate_title!=null">
+				and b.arbitrate_title like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_title},'%')
+			</when>
+			<when test="arbitrateInfoDetail.arbitrate_state!=null">
+				and a.arbitrate_state like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_state},'%')
+			</when>
+		</choose>
+	</select> -->
+	<!-- 条件搜索仲裁内容数量 -->
+	<select id="getArbitrateInfoListCount" resultType="java.lang.Long">
+		SELECT count(*)
+	FROM u_arbitrate_info a
+	LEFT JOIN u_arbitrate_user_info b ON a.id=b.arbitrate_id
+	LEFT JOIN u_arbitrate_user_info c ON a.id=c.arbitrate_id
+	LEFT JOIN u_user_info d ON b.user_id=d.user_id
+	LEFT JOIN u_user_info e ON c.user_id=e.user_id
+	LEFT JOIN u_company f ON b.company_id=f.id
+	LEFT JOIN u_company g ON c.company_id=g.id
+	WHERE b.user_type='A'AND c.user_type='D' 
+		
+		<choose>
+			<when test="arbitrateInfoDetail.id!=null">
+				and a.id=#{arbitrateInfoDetail.id}
+			</when>
+			<when test="arbitrateInfoDetail.nickname!=null" >
+				and (e.name like CONCAT('%',#{arbitrateInfoDetail.nickname},'%') OR d.name like CONCAT('%',#{arbitrateInfoDetail.nickname},'%'))
+						
+					
+			</when>
+			<when test="arbitrateInfoDetail.company_name!=null" >
+				
+			   and (f.company_name like CONCAT('%',#{arbitrateInfoDetail.company_name},'%') OR g.company_name like CONCAT('%',#{arbitrateInfoDetail.company_name},'%'))
+					
+			</when>
+			
+			<when test="arbitrateInfoDetail.arbitrate_type!=null">
+				and arbitrate_type =
+				#{arbitrateInfoDetail.arbitrate_type}
+			</when>
+			<!-- <when test="arbitrateInfoDetail.arbitrate_content!=null">
+				and b.arbitrate_content like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_content},'%')
+			</when> -->
+			<when test="arbitrateInfoDetail.arbitrate_state!=null">
+				and arbitrate_state like
+				CONCAT('%',#{arbitrateInfoDetail.arbitrate_state},'%')
+			</when>
+		</choose>
+	</select>
+
+	<!-- 判决仲裁 -->
+	<update id="finishArbitrate">
+		update u_arbitrate_info
+		<set>
+			<if test="arbitrate_state != null and arbitrate_state != ''">
+				arbitrate_state=#{arbitrate_state},
+			</if>
+			<if test="audit_time != null">
+				audit_time=#{audit_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<!-- 获取仲裁详情 -->
+	<select id="getArbitrateInfoM" resultType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoHead">
+		SELECT
+		a.arbitrate_state,
+		a.arbitrate_type,
+		c.`name` as project_name,
+		b.`name`
+		as task_name,
+		b.task_status,
+		a.create_time
+		FROM
+		u_arbitrate_info AS a
+		LEFT
+		JOIN p_model_task AS b ON a.task_id =
+		b.id
+		LEFT JOIN p_project AS c ON
+		c.id = b.project_id
+		WHERE
+		a.id = #{id} LIMIT 0,1
+	</select>
+	<!-- 获取仲裁详情 -->
+	<select id="getArbitrateInfoA" resultType="com.cgwas.arbitrateInfo.entity.ArbitrateInfoHead">
+		SELECT
+		a.arbitrate_state,
+		a.arbitrate_type,
+		c.`name` AS project_name,
+		b.pattern_number AS task_name,
+		b.task_status,
+		a.create_time
+		FROM
+		u_arbitrate_info AS a
+		LEFT JOIN p_animation_light_task AS b ON a.task_id = b.id
+		LEFT JOIN p_project AS c ON c.id = b.project_id
+		WHERE
+		a.id = #{id}
+		LIMIT 0,
+		1
+	</select>
+	
+
+</mapper>

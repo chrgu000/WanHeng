@@ -1,0 +1,84 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+   <title>蒙台梭利</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/teacher_style.css">
+        <style type="text/css">
+[v-cloak] {
+    display: none;
+}
+</style>
+</head>
+<body>
+<div class="back">
+    <div class="back_btn" onclick="goBack()"><img src="../img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center">成长</div>
+    <div class="back_right"><a :href="'evaluation_add.html?baby_id='+data">添加</a></div>
+</div>
+<div class="growth growth_t" v-cloak>
+    <ul>
+        <li v-for="list in data"><a :href="'evaluation.html?id='+list.id+'&baby_id='+list.baby_id">{{list.create_time}}<small>{{list.content}}</small></a></li>
+    </ul>
+</div>
+
+<div id="foot">
+    <ul class="footer">
+      <li><a :href="'pic_list.html?id='+data"><img src="../img/picture_photo_t.png" class="img-responsive"><span>照片</span></a></li>
+        <li><a :href="'growth.html?id='+data"><img src="../img/chengctc.png" class="img-responsive"><span>成长</span></a></li></ul>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../js/data.js"></script>
+<script src="../js/style.js"></script>
+<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js"></script>
+			<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script src="../js/teacher_cookie.js">
+</script>
+<script>
+	var baby_id = getQueryString("id");
+	$(function(){
+		$.ajax({
+				url:"../../log/getLogByBabyId.do",
+				type:"post",
+				data:{baby_id:baby_id},
+				dataType:"json",
+				success:function(data){
+					 vm=new Vue({
+						el:".growth",
+						data:{
+				            data:data
+				        }
+					});
+					 new Vue({
+						 el:".back",
+						 data:{
+						 data:baby_id
+						 }
+					 });
+					 new Vue({
+						 el:"#foot",
+						 data:{
+						 data:baby_id
+						 }
+					 });
+				},error:function(){}
+			});
+	});
+</script>
+</body>
+</html>

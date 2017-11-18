@@ -1,0 +1,310 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.rewardsRecord.dao">
+
+	<sql id="columns">
+		id, prestige, contribute, flat, reason, type, use_id,
+		company_id, name, time
+	</sql>
+	<sql id="vals">
+		#{id}, #{prestige}, #{contribute}, #{flat}, #{reason},
+		#{type}, #{use_id}, #{company_id}, #{name}, #{time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="prestige != null and prestige != ''">
+			and prestige = #{prestige}
+		</if>
+		<if test="contribute != null and contribute != ''">
+			and contribute = #{contribute}
+		</if>
+		<if test="flat != null and flat != ''">
+			and flat = #{flat}
+		</if>
+		<if test="reason != null and reason != ''">
+			and reason = #{reason}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="use_id != null and use_id != ''">
+			and use_id = #{use_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="time != null">
+			and time = #{time}
+		</if>
+	</sql>
+
+	<insert id="saveRewardsRecord" parameterType="com.cgwas.rewardsRecord.entity.RewardsRecord"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_rewards_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveRewardsRecordVo" parameterType="com.cgwas.rewardsRecord.entity.RewardsRecordVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_rewards_record (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteRewardsRecord">
+		delete from u_rewards_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteRewardsRecordVo">
+		delete from u_rewards_record
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleRewardsRecord">
+		delete from u_rewards_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleRewardsRecordVo">
+		delete from u_rewards_record
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadRewardsRecord" resultType="com.cgwas.rewardsRecord.entity.RewardsRecordVo">
+		select
+		<include refid="columns" />
+		from u_rewards_record
+		where id=#{id}
+	</select>
+
+	<select id="selectRewardsRecord" resultType="com.cgwas.rewardsRecord.entity.RewardsRecordVo">
+		select
+		<include refid="columns" />
+		from u_rewards_record
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateRewardsRecord">
+		update u_rewards_record
+		<set>
+			id=#{id},
+			prestige=#{prestige},
+			contribute=#{contribute},
+			flat=#{flat},
+			reason=#{reason},
+			type=#{type},
+			use_id=#{use_id},
+			company_id=#{company_id},
+			name=#{name},
+			time=#{time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateRewardsRecordVo">
+		update u_rewards_record
+		<set>
+			id=#{id},
+			prestige=#{prestige},
+			contribute=#{contribute},
+			flat=#{flat},
+			reason=#{reason},
+			type=#{type},
+			use_id=#{use_id},
+			company_id=#{company_id},
+			name=#{name},
+			time=#{time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullRewardsRecord">
+		update u_rewards_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="time != null">
+				time=#{time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullRewardsRecordVo">
+		update u_rewards_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="time != null">
+				time=#{time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleRewardsRecord">
+		update u_rewards_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="time != null">
+				time=#{time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleRewardsRecordVo">
+		update u_rewards_record
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="contribute != null and contribute != ''">
+				contribute=#{contribute},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="reason != null and reason != ''">
+				reason=#{reason},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="time != null">
+				time=#{time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据用户ID得到奖罚记录 -->
+	<select id="getRewardsRecordListByUserId" resultType="com.cgwas.rewardsRecord.entity.RewardsRecord">
+		select
+		*
+		from u_rewards_record
+		where use_id = #{use_id}
+	</select>
+	<!-- 根据公司ID得到奖罚记录 -->
+	<select id="getRewardsRecordListByCompanyId" resultType="com.cgwas.rewardsRecord.entity.RewardsRecord">
+		select
+		*
+		from u_rewards_record
+		where company_id = #{company_id}
+	</select>
+</mapper>

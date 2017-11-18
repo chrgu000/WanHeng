@@ -1,0 +1,22 @@
+.labelError {
+	line-height: 9px;
+	font-size: 10pt;
+	color: #f40000;
+	border: 1px #ffb8b8 solid;
+	padding: 10px 8px 10px 35px;
+	background: url(../images/error.png) no-repeat;
+	background-color: #fef2f2;
+	margin-top:0px;
+	float: left;
+}
+#labelError {
+	line-height: 9px;
+	font-size: 10pt;
+	color: #f40000;
+	border: 1px #ffb8b8 solid;
+	padding: 8px 8px 8px 35px;
+	background: url(../images/error.png) no-repeat;
+	background-color: #fef2f2;
+	margin-top:4px;
+	float: left;
+}

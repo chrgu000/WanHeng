@@ -1,0 +1,82 @@
+
+var gallery=[{
+    big_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    small_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    title:"标题一"
+},{
+    big_img:"img/index_top.png",
+    small_img:"img/index_top.png",
+    title:"标题二"
+},{
+    big_img:"img/home.png",
+    small_img:"img/home.png",
+    title:"标题三"
+},{
+    big_img:"http://img1.qunarzz.com/travel/d2/201212/01/7a9c6c2aaa15cba1ddb12cfb.jpg_r_480x360x95_4a9862bc.jpg",
+    small_img:"http://p4.so.qhimgs1.com/bdr/200_200_/t0133e33a306b8bd274.jpg",
+    title:"标题四"
+},{
+    big_img:"http://img.taopic.com/uploads/allimg/120520/159368-1205201S44789.jpg",
+    small_img:"http://p0.so.qhimgs1.com/bdr/200_200_/t01c249aaa446b48f80.jpg",
+    title:"标题五"
+},{
+    big_img:"img/foot2.png",
+    small_img:"img/foot2.png",
+    title:"标题六"
+},{
+    big_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    small_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    title:"标题7"
+},{
+    big_img:"img/index_top.png",
+    small_img:"img/index_top.png",
+    title:"标题8"
+},{
+    big_img:"img/home.png",
+    small_img:"img/home.png",
+    title:"标题9"
+},{
+    big_img:"http://img1.qunarzz.com/travel/d2/201212/01/7a9c6c2aaa15cba1ddb12cfb.jpg_r_480x360x95_4a9862bc.jpg",
+    small_img:"http://p4.so.qhimgs1.com/bdr/200_200_/t0133e33a306b8bd274.jpg",
+    title:"标题10"
+},{
+    big_img:"http://img.taopic.com/uploads/allimg/120520/159368-1205201S44789.jpg",
+    small_img:"http://p0.so.qhimgs1.com/bdr/200_200_/t01c249aaa446b48f80.jpg",
+    title:"标题11"
+},{
+    big_img:"img/foot2.png",
+    small_img:"img/foot2.png",
+    title:"标题12"
+},{
+    big_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    small_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    title:"标题13"
+},{
+    big_img:"img/index_top.png",
+    small_img:"img/index_top.png",
+    title:"标题14"
+},{
+    big_img:"img/home.png",
+    small_img:"img/home.png",
+    title:"标题15"
+},{
+    big_img:"http://img1.qunarzz.com/travel/d2/201212/01/7a9c6c2aaa15cba1ddb12cfb.jpg_r_480x360x95_4a9862bc.jpg",
+    small_img:"http://p4.so.qhimgs1.com/bdr/200_200_/t0133e33a306b8bd274.jpg",
+    title:"标题16"
+},{
+    big_img:"http://img.taopic.com/uploads/allimg/120520/159368-1205201S44789.jpg",
+    small_img:"http://p0.so.qhimgs1.com/bdr/200_200_/t01c249aaa446b48f80.jpg",
+    title:"标题17"
+},{
+    big_img:"img/foot2.png",
+    small_img:"img/foot2.png",
+    title:"标题18"
+},{
+    big_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    small_img:"http://android-wallpapers.25pp.com/20140117/1010/52d8913d01fbc14_900x675.jpg",
+    title:"标题19"
+},{
+    big_img:"img/index_top.png",
+    small_img:"img/index_top.png",
+    title:"标题20"
+}];

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.GardenDao">
+<select id="getGardensByAdminId" resultType="Garden">
+	select g.* from kg_garden g left join kg_admin_garden a on g.id=a.garden_id
+		where a.admin_id=#{id}
+	</select>
+	<insert id="addGarden" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		kg_garden(name,introduce)values(#{name},#{introduce})
+	</insert>
+	<update id="updateGarden">
+		update kg_garden
+		<set>
+			<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+			<if test="introduce!=null and introduce!=''">
+				introduce=#{introduce},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_garden where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getGardenById" resultType="Garden">
+		select * from kg_garden
+		where id=#{id}
+	</select>
+	<select id="getGardenByPage" resultType="Garden">
+		select * from kg_garden
+		<where>
+			<if test="name!=null and name!=''">
+				and name like "%"#{name}"%"
+		</if>
+		<if test="id!=null and id!=''">
+				and id  =#{id}
+		</if>
+		<if test="gardenIds!=null and gardenIds.size()>0">
+		   and id in <foreach collection="gardenIds" open="(" close=")" item="id" separator=",">#{id}</foreach>
+		</if>
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_garden
+		<where>
+			<if test="name!=null and name!=''">
+				and name like "%"#{name}"%"
+		</if>
+		<if test="id!=null and id!=''">
+				and id  =#{id}
+		</if>
+		</where>
+	</select>
+	<select id="getAllGarden" resultType="Garden">
+		select * from kg_garden
+	</select>
+</mapper>

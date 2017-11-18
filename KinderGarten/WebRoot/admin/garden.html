@@ -1,0 +1,257 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form action="../footprint/exportFootprint.do" id="form" method="post">
+			<input type="hidden" name="garden_id" id="garden_id">
+			</form>
+				<form id="searchForm" class="form-horizontal span24">
+					<div class="row">
+						<div class="control-group span8">
+							<label class="control-label">
+								园区名
+							</label>
+							<div class="controls">
+								<input type="text" class="control-text" name="key">
+							    <input type="text" style="display: none">
+							</div>
+						</div>
+						<div class="span3 offset" style="float: left; margin-left: 50px;">
+							<button type="button" id="btnSearch"
+								class="button button-primary">
+								搜索
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid"></div>
+			</div>
+		</div>
+		<script type="text/javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+<script type="text/javascript" src="js/checkLoginState.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript">
+		function exportFootprint(id){
+ $("#garden_id").val(id);
+ $("#form").submit();
+} var role_id;
+ 
+BUI
+		.use(
+				[ 'common/search' ,'common/page'],
+				function(Search, Grid, Data,Form,Tooltip) {
+					var Grid = BUI.Grid;
+					var columns = [
+							{
+								title : '园区名称',
+								dataIndex : 'name',
+								width : 150
+							},
+							{
+								title : '园区介绍',
+								dataIndex : 'introduce',
+								width : 400,
+							},
+							{
+								title : '操作',
+								dataIndex : '',
+								width : 200,
+								renderer : function(value, obj) {
+									var delStr = '<span class="grid-command btn-del" title="删除园区信息">删除</span>',
+									editStr1 =  Search.createLink({ //链接使用 此方式
+									id : 'edit1' + obj.id,
+									title : '查看教师',
+									text : '查看教师',
+									href : '../admin/teacher.html?garden_id='+obj.id
+									}),
+									editStr2 =  Search.createLink({ //链接使用 此方式
+									id : 'edit2' + obj.id,
+									title : '查看学生',
+									text : '查看学生',
+									href : '../admin/baby.html?garden_id='+obj.id
+									}),
+										editStr3 = '<span class="grid-command"   onclick="exportFootprint('+obj.id+')" title="导出足迹">导出足迹</span>';
+									return delStr+editStr1+editStr2 +editStr3 ;
+								}
+							} ];
+					var store = Search.createStore('../garden/loadGarden.do', {
+						proxy : {
+							save : {},
+							method : 'POST'
+						},
+						params:{
+							 
+						},
+						pageIndex : 0,
+						pageSize : 20,
+						autoSync : true
+					//保存数据后，自动更新
+							});
+					var gridCfg = Search.createGridCfg(columns, {
+						forceFit : true,
+						tbar : {
+							items : [ {
+								text : '<i class="icon-plus"></i>新建',
+								btnCls : 'button button-small',
+								handler : addFunction
+							}, {
+								text : '<i class="icon-edit"></i>编辑',
+								btnCls : 'button button-small',
+								handler : updFunction
+							}, {
+								text : '<i class="icon-remove"></i>删除',
+								btnCls : 'button button-small',
+								handler : delFunction
+							} ]
+						},
+						loadMask : true, //加载数据时显示屏蔽层
+						plugins : [BUI.Grid.Plugins.CheckSelection ]
+					// 插件形式引入多选表格
+							});
+					var search = new Search( {
+						store : store,
+						gridCfg : gridCfg
+					});
+					var grid = search.get('grid');
+				
+					function addFunction() {
+						var newData = {
+							isNew : false
+						};
+						location.href="garden_add.html"
+					}
+					function updFunction() {
+						var selections = grid.getSelection();
+						var ids = [];
+						BUI.each(selections, function(selections) {
+							ids.push(selections.id);
+						});
+						if (ids.length > 1) {
+							BUI.Message.Alert('只能选择一条记录', 'warning');
+						} else if (ids.length <= 0) {
+							BUI.Message.Alert('请选择要编辑的记录', 'warning');
+						} else {
+							location.href="garden_update.html?id="+ids[0];
+						}
+					}
+					function delFunction() {
+						var selections = grid.getSelection();
+						delItems(selections);
+					}
+					function delItems(items) {
+						var ids = [];
+						BUI.each(items, function(item) {
+							ids.push(item.id);
+						});
+						if (ids.length) {
+							BUI.Message.Confirm('确定要删除选中记录吗?', function() {
+								$.ajax( {
+									url : '../garden/deleteGarden.do',
+									dataType : "json",
+									data : {
+										"ids" : ids.toString()
+									},
+									type : "post",
+									async : true,
+									success : function(data) {
+										if (data.hasError == false) {
+											store.load();
+										} else {
+											BUI.Message.Alert(data.errInfo,
+													'warning');
+										}
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrow) {
+										BUI.Message.Alert('系统繁忙,请稍候'
+												+ XMLHttpRequest.status + ","
+												+ XMLHttpRequest.readyState,
+												+"," + textStatus, 'warning')
+									}
+								});
+							}, 'questions');
+						} else {
+							BUI.Message.Alert('请选择记录', function() {
+							}, 'warning');
+						}
+					}
+					grid.on('cellclick', function(ev) {
+						var sender = $(ev.domTarget);
+						if (sender.hasClass('btn-del')) {
+							var record = ev.record;
+							delItems( [ record ]);
+						}
+					});
+				});
+$(function() {
+	$.ajax( {
+		url : "../admin/getAllGarden.do",
+		dataType : "json",
+		type : "post",
+		data : {},
+		success : function(data) {
+			new Vue( {
+				el : '#garden1',
+				data : {
+					selected : "",
+					options : data
+				}
+			});
+			new Vue( {
+				el : '#garden2',
+				data : {
+					selected : "",
+					options : data
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+function getGarden(value){
+	if(value==2){
+	$("#garden2").show();
+	}else{
+		$("#garden2").hide();
+	}
+}
+function check(){
+var value=$("#garden").val();
+if(!value){
+	BUI.Message.Alert("请为管理员选择园区","warning");
+	return  false;
+}
+return true;
+}
+</script>
+		<body>
+</html>

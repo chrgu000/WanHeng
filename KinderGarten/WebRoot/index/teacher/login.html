@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+ <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+   <title>蒙台梭利</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<div class="container">
+  <div class="login">
+    <form  id="form" action="../../teacher/login.do" class="form">
+     <!-- text -->
+        <label>
+           <input type="text"  name="tel"  id="tel" placeholder="手机号码">
+        </label>
+        <label>
+             <input  type="password"  name="password" id="password" placeholder="请输入密码">
+        </label>
+        <!-- checkbox -->
+       <div class="check">
+            <a class="pull-left" href="registered.html"  style="background: #c3a99f; border: 1px solid #c3a99f">注册</a>
+           <a class="pull-right" href="psd.html">忘记密码？</a>
+        </div>
+        <a href="#" class="btn btn-primary btn-lg pull-right" role="button"  style="background: #c3a99f; border: 1px solid #c3a99f;color:white" onclick="showModal()">登录</a>
+    </form>
+  </div>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script src="../js/vue.min.js"></script>
+<script src="../../static/common/jquery.form.js">
+</script>
+		<script type="text/javascript" src="../../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script>
+$(function(){
+ $.ajax({
+	 url:"../../teacher/checkLogin.do",
+	 type:"post",
+	 data:{},
+	 dataType:"json",
+	 success:function(data){
+		 if(data==1){
+			 location.href="index.html"
+		 } 
+	 },
+	 error:function(){}
+ });
+});
+    new Vue({
+        el: 'body',
+        data: {
+            msg      : '账号',
+            checked  : true,
+            picked   : 'one',
+            selected : 'two',
+            multiSelect: ['one', 'three']
+        }
+    });
+function changeCheckbox() {
+    var mylabel = document.getElementById('formyCheckBox');
+    if (mylabel.innerHTML == "X")
+       mylabel.innerHTML = "";
+    else
+       mylabel.innerHTML = "X";
+}
+function showModal() {
+	$("#form").submit();
+}
+$("#form").ajaxForm( {
+	dataType : 'json',
+	beforeSend : function() {
+		//表单提交前做表单验证
+	return check();
+},
+success : function(data) {
+	if (data.hasError) {
+		$.pop.tips(data.errInfo);
+	} else {
+			location.href="index.html";
+	}
+},
+error : function() {
+}
+});
+function checktel() {
+	var bool = true;
+	var value = $("#tel").val().trim();
+	var reg = /^1[3|4|5|7|8]\d{9}$/;
+	if (!reg.test(value)) {
+		$.pop.tips("手机号格式不对,请重新输入!");
+		bool = false;
+	}
+	return bool;
+}
+function checkPwd() {
+	var bool = true;
+	var password = $("#password").val();
+	if (!password) {
+		$.pop.tips("密码不能为空!");
+		bool = false;
+	} else if (password.length < 6 || password.length > 20) {
+		$.pop.tips("密码长度在6~20之间!");
+		bool = false;
+	}
+	return bool;
+}
+function check() {
+	if ( checktel() &&checkPwd()) {
+		return true;
+	}
+	return false;
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companyFilesUser.dao">
+	<sql id="columnsAs">
+		company_files_id, user_id
+	</sql>
+
+	<select id="selectCompanyFilesUserPage" resultType="com.cgwas.companyFilesUser.entity.CompanyFilesUserVo">
+		select cf.file_name,uc.company_name,uu.username 
+		from p_company_files_user cfu
+		left join  p_company_files cf on cf.id  =cfu.company_files_id
+		left join  u_company uc on uc.id=cf.company_id
+		left join  u_user uu ON uu.id=cfu.user_id
+		where uu.id=#{user_id} and cf.parent_id = #{parent_id}
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectCompanyFilesUserCount" resultType="java.lang.Long">
+		select
+		count(*)
+		from p_company_files_user
+		where uu.id=#{user_id}
+	</select>
+
+</mapper>

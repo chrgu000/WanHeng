@@ -1,0 +1,123 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+<title>蒙台梭利</title>
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="../css/date.min.css" rel="stylesheet" type="text/css" />
+</head>
+<body>
+
+<div class="back">
+    <div class="back_btn" onclick="goBack()"><img src="../img/left_icon.png" class="img-responsive"/></div>
+    <div class="back_center">评语</div>
+    <div class="back_right"><a href="#" onclick="save()">保存</a></div>
+</div>
+<div class="archives">
+     <form action="../../log/addLog.do" method="post" id="form">
+     <input type="hidden" name="baby_id" id="baby_id"/>
+    <ul>
+        <li>
+            <a>
+                <div class="pull-left" >日期</div>
+                <div class="lie " style="text-align:center">
+                <input  id="create_time" style="text-align:center"  name="create_time"class="kbtn" placeholder="请选择日期" /></div>
+                <div id="datePlugin"></div>
+            </a>
+        </li>
+        <li>
+            <a style="background:none">
+                <div class="pull-left">近期我宝贝学会了</div>
+		<div class="pull-right" style="width: 100%;">
+                    <textarea rows="4" name="living_ability" id="living_ability" placeholder="请输入内容" style="width: 100%; float: left; border: none; text-indent: 10%;"></textarea>
+                </div>
+            </a>
+        </li>
+        <li>
+            <a style="background: none;border:none">
+                <div class="pull-left">老师夸夸我</div>
+                <div class="pull-right" style="width: 100%;">
+                    <textarea rows="4" id="content" name="content" placeholder="请输入评语" style="width: 100%; float: left; border: none; text-indent: 10%;"></textarea>
+                </div>
+            </a>
+        </li>
+    </ul>
+</div>
+</form>
+</div>
+<script src="../js/jquery.min.js"></script>
+<script type="text/javascript" src="../js/date1.js"></script>
+<script type="text/javascript" src="../js/iscroll.js" ></script>
+<script src="../js/style.js"></script>
+<script src="../../static/common/jquery.form.js">
+</script>
+<script type="text/javascript" language="javascript"
+			src="../../static/common/getQueryString.js"></script>
+			<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+<script src="../js/teacher_cookie.js">
+</script>
+<script type="text/javascript">
+$(function(){
+        $('#create_time').date( {
+					});
+    });
+var baby_id = getQueryString("baby_id");
+$(function(){
+	$("#baby_id").val(baby_id);
+});
+function save() {
+	$("#form").submit();
+}
+$("#form").ajaxForm( {
+	dataType : 'json',
+	beforeSend : function() {
+		//表单提交前做表单验证
+	return check();
+},
+success : function(data) {
+	 if (data.hasError) {
+		$.pop.tips(data.errInfo);
+	} else {
+		$.pop.tips(data.errInfo);
+		setTimeout(function(){
+			location.href="growth.html?id="+baby_id;
+		},400);
+	}
+},
+error : function() {
+}
+});
+function check(){
+  	 var create_time=$("#create_time").val();
+  	 if(!create_time){
+  		 $.pop.tips("请选择日期");
+  		 return false;
+  	 }
+  	 var living_ability=$("#living_ability").val();
+  	 if(!living_ability){
+  		 $.pop.tips("请输入宝贝学会了");
+  		 	 return false;
+  	 }
+  	 var content =$("#content").val();
+  	  if(!content){
+  		 $.pop.tips("请输入老师夸夸我");
+  		 	 return false;
+  	 }
+  	 return true;
+     }
+</script>
+
+</body>
+</html>

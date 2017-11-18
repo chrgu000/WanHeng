@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userCompany.dao">
+
+	<sql id="columns">
+		id, relation, company_id, use_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{relation}, #{company_id}, #{use_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="relation != null and relation != ''">
+			and relation = #{relation}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="use_id != null and use_id != ''">
+			and use_id = #{use_id}
+		</if>
+	</sql>
+
+	<insert id="saveUserCompany" parameterType="com.cgwas.userCompany.entity.UserCompany"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_company (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserCompanyVo" parameterType="com.cgwas.userCompany.entity.UserCompanyVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_company (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserCompany">
+		delete from u_user_company
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserCompanyVo">
+		delete from u_user_company
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserCompany">
+		delete from u_user_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserCompanyVo">
+		delete from u_user_company
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserCompany" resultType="com.cgwas.userCompany.entity.UserCompanyVo">
+		select
+		<include refid="columns" />
+		from u_user_company
+		where id=#{id}
+	</select>
+
+	<select id="selectUserCompany" resultType="com.cgwas.userCompany.entity.UserCompanyVo">
+		select
+		<include refid="columns" />
+		from u_user_company
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserCompany">
+		update u_user_company
+		<set>
+			id=#{id},
+			relation=#{relation},
+			company_id=#{company_id},
+			use_id=#{use_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserCompanyVo">
+		update u_user_company
+		<set>
+			id=#{id},
+			relation=#{relation},
+			company_id=#{company_id},
+			use_id=#{use_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserCompany">
+		update u_user_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="relation != null and relation != ''">
+				relation=#{relation},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserCompanyVo">
+		update u_user_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="relation != null and relation != ''">
+				relation=#{relation},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserCompany">
+		update u_user_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="relation != null and relation != ''">
+				relation=#{relation},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserCompanyVo">
+		update u_user_company
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="relation != null and relation != ''">
+				relation=#{relation},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="use_id != null and use_id != ''">
+				use_id=#{use_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取公司对应用户 -->
+	<select id="companygetUser" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		*
+		FROM
+		u_user_company
+		WHERE
+		company_id = #{company_id}
+		AND relation = 1
+		LIMIT 0,
+		1
+	</select>
+	<!-- 获取用户拥有公司 -->
+	<select id="getUserHaveCompany" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		a.id,
+		a.company_name,
+		a.head_pic_path,
+		e.regist_time,
+		f.`name`,
+		e.tel
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_company_auth_info AS c ON c.company_id = a.id
+		LEFT JOIN u_user AS e ON e.id = b.use_id
+		LEFT JOIN u_user_info AS f ON b.use_id = f.user_id
+		LEFT JOIN u_user_auth_info AS g ON g.user_id = e.id
+		WHERE
+		c.`status` = '已认证'
+		AND a.is_delete = 'N'
+		AND g.`status` = '已认证'
+		AND b.use_id = #{use_id}
+		AND b.relation = 1
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+
+		<if test="sortColumn ==null or sortColumn =='' ">
+			ORDER BY id
+		</if>
+		<if test="sortType=='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} DESC
+		</if>
+		<if test="sortType!='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} ASC
+		</if>
+		<if test="start != null and start > -1">
+			LIMIT #{start},#{end}
+		</if>
+
+	</select>
+	<!-- 获取用户拥有公司(数量) -->
+	<select id="getUserHaveCompanyCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_company_auth_info AS c ON c.company_id = a.id
+		LEFT JOIN u_user AS e ON e.id = b.use_id
+		LEFT JOIN u_user_info AS f ON b.use_id = f.user_id
+		LEFT JOIN u_user_auth_info AS g ON g.user_id = e.id
+		WHERE
+		c.`status` = '已认证'
+		AND a.is_delete = 'N'
+		AND g.`status` = '已认证'
+		AND b.use_id = #{use_id}
+		AND b.relation = 1
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+	</select>
+
+	<!-- 获取加入公司 -->
+	<select id="getUserJoinCompany" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		a.id,
+		a.company_name,
+		a.head_pic_path,
+		f.`name`,
+		g.regist_time,
+		g.tel
+		FROM
+		u_company AS a
+		LEFT JOIN u_employee AS b ON a.id =
+		b.company_id
+		LEFT JOIN u_company_position AS c ON b.position_id = c.id
+		LEFT JOIN u_company_section AS d ON b.section_id = d.id
+		LEFT JOIN
+		u_user_company AS e ON a.id = e.company_id
+		LEFT JOIN u_user_info AS f
+		ON f.user_id = e.use_id
+		LEFT JOIN u_user AS g ON e.use_id = g.id
+		LEFT
+		JOIN u_company_auth_info as h on h.company_id = a.id
+		LEFT JOIN
+		u_user_auth_info AS i on i.user_id = g.id
+		WHERE
+		b.user_id = #{use_id}
+		AND b.emp_status_id != 2 AND
+		a.is_delete = 'N' AND
+		h.`status`= '已认证' AND
+		i.`status` = '已认证'
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+		<if test="sortColumn ==null or sortColumn =='' ">
+			ORDER BY id
+		</if>
+		<if test="sortType=='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} DESC
+		</if>
+		<if test="sortType!='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} ASC
+		</if>
+		<if test="start != null and start > -1">
+			LIMIT #{start},#{end}
+		</if>
+	</select>
+	<!-- 获取加入公司 -->
+	<select id="getUserJoinCompanyCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		from
+		u_company AS a
+		LEFT JOIN u_employee AS b ON a.id =
+		b.company_id
+		LEFT JOIN u_company_position AS c ON b.position_id = c.id
+		LEFT JOIN u_company_section AS d ON b.section_id = d.id
+		LEFT JOIN
+		u_user_company AS e ON a.id = e.company_id
+		LEFT JOIN u_user_info AS f
+		ON f.user_id = e.use_id
+		LEFT JOIN u_user AS g ON e.use_id = g.id
+		LEFT
+		JOIN u_company_auth_info as h on h.company_id = a.id
+		LEFT JOIN
+		u_user_auth_info AS i on i.user_id = g.id
+		WHERE
+		b.user_id = #{use_id}
+		AND b.emp_status_id != 2 AND
+		a.is_delete = 'N' AND
+		h.`status`= '已认证' AND
+		i.`status` = '已认证'
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+	</select>
+
+	<!-- 获取公司项目数 -->
+	<select id="getCompanyProjectNum" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT company_id as id,COUNT(*) as project_no FROM p_project WHERE
+		company_id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+		GROUP
+		BY company_id
+	</select>
+	<!-- 获取公司员工数 -->
+	<select id="getCompanyEmpNum" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		company_id AS id,
+		COUNT(*) AS project_no
+		FROM
+		u_employee
+		WHERE
+		company_id IN
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+		and emp_status_id !=2 and is_delete = 'N'
+		GROUP BY
+		company_id
+	</select>
+	<!-- 获取公司职位数 -->
+	<select id="getCompanyPositionNum" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		company_id AS id,
+		COUNT(*) AS project_no
+		FROM
+		u_company_position
+		WHERE company_id IN
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+		and is_delete = 'N'
+		GROUP BY
+		company_id
+	</select>
+	<!-- 获取公司部门数 -->
+	<select id="getCompanySectionNum" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		company_id AS id,
+		COUNT(*) AS project_no
+		FROM
+		u_company_section
+		WHERE
+		company_id IN
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+		and is_delete = 'N'
+		GROUP BY
+		company_id
+	</select>
+
+
+
+	<!-- 获取可管理公司 -->
+	<select id="getAdminCompany" resultType="com.cgwas.userCompany.entity.UserCompany">
+		SELECT
+		a.id,
+		a.company_name,
+		a.head_pic_path,
+		e.regist_time,
+		f.`name`,
+		e.tel
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id =
+		b.company_id
+		LEFT JOIN u_company_auth_info AS c ON c.company_id = a.id
+		LEFT JOIN u_user AS e ON e.id = b.use_id
+		LEFT JOIN u_user_info AS f ON
+		b.use_id = f.user_id
+		LEFT JOIN u_user_auth_info as g on e.id =
+		g.user_id
+		WHERE
+		c.`status` = '已认证' AND
+		a.is_delete = 'N' AND
+		g.`status` =
+		'已认证'
+
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+
+		<if test="sortColumn ==null or sortColumn =='' ">
+			ORDER BY id
+		</if>
+		<if test="sortType=='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} DESC
+		</if>
+		<if test="sortType!='DESC' and sortColumn !=null and sortColumn !='' ">
+			ORDER BY ${sortColumn} ASC
+		</if>
+
+		<if test="start != null and start > -1">
+			LIMIT #{start},#{end}
+		</if>
+	</select>
+	<!-- 获取可管理公司(数量) -->
+	<select id="getAdminCompanyCount" resultType="java.lang.Long">
+		SELECT
+		count(*)
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id
+		= b.company_id
+		LEFT JOIN u_company_auth_info AS c ON c.company_id =
+		a.id
+		LEFT JOIN u_user AS e ON e.id = b.use_id
+		LEFT JOIN u_user_info AS f
+		ON b.use_id = f.user_id
+		LEFT JOIN u_user_auth_info as g on e.id =
+		g.user_id
+		WHERE
+		c.`status` = '已认证' AND
+		a.is_delete = 'N' AND
+		g.`status` =
+		'已认证'
+		<if test="sConpany.id != null and sConpany.id  != ''">
+			and a.id=#{sConpany.id}
+		</if>
+		<if test="sConpany.company_name != null and sConpany.company_name  != ''">
+			and a.company_name like
+			CONCAT('%',#{sConpany.company_name},'%')
+		</if>
+		<if test="sConpany.name != null and sConpany.name  != ''">
+			and f.`name` like
+			CONCAT('%',#{sConpany.name},'%')
+		</if>
+	</select>
+	<select id="getCompanyUserUUID" resultType="java.lang.String">
+		SELECT
+		c.uuid
+		FROM
+		u_company AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN u_user AS c ON b.use_id = c.id
+		WHERE b.relation='1' AND
+		a.id=#{company_id}
+		LIMIT 0,1
+	</select>
+
+</mapper>

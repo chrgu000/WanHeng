@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.projectStatus.dao">
+
+	<sql id="columns">
+		id, content, color
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{color}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="color != null and color != ''">
+			and color = #{color}
+		</if>
+	</sql>
+
+	<insert id="saveProjectStatus" parameterType="com.cgwas.projectStatus.entity.ProjectStatus" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_status (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveProjectStatusVo" parameterType="com.cgwas.projectStatus.entity.ProjectStatusVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_project_status (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteProjectStatus">
+		delete from p_project_status
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteProjectStatusVo">
+		delete from p_project_status
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleProjectStatus">
+		delete from p_project_status
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleProjectStatusVo">
+		delete from p_project_status
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadProjectStatus" resultType="com.cgwas.projectStatus.entity.ProjectStatusVo">
+		select 
+		<include refid="columns"/>
+		from p_project_status
+		where id=#{id} 
+	</select>
+	
+	<select id="selectProjectStatus" resultType="com.cgwas.projectStatus.entity.ProjectStatusVo">
+		select 
+		<include refid="columns"/>
+		from p_project_status
+	</select>
+
+	<update id="updateProjectStatus">
+		update p_project_status
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			color=#{color}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateProjectStatusVo">
+		update p_project_status
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			color=#{color}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullProjectStatus">
+		update p_project_status
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="color != null and color != ''">
+			color=#{color}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullProjectStatusVo">
+		update p_project_status
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="color != null and color != ''">
+			color=#{color}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleProjectStatus">
+		update p_project_status
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="color != null and color != ''">
+			color=#{color}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleProjectStatusVo">
+		update p_project_status
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="color != null and color != ''">
+			color=#{color}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+    <select id="getStatusId" resultType="java.lang.Long">
+      select id  from p_project_status where content =#{status}
+    </select>
+</mapper>

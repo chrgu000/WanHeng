@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.ProattDao">
+<!-- 	<cache type="com.cache.RedisCache"/> -->
+	<resultMap type="Proatt" id="proattMap">
+		<!-- <id property="paid" column="paid" javaType="Long" jdbcType="BIGINT" /> -->
+		<result property="pid" column="pid"  javaType="int" jdbcType="INTEGER"/>
+		<result property="att_id" column="att_id"  javaType="int" jdbcType="INTEGER"/>
+		<result property="sort" column="sort" javaType="int" jdbcType="INTEGER" />
+		<result property="addtime" column="addtime" javaType="string" jdbcType="VARCHAR" />
+		<result property="delflag" column="delflag" javaType="int" jdbcType="INTEGER" />
+		<association property="att" javaType="Att" column="att_id">
+			<id property="att_id" column="att_id"  javaType="int" jdbcType="INTEGER"/>
+			<result property="attr_title" column="attr_title" javaType="string" jdbcType="VARCHAR" />
+			<result property="addtime" column="addtime" javaType="string" jdbcType="VARCHAR" />
+			<result property="delflag" column="delflag" javaType="int" jdbcType="INTEGER" />
+		</association>
+	</resultMap>
+	
+	<select id="getByPage" parameterType="map" resultMap="proattMap">
+		select pa.*,a.* from proatt pa,att a
+		where pa.att_id=a.att_id
+			<if test="pid !=null and pid !=''">
+				and pa.pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and pa.att_id =#{att_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and pa.delflag =#{delflag}
+			</if>
+			order by pa.sort asc
+		<if test="start!=null and size!=null">
+			limit #{start},#{size}
+		</if>
+	</select>
+	
+	<select id="getTotal" parameterType="map" resultType="int">
+		select count(*) from proatt pa,att a
+		where pa.att_id=a.att_id
+			<if test="paid !=null and paid !=''">
+				and pa.paid=#{paid}
+			</if>
+			<if test="pid !=null and pid !=''">
+				and pa.pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and pa.att_id =#{att_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and pa.delflag =#{delflag}
+			</if>
+	</select>
+	
+	<insert id="add">
+		insert into proatt(pid,att_id,sort,delflag,addtime)
+		values(#{pid},#{att_id},#{sort},#{delflag},#{addtime})
+	</insert>
+	
+	<update id="upd" parameterType="Proatt">
+		update proatt
+		<set>
+			<if test="pid !=null and pid !=''">pid=#{pid},</if>
+			<if test="att_id !=null and att_id !=''">att_id=#{att_id},</if>
+			<if test="sort !=null and sort !=''">sort=#{sort},</if>
+			<if test="delflag !=null and delflag !=''">delflag=#{delflag},</if>
+		</set>
+		where pid=#{pid}
+	</update>
+	
+	<delete id="del" >
+		delete from proatt where pid=#{pid}
+	</delete>
+	
+	<select id="findById" resultType="Proatt">
+		select * from proatt where paid=#{paid}
+	</select>
+	
+	<select id="getByMap" parameterType="map" resultMap="proattMap">
+		select pa.*,a.* from proatt pa,att a
+		where pa.att_id=a.att_id
+			<if test="pid !=null and pid !=''">
+				and pa.pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and pa.att_id =#{att_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and pa.delflag =#{delflag}
+			</if>
+			order by pa.sort asc
+	</select>
+	
+	<select id="findByMap" parameterType="map" resultMap="proattMap">
+		select pa.*,a.* from proatt pa,att a
+		where pa.att_id=a.att_id
+			<if test="pid !=null and pid !=''">
+				and pa.pid =#{pid}
+			</if>
+			<if test="att_id !=null and att_id !=''">
+				and pa.att_id =#{att_id}
+			</if>
+			<if test="delflag !=null and delflag !=''">
+				and pa.delflag =#{delflag}
+			</if>
+		order by pa.sort asc
+		limit 1
+	</select>
+	
+	
+	<delete id="delByPid" >
+		delete from proatt where pid=#{pid}
+	</delete>
+	
+</mapper>

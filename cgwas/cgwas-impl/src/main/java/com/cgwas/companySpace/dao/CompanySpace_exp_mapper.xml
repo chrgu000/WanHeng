@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companySpace.dao">
+	<sql id="columnsAs">
+		t1.id, t1.init_space, t1.company_id
+	</sql>
+
+	<select id="selectCompanySpacePage" resultType="com.cgwas.companySpace.entity.CompanySpaceVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		z_company_space t1
+		join
+		(SELECT
+		id
+		from
+		z_company_space
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectCompanySpaceCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from z_company_space
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

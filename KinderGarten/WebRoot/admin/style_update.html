@@ -1,0 +1,199 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../admin/css/base.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/tab.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/item.css" type="text/css" rel="stylesheet" />
+		<link href="../admin/css/item_do.css" type="text/css" rel="stylesheet" />
+		<link href="../static/assets/css/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link rel="stylesheet"
+			href="../static/kindeditor/themes/default/default.css" />
+		<link rel="stylesheet"
+			href="../static/kindeditor/plugins/code/prettify.css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+		<style>
+#edit {
+	margin-top: 30px;
+	margin-left: 200px;
+}
+
+#edit_1 {
+	margin: 0 auto;
+}
+
+.loading {
+	width: 100%;
+	height: 100%;
+	position: fixed;
+	left: 0;
+	top: 0;
+	background: url(../static/images/loading2.gif) no-repeat 0 center #fff;
+	background-size: auto;
+	background-position: center;
+	opacity: 0.4;
+	display: none;
+	z-index: 9999;
+}
+</style>
+
+	</head>
+	<body>
+		<div class="loading" style="display: none;"></div>
+		<form action="../style/updateStyle.do" id="regForm" method="post">
+			<div style="padding: 20px 0 0 20px;" class="productliist">
+				<div id="">
+					<div id="i_do_wrap">
+						<input name="id" type="hidden" />
+						<div class="i_do_div rel" id="i_no_sku_stock_wrap">
+							<p class="i_do_tle r_txt abs font14">
+								标题
+							</p>
+							<input type="text" id="i_no_sku_stock" name="title"
+								class="block input left tline" placeholder="标题" />
+						</div>
+
+						<div class="i_do_div rel" id="i_no_sku_stock_wrap">
+							<p class="i_do_tle r_txt abs font14">
+								内容
+							</p>
+							<textarea name="content" cols="100" rows="8"
+								style="visibility: hidden;"></textarea>
+						</div>
+						<div id="i_do_btns" style="height: 50px;">
+							<div style="width: 800px; margin: 0 auto">
+								<input type="button" class="btns block margin_auto"
+									style="float: left; margin-right: 20px;" value="提 交" id="tj" />
+								<a href="javascript:void(0);" onclick="close1();"
+									class="btns block margin_auto" style="float: left;">关 闭</a>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</form>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+		<script type="text/javascript" src="js/checkLoginState.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/jquery.form.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.js">
+</script>
+		<script type="text/javascript">
+var vm = null;
+var Mask = BUI.Mask;
+
+var fullMask = new Mask.LoadMask( {
+	el : 'body',
+	msg : '正在处理。。。'
+});
+var loadMask = new Mask.LoadMask( {
+	el : 'body',
+	msg : 'loading。。。'
+});
+loadMask.show();
+function close1() {
+	//关闭当前页
+	top.topManager.closePage();
+}
+var editor1 = null;
+KindEditor.ready(function(K) {
+	editor1 = K.create('textarea[name="content"]', {
+		width : "800px",
+		height : "370px",
+		cssPath : '../static/kindeditor/plugins/code/prettify.css',
+		uploadJson : '../Upload_json.do',
+		fileManagerJson : '../File_manager_json.do',
+		allowFileManager : true,
+		afterCreate : function() {
+		}
+	});
+});
+$(document).ready(
+		function() {
+			var id = getQueryString("id");
+			$.ajax( {
+				url : "../style/getStyleById.do",
+				data : {
+					"id" : id
+				},
+				dataType : "json",
+				type : "post",
+				async : true,
+				success : function(data) {
+					form = $('form')[0], BUI.FormHelper.setFields(form, data);
+					editor1.html(data.content);
+					loadMask.hide();
+				},
+				error : function(XMLHttpRequest, textStatus, errorThrown) {
+					BUI.Message.Alert("系统繁忙，请稍后" + XMLHttpRequest.status + ","
+							+ XMLHttpRequest.readyState + "," + textStatus,
+							'warning');
+					loadMask.hide();
+				}
+			});
+			$("#tj").click(function() {
+				editor1.sync();
+				$("#regForm").submit();
+			});
+			$("#regForm").ajaxForm(
+					{
+						//定义返回JSON数据，还包括xml和script格式
+						dataType : 'json',
+						beforeSend : function() {
+							//表单提交前做表单验证
+							return check();
+						},
+						success : function(data) {
+							if (data.hasError == false) {
+								window.location.href = document.referrer;
+							} else {
+								BUI.Message.Alert(data.errInfo, 'warning');
+							}
+							fullMask.hide();
+						},
+						error : function(XMLHttpRequest, textStatus,
+								errorThrown) {
+							BUI.Message.Alert("系统繁忙，请稍后"
+									+ XMLHttpRequest.status + ","
+									+ XMLHttpRequest.readyState + ","
+									+ textStatus, 'warning');
+							fullMask.hide();
+						}
+					});
+		});
+
+function check() {
+	if ($("[name='title']").val().trim() == "") {
+		BUI.Message.Alert("请输入标题", 'warning');
+		return false;
+	}
+	if ($("[name='content']").val().trim() == "") {
+		BUI.Message.Alert("请输内容", 'warning');
+		return false;
+	}
+	fullMask.show();
+	return true;
+}
+</script>
+	</body>
+</html>

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <title>详情页</title>
+    <link rel="stylesheet" type="text/css" href="css/style.css">
+    <link rel="stylesheet" href="http://cache.amap.com/lbs/static/main1119.css"/>
+    <style>
+        .marker {
+            color: #ff6600;
+            padding: 4px 10px;
+            border: 1px solid #fff;
+            white-space: nowrap;
+            font-size: 12px;
+            font-family: "";
+            background-color: #0066ff;
+        }
+        [v-cloak] {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div id="slideBox" class="slideBox" v-cloak>
+    <div class="bd">
+            <ul>
+            <li v-for="picture in pictures">
+                <a class="pic" href="#"><img :src="'..'+picture.imgUrl" class="img-responsive" /></a>
+            </li>
+        </ul>
+    </div>
+    <div class="pageState"></div>
+</div>
+<div class="details" v-cloak>
+    <div class="details_border">
+        <p class="title">{{data.title}}</p>
+        <small>更新时间{{data.modifiedTime}}小时前</small>
+    </div>
+    <div class="details_border">
+        <p v-if="data.rent">租金：<big>{{data.rent}}元/月</big></p>
+        <p><span v-if="data.payWay">方式：{{data.payWay.content}}</span><span v-if="data.acreage">建筑面积：{{data.acreage}}平米</span></p>
+        <p><span v-if="data.type">户型：{{data.type}}</span><span v-if="data.orientation">朝向：{{data.orientation.content}}</span></p>
+        <p><span v-if="data.decorateSituation">装修：{{data.decorateSituation.content}}</span></p>
+        <p><span v-if="data.module">类型：{{data.module}}</span></p>
+        <p><span v-if="data.concactName">联系人：{{data.concactName}}</span><span v-if="data.identity">身份：{{data.identity}}</span></p>
+        <p><span v-if="data.address">地址：{{data.city}}{{data.area}}{{data.address}}</span></p>
+    </div>
+</div>
+<template v-if="supportingFacilitys.length!=0" id="facilities"  v-cloak>
+    <div class="details_border" >
+        <p>配套设施:</p>
+        <ul class="facilities">
+            <li v-for="list in supportingFacilitys">{{list.content}}</li>
+        </ul>
+    </div>
+</template>
+<p style="color:#e6873a;border-top: 1px solid #e4e4e4;">郑重提示：请您在签订合同之前，切勿支付任何形式的费用，以免上当受骗</p>
+<div id="map" v-cloak style="width: 100%;height: 300px">
+    <p>{{house.details}}</p>
+    <h5>{{house.gardenName}}</h5>
+    <div id="container" style="float:left;position: relative"></div>
+</div>
+<div style="height: 2.6rem;width: 100%; float: left"></div>
+<div class="details_foot">
+    <ul>
+        <li><img src="img/sc.png" class="img-responsive"><p>收藏</p></li>
+        <li><img src="img/fenxiang.png" class="img-responsive"><p>分享</p></li>
+        <li><a :href="'tel:'+house.tel">电话咨询</a></li>
+    </ul>
+</div>
+</div>
+<script type="text/javascript" src="js/jquery.min.js"></script>
+<script src="js/vue.min.js"></script>
+ <script src="js/data.js"></script>
+<script src="js/TouchSlide.1.1.js"></script>
+<script src="js/style.js"></script>
+<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+<script type="text/javascript"
+        src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" language="javascript"
+        src="../static/common/getQueryString.js"></script>
+<script src="http://webapi.amap.com/maps?v=1.3&key=4591c0f68eaa4aae0bac494646dc82f5"></script>
+<script>
+    var id=getQueryString("id");
+    var vm=new Vue({
+        el:'.details',
+        data:{
+            data:null
+        }
+    });
+    var vm1=new Vue({
+        el:'#slideBox',
+        data:{
+            pictures:null
+        }
+    });
+    var vm2=new Vue({
+        el:'#facilities',
+        data:{
+            supportingFacilitys:null
+        }
+    });
+var vm3=new Vue({
+    el:'#map',
+    data:{
+        house:null
+    }
+
+});
+    var latitude,longitude;
+    $(function() {
+        $.ajax({
+            url: "../picture/getPicturesByHouseId.do",
+            dataType: "json",
+            type: "post",
+            data: {houseId:id},
+                success: function (data) {
+                vm1.pictures=data;
+                    vm1.$nextTick(function(){
+                        TouchSlide({
+                            slideCell: "#slideBox",
+                            mainCell: ".bd ul",
+                            effect: "leftLoop",
+                            pageStateCell: ".pageState",
+                            autoPlay: true,
+                            easing: "swing"
+                        });
+                    });
+            },
+            error: function () {
+            }
+        });
+        $.ajax({
+            url: "../supportingFacility/getSupportingFacilityByHouseId.do",
+            dataType: "json",
+            type: "post",
+            data: {houseId:id},
+            success: function (data) {
+                vm2.supportingFacilitys=data;
+            },
+            error: function () {
+            }
+        });
+        $.ajax({
+            url: "../house/getHouseById.do",
+            dataType: "json",
+            type: "post",
+            data: {id:id},
+            success: function (data) {
+                latitude=data.latitude;
+                longitude=data.longitude;
+                vm.data=data;
+                vm3.house=data;
+            },
+            error: function () {
+            }
+        });
+    });
+    var marker, map;
+    setTimeout(function(){
+         map= new AMap.Map("container", {
+            resizeEnable: true,
+            center: [longitude,latitude],
+            zoom: 13
+        });
+        addMarker(longitude,latitude);
+    },2000);
+    // 实例化点标记
+    function addMarker(longitude,latitude) {
+        marker = new AMap.Marker({
+            icon: "http://webapi.amap.com/theme/v1.3/markers/n/mark_b.png",
+            position: [longitude,latitude]
+        });
+        marker.setMap(map);
+    }
+</script>
+<script>
+</script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.AreaDao">
+	<select id="findAllArea" resultType="Area">
+		select * from jxc_area
+		order
+		by num desc ,ch
+	</select>
+	<select id="findAllAreaByPage" resultMap="AreaMaps">
+		select * from jxc_area
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				and city_id =#{city_id}
+			</if>
+		</where>
+		order by num desc ,ch  limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Area" id="AreaMaps">
+	<association property="city" column="city_id" javaType="City" select="findCityById"/>
+	</resultMap>
+	<select id="findCityById" resultType="City">
+	select * from jxc_city where id=#{city_id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_area
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				and city_id =#{city_id}
+			</if>
+		</where>
+	</select>
+	<select id="findAreaById" resultType="Area">
+		select * from jxc_area
+		where id=#{id}
+	</select>
+	<select id="findAreasByCityId" resultType="Area">
+	select * from jxc_area where city_id=#{city_id}
+	</select>
+	<insert id="addArea">
+		insert into
+		jxc_area(name,num,ch,city_id)values(#{name},#{num},#{ch},#{city_id})
+	</insert>
+	<update id="updateArea" parameterType="Area">
+		update jxc_area
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+			<if test="ch!=null&amp;&amp;!ch.equals('')">
+				ch=#{ch},
+			</if>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				city_id=#{city_id},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteAreaById">
+		delete from jxc_area where id=#{id}
+	</delete>
+</mapper>

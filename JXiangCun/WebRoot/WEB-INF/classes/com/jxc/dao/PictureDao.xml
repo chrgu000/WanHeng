@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.PictureDao">
+	<select id="findAllPicture" resultType="Picture">
+		select * from jxc_picture where type=#{type}
+	</select>
+	<select id="findAllPictureByPage" resultMap="pictureMaps">
+		select * from jxc_picture p left join jxc_merchant m on p.merchant_id=m.id 
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and m.title like "%"#{name}"%"
+			</if>
+			<if test="type!=null&amp;&amp;!type.equals('')">
+				and p.type=#{type}
+			</if>
+		</where>
+	order by p.num desc	 limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Picture" id="pictureMaps">
+	<association property="merchant" column="merchant_id" javaType="Merchant" select="findMerchantById"></association>
+	</resultMap>
+	<select id="findMerchantById" resultType="Merchant">
+	select * from jxc_merchant where id=#{merchant_id} 
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_picture p left join jxc_merchant m on p.merchant_id=m.id
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and m.title like "%"#{name}"%"
+			</if>
+			<if test="type!=null&amp;&amp;!type.equals('')">
+				and p.type=#{type}
+			</if>
+		</where>
+	</select>
+	<select id="findPictureById" resultType="Picture">
+		select * from jxc_picture
+		where id=#{id}
+	</select>
+	<select id="findPicturesByMerchantId" resultMap="pictureMaps">
+	select * from jxc_picture where merchant_id=#{merchant_id} order by num desc
+	</select>
+	<insert id="addPicture">
+		insert into jxc_picture(path,merchant_id,url,type,num)values(#{path},#{merchant_id},#{url},#{type},#{num})
+	</insert>
+	<update id="updatePicture" parameterType="Picture">
+		update jxc_picture
+		<set>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="merchant_id!=null&amp;&amp;!merchant_id.equals('')">
+				merchant_id=#{merchant_id},
+			</if>
+				<if test="url!=null&amp;&amp;!url.equals('')">
+				url=#{url},
+			</if>
+				<if test="type!=null&amp;&amp;!type.equals('')">
+				type=#{type},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deletePictureById">
+		delete from jxc_picture where id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.schedule.dao">
+
+	<sql id="columns">
+		id, trade_record_id, create_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{trade_record_id}, #{create_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="trade_record_id != null and trade_record_id != ''">
+			and trade_record_id = #{trade_record_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+	</sql>
+
+	<insert id="saveSchedule" parameterType="com.cgwas.schedule.entity.Schedule" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_schedule (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveScheduleVo" parameterType="com.cgwas.schedule.entity.ScheduleVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_schedule (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteSchedule">
+		delete from u_schedule
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteScheduleVo">
+		delete from u_schedule
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleSchedule">
+		delete from u_schedule
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleScheduleVo">
+		delete from u_schedule
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadSchedule" resultType="com.cgwas.schedule.entity.ScheduleVo">
+		select 
+		<include refid="columns"/>
+		from u_schedule
+		where id=#{id} 
+	</select>
+	
+	<select id="selectSchedule" resultType="com.cgwas.schedule.entity.ScheduleVo">
+		select 
+		<include refid="columns"/>
+		from u_schedule
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateSchedule">
+		update u_schedule
+		<set>
+			id=#{id}, 
+			trade_record_id=#{trade_record_id}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateScheduleVo">
+		update u_schedule
+		<set>
+			id=#{id}, 
+			trade_record_id=#{trade_record_id}, 
+			create_time=#{create_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullSchedule">
+		update u_schedule
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="trade_record_id != null and trade_record_id != ''">
+			trade_record_id=#{trade_record_id}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullScheduleVo">
+		update u_schedule
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="trade_record_id != null and trade_record_id != ''">
+			trade_record_id=#{trade_record_id}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleSchedule">
+		update u_schedule
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="trade_record_id != null and trade_record_id != ''">
+			trade_record_id=#{trade_record_id}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleScheduleVo">
+		update u_schedule
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="trade_record_id != null and trade_record_id != ''">
+			trade_record_id=#{trade_record_id}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

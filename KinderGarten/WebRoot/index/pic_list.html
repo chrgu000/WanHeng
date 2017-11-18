@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta http-equiv="x-ua-compatible" content="ie=7" />
+    <meta http-equiv="x-ua-compatible" content="ie=9" />
+    <meta name="format-detection" content="telephone=no" />
+    <title>蒙台梭利</title>
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="css/commes.css" />
+    <link rel="stylesheet" href="css/photoswipe.css"/>
+    <link rel="stylesheet" href="css/default-skin/default-skin.css"/>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/teacher_style.css">
+    <style>
+[v-cloak] {
+	display: none;
+}
+</style>
+
+</head>
+<body>
+<div class="back">
+    <div class="back_btn" onclick="goBack()">返回</div>
+    <div class="back_center" style="width: 74%;">照片</div>
+    <div class="back_right" style="width: 15%;text-align: right;position: relative;">
+       </div>
+</div>
+    <div class="pic_list">
+        <ul class="pic_list_ul">
+             <li><a href="#" onclick="getPicturesByTypeId()"><span id="total"></span><small>全部</small></a></li>
+            <li><a href="#" onclick="getPicturesByTypeId(1)"><span id="num1"></span><small>蒙氏工作</small></a></li>
+            <li><a href="#" onclick="getPicturesByTypeId(2)"><span id="num2"></span><small>户外感知</small></a></li>
+            <li><a href="#" onclick="getPicturesByTypeId(3)"><span id="num3"></span><small>创想记录</small></a></li>
+        </ul>
+       <div class="my-gallery"    v-cloak>
+<!--       <div class="gallery-item" ">-->
+		       <figure  v-for="picture in data">
+		                <a :href="'..'+picture.path"  :title="picture.content" data-size="800x1142">
+		                    <img v-lazy="'..'+picture.min_path" />
+		                </a>
+		               
+        </div>
+    </div>
+   <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+       <div class="pswp__bg"></div>
+       <div class="pswp__scroll-wrap">
+           <div class="pswp__container">
+               <div class="pswp__item"></div>
+               <div class="pswp__item"></div>
+               <div class="pswp__item"></div>
+           </div>
+           <div class="pswp__ui pswp__ui--hidden">
+               <div class="pswp__top-bar">
+                   <div class="pswp__counter"></div>
+                   <button class="pswp__button pswp__button--close" title="Close (Esc)" style="float: right;background: none;color: #fff; border: none">X</button>
+                   <div class="pswp__preloader">
+                       <div class="pswp__preloader__icn">
+                           <div class="pswp__preloader__cut">
+                               <div class="pswp__preloader__donut"></div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+               <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                   <div class="pswp__share-tooltip"></div>
+               </div>
+               <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)"></button>
+               <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)"></button>
+        <div class="pswp__caption" style="margin-bottom: -5px">
+						<div class="pswp__caption__center"   style="opacity:0.9;background-color: black;text-align: left;color:#fff" id="content_msg"></div>
+					</div>
+           </div>
+       </div>
+   </div>
+   <div class="sum">
+           <div class="sum_btn">
+               <input type="button" id="in_num" class="in_num" value="0">
+               <span>完成</span>
+           </div>
+       </div>
+       <div class="delete_btn">
+           <a>删除<input type="button" class="in_num" value="0" style="background: none; border: none;margin-bottom: 3px;">张照片</a>
+           <a class="close_btn">取消</a>
+       </div>
+          <script src="js/jquery.min.js"></script>
+   <script src="js/vue.min.js"></script>
+   <script src="js/data.js"></script>
+   <script src="js/style.js"></script>
+   
+   <script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+
+   <script src="js/photoswipe.min.js"></script>
+   <script src="js/photoswipe-ui-default.min.js"></script>
+     <script type="text/javascript" src="js/vue-lazyload.js"> </script>
+     <script>
+
+
+    
+</script>
+   <script type="text/javascript">
+       var initPhotoSwipeFromDOM = function(gallerySelector) {
+           // parse slide data (url, title, size ...) from DOM elements
+           // (children of gallerySelector)
+           var parseThumbnailElements = function(el) {
+               var thumbElements = el.childNodes,
+                   numNodes = thumbElements.length,
+                   items = [],
+                   figureEl,
+                   linkEl,
+                   size,
+                   item;
+
+               for (var i = 0; i < numNodes; i++) {
+
+                   figureEl = thumbElements[i];
+                   if (figureEl.nodeType !== 1) {
+                       continue;
+                   }
+                   linkEl = figureEl.children[0];
+                   size = linkEl.getAttribute('data-size').split('x');
+
+                   // create slide object
+                   item = {
+                       src: linkEl.getAttribute('href'),
+                       title: linkEl.getAttribute('title'),
+                       w: parseInt(size[0], 10),
+                       h: parseInt(size[1], 10)
+                   };
+
+
+
+//                   if (figureEl.children.length > 1) {
+//                       item.title = figureEl.children[1].innerHTML;
+//                   }
+//
+//                   if (linkEl.children.length > 0) {
+//                       item.msrc = linkEl.children[0].getAttribute('src');
+//                   }
+
+                   item.el = figureEl; // save link to element for getThumbBoundsFn
+                   items.push(item);
+               }
+
+               return items;
+           };
+
+           // find nearest parent element
+           var closest = function closest(el, fn) {
+               return el && (fn(el) ? el : closest(el.parentNode, fn));
+           };
+
+           // triggers when user clicks on thumbnail
+           var onThumbnailsClick = function(e) {
+               e = e || window.event;
+               e.preventDefault ? e.preventDefault() : e.returnValue = false;
+
+               var eTarget = e.target || e.srcElement;
+
+               // find root element of slide
+               var clickedListItem = closest(eTarget, function(el) {
+                   return (el.tagName && el.tagName.toUpperCase() === 'FIGURE');
+               });
+
+               if (!clickedListItem) {
+                   return;
+               }
+
+               // find index of clicked item by looping through all child nodes
+               // alternatively, you may define index via data- attribute
+               var clickedGallery = clickedListItem.parentNode,
+                   childNodes = clickedListItem.parentNode.childNodes,
+                   numChildNodes = childNodes.length,
+                   nodeIndex = 0,
+                   index;
+
+               for (var i = 0; i < numChildNodes; i++) {
+                   if (childNodes[i].nodeType !== 1) {
+                       continue;
+                   }
+
+                   if (childNodes[i] === clickedListItem) {
+                       index = nodeIndex;
+                       break;
+                   }
+                   nodeIndex++;
+               }
+               if (index >= 0) {
+                   openPhotoSwipe(index, clickedGallery);
+               }
+               return false;
+           };
+
+           var photoswipeParseHash = function() {
+               var hash = window.location.hash.substring(1),
+                   params = {};
+
+               if (hash.length < 5) {
+                   return params;
+               }
+
+               var vars = hash.split('&');
+               for (var i = 0; i < vars.length; i++) {
+                   if (!vars[i]) {
+                       continue;
+                   }
+                   var pair = vars[i].split('=');
+                   if (pair.length < 2) {
+                       continue;
+                   }
+                   params[pair[0]] = pair[1];
+               }
+
+               if (params.gid) {
+                   params.gid = parseInt(params.gid, 10);
+               }
+
+               return params;
+           };
+
+           var openPhotoSwipe = function(index, galleryElement, disableAnimation, fromURL) {
+               var pswpElement = document.querySelectorAll('.pswp')[0],
+                   gallery,
+                   options,
+                   items;
+
+               items = parseThumbnailElements(galleryElement);
+
+               options = {
+                   galleryUID: galleryElement.getAttribute('data-pswp-uid'),
+                   getThumbBoundsFn: function(index) {
+                       // See Options -> getThumbBoundsFn section of documentation for more info
+                       var thumbnail = items[index].el.getElementsByTagName('img')[0], // find thumbnail
+                           pageYScroll = window.pageYOffset || document.documentElement.scrollTop,
+                           rect = thumbnail.getBoundingClientRect();
+
+                       return {x: rect.left, y: rect.top + pageYScroll, w: rect.width};
+                   }
+
+               };
+
+               if (fromURL) {
+                   if (options.galleryPIDs) {
+                       // parse real index when custom PIDs are used
+                       // http://photoswipe.com/documentation/faq.html#custom-pid-in-url
+                       for (var j = 0; j < items.length; j++) {
+                           if (items[j].pid == index) {
+                               options.index = j;
+                               break;
+                           }
+                       }
+                   } else {
+                       // in URL indexes start from 1
+                       options.index = parseInt(index, 10) - 1;
+                   }
+               } else {
+                   options.index = parseInt(index, 10);
+               }
+
+               if (isNaN(options.index)) {
+                   return;
+               }
+
+               if (disableAnimation) {
+                   options.showAnimationDuration = 0;
+               }
+
+               gallery = new PhotoSwipe(pswpElement, PhotoSwipeUI_Default, items, options);
+               gallery.init();
+           };
+
+           var galleryElements = document.querySelectorAll(gallerySelector);
+
+           for (var i = 0, l = galleryElements.length; i < l; i++) {
+               galleryElements[i].setAttribute('data-pswp-uid', i + 1);
+               galleryElements[i].onclick = onThumbnailsClick;
+           }
+
+           var hashData = photoswipeParseHash();
+           if (hashData.pid && hashData.gid) {
+               openPhotoSwipe(hashData.pid, galleryElements[ hashData.gid - 1 ], true, true);
+           }
+       };
+       // execute above function
+       initPhotoSwipeFromDOM('.my-gallery');
+       var vm;
+   	function getPicturesByTypeId(typeId){
+   		$.ajax({
+				url:"../picture/getPicturesByTypeId.do",
+				type:"post",
+				data:{type_id:typeId},
+				dataType:"json",
+				success:function(data){
+					vm.data=data;
+				},error:function(){}
+			});
+   	}
+   	
+   $(function(){
+			$.ajax({
+				url:"../picture/getPicturesByBabyId.do",
+				type:"post",
+				data:{},
+				dataType:"json",
+				success:function(data){
+					
+					 vm=new Vue({
+						el:".my-gallery",
+						data:{
+				            data:data
+				        }
+					});
+				},error:function(){}
+			});
+	       $.ajax({
+	    	   url:"../picture/getPicNum.do",
+	    	   type:"post",
+	    	   data:{type:"蒙氏工作"},
+	    	   dataType:"json",
+	    	   success:function(data){
+	    		   $("#num1").html(data);
+	    	   },
+	    	   error:function(){}
+	       });
+	        $.ajax({
+	    	   url:"../picture/getPicNum.do",
+	    	   type:"post",
+	    	   data:{type:"户外感知"},
+	    	   dataType:"json",
+	    	   success:function(data){
+	    		   $("#num2").html(data);
+	    	   },
+	    	   error:function(){}
+	       });
+	         $.ajax({
+	    	   url:"../picture/getPicNum.do",
+	    	   type:"post",
+	    	   data:{type:"创想记录"},
+	    	   dataType:"json",
+	    	   success:function(data){
+	    		   $("#num3").html(data);
+	    	   },
+	    	   error:function(){}
+	       });
+	          $.ajax({
+	    	   url:"../picture/getTotalPicNum.do",
+	    	   type:"post",
+	    	   data:{},
+	    	   dataType:"json",
+	    	   success:function(data){
+	    		   $("#total").html(data);
+	    	   },
+	    	   error:function(){}
+	       });
+   });
+ Vue.use(VueLazyload, {
+  preLoad: 1.3,
+  error: 'img/404.png',
+  loading: 'img/load.gif',
+  attempt: 1
+})
+   </script>
+</body>
+</html>

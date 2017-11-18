@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.UserDao">
+	<resultMap id="userMap" type="User">
+	    <result property="joinTime" column="join_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		 </resultMap>
+	<delete id="deleteByIds">
+		update   to_user set delflag=1  where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="userMap">
+		select * from to_user
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="userMap">
+		select * from to_user  where delflag=2
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_user where delflag=2
+	</select>
+	<insert id="save" >
+		insert into to_user(tel,password,join_time,modified_time,delflag)values(#{tel},#{password},#{joinTime},#{modifiedTime},#{delflag})
+	</insert>
+	<select id="findAllTel" resultType="string">
+	select tel from to_user
+	</select>
+	<select id="login" resultType="User">
+		select * from to_user where
+		tel=#{tel} and password=#{password}
+	</select>
+	<update id="updatePwdByTel" >
+		update to_user set password=#{password},modified_time=#{modifiedTime} where
+		tel=#{tel}
+	</update>
+	<select id="findAllAreaByCity" resultType="string">
+		select name from to_area where p_code = (select code from to_area where name=#{city}) and level=3
+	</select>
+</mapper>

@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.OrderDao">
+	<insert id="addOrder">
+		insert into
+		yt_order(order_num,car_id,buyTime,sendTime,buyAddr,sendAddr,status,procedure_price,basic_insure_price,basic_rent_price,total_price,days,invoice,receiver,tel,receiver_address,car_buy_time,user_id,pay_way,appId,timeStamp,nonceStr,packageValue,signType,paySign,sendUrl,agent,openid,urlCode)
+		values(#{order_num},#{car_id},#{buyTime},#{sendTime},#{buyAddr},#{sendAddr},#{status},#{procedure_price},#{basic_insure_price},#{basic_rent_price},#{total_price},#{days},#{invoice},#{receiver},#{tel},#{receiver_address},#{car_buy_time},#{user_id},#{pay_way},#{appId},#{timeStamp},#{nonceStr},#{packageValue},#{signType},#{paySign},#{sendUrl},#{agent},#{openid},#{urlCode})
+		<selectKey resultType="int" order="AFTER" keyProperty="id">
+			select last_insert_id() as id
+		</selectKey>
+	</insert>
+	<select id="findOrderById" resultMap="orderMap">
+		select * from yt_order
+		where id=#{order_id}
+	</select>
+	<select id="findOrderByOrderNum" resultType="Order">
+	select * from yt_order where order_num=#{order_num}
+	</select>
+	<resultMap type="Order" id="orderMap">
+		<association property="user" javaType="User" column="user_id"
+			select="findUserById" />
+		<association property="car" javaType="Car" column="car_id"
+			select="findCarById" />
+	</resultMap>
+	<select id="findUserById" resultType="User">
+		select * from yt_user where
+		id=#{user_id}
+	</select>
+	<select id="findCarById" resultType="Car">
+		select * from yt_car where
+		id=#{car_id}
+	</select>
+	<update id="updateOderStatus">
+		update yt_order
+		<set>
+			<if test="status!=null&amp;&amp;!status.equals('')">
+				status=#{status}
+			</if>
+			where id=#{id}
+		</set>
+	</update>
+	<select id="findAllOrderByPage" resultMap="orderMaps">
+		select * from yt_order yo left join yt_user yu on yo.user_id=yu.id
+		<where>
+			<if test="status!=null&amp;&amp;!status.trim().equals('')">
+				and status=#{status}
+			</if>
+			<if test="order_num!=null&amp;&amp;!order_num.equals('')">
+				and order_num like "%"#{order_num}"%"
+			</if>
+			<if test="user_id!=null&amp;&amp;!user_id.equals('')">
+				and user_id=#{user_id}
+			</if>
+			<if test="username!=null&amp;&amp;!username.equals('')">
+				and yu.username like "%"#{username}"%"
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	<select id="findOrderByUserId" resultType="Order">
+		select * from yt_order
+		where user_id=#{user_id}
+
+	</select>
+	<select id="findOrdersByPage" resultMap="orderMaps1">
+		select * from yt_order
+		<where>
+			<if test="user_id!=null&amp;&amp;!user_id.equals('')">
+				and user_id=#{user_id}
+			</if>
+			<if test="status!=null&amp;&amp;!status.trim().equals('')">
+				and status=#{status}
+			</if>
+		</where>
+	</select>
+	<resultMap type="Order" id="orderMaps">
+		<association property="car" javaType="Car" column="car_id"
+			select="findCarById" />
+		<association property="user" javaType="User" column="user_id"
+			select="findUserById" />
+	</resultMap>
+	<resultMap type="Order" id="orderMaps1">
+		<association property="car" javaType="Car" column="car_id"
+			select="findCarById" />
+		<association property="user" javaType="User" column="user_id"
+			select="findUserById" />
+	</resultMap>
+	<select id="findRows" resultType="int">
+		select count(*) from yt_order yo left join yt_user yu on
+		yo.user_id=yu.id
+		<where>
+			<if test="status!=null&amp;&amp;!status.trim().equals('')">
+				and status=#{status}
+			</if>
+			<if test="order_num!=null&amp;&amp;!order_num.equals('')">
+				and order_num like "%"#{order_num}"%"
+			</if>
+			<if test="username!=null&amp;&amp;!username.equals('')">
+				and yu.username like "%"#{username}"%"
+			</if>
+		</where>
+	</select>
+	<select id="findCarIdsByUserId" resultType="int">
+		select car_id from
+		yt_order where user_id=#{id}
+	</select>
+	<delete id="deleteOrderById">
+		delete from yt_order where id=#{id}
+	</delete>
+	<delete id="deleteOrderByUserId">
+		delete from yt_order where user_id=#{id}
+	</delete>
+	<select id="findOrdersByCarId" resultType="Order">
+	select * from yt_order where car_id=#{car_id} and status=3
+	</select>
+	<update id="updateOrder">
+		update yt_order
+		<set>
+			<if test="invoice!=null&amp;&amp;!invoice.equals('')">
+				invoice=#{invoice},
+			</if>
+			<if test="receiver!=null&amp;&amp;!receiver.equals('')">
+				receiver=#{receiver},
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				tel=#{tel},
+			</if>
+			<if test="receiver_address!=null&amp;&amp;!receiver_address.equals('')">
+				receiver_address=#{receiver_address},
+			</if>
+			<if test="appId !=null and appId !=''">
+				appId=#{appId},
+			</if>
+			<if test="timeStamp !=null and timeStamp !=''">
+				timeStamp=#{timeStamp},
+			</if>
+			<if test="nonceStr !=null and nonceStr !=''">
+				nonceStr=#{nonceStr},
+			</if>
+			<if test="packageValue !=null and packageValue !=''">
+				packageValue=#{packageValue},
+			</if>
+			<if test="signType !=null and signType !=''">
+				signType=#{signType},
+			</if>
+			<if test="paySign !=null and paySign !=''">
+				paySign=#{paySign},
+			</if>
+			<if test="sendUrl !=null and sendUrl !=''">
+				sendUrl=#{sendUrl},
+			</if>
+			<if test="agent !=null and agent !=''">
+				agent=#{agent},
+			</if>
+			<if test="openid !=null and openid !=''">
+				openid=#{openid},
+			</if>
+				<if test="urlCode !=null and urlCode !=''">
+				urlCode=#{urlCode},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.bankInfo.dao">
+	<sql id="columnsAs">
+		t1.id, t1.bank__name, t1.bank_num, t1.bank_ico, t1.bank_type, t1.sort, t1.preinstall_phone, t1.user_id, t1.create_date
+	</sql>
+
+	<select id="selectBankInfoPage" resultType="com.cgwas.bankInfo.entity.BankInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_bank_info t1
+		join
+		(SELECT
+		id
+		from
+		u_bank_info
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectBankInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_bank_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.DatePriceDao">
+	<insert id="addDatePrice">
+		insert into jxc_date_price(product_id,date,original_price,favourable_price)
+		values(#{product_id},#{date},#{original_price},#{favourable_price})
+	</insert>
+	<delete id="deleteDatePrice">
+	delete from jxc_date_price where product_id=#{product_id}
+	</delete>
+</mapper>

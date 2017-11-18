@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.DiaryDao">
+	<select id="getDiaryByPage" resultMap="DiaryMaps">
+		select * from kg_diary 
+		<where>
+			<if test="diary_type_id!=null and diary_type_id!=''">
+				and diary_type_id like #{diary_type_id}
+	 </if>
+	 <if test="teacher_id!=null and teacher_id!=''">
+				and teacher_id like #{teacher_id}
+	 </if>
+		</where>
+		order by diary_type_id,id desc 
+		limit #{begin},#{pageSize} 
+	</select>
+	<resultMap type="Diary" id="DiaryMaps">
+	<association property="diaryType" column="diary_type_id" javaType="DiaryType" select="getDiaryTypeById" />
+	</resultMap>
+	<select id="getDiaryTypeById" resultType="DiaryType"> 
+	select * from kg_diary_type where id=#{diary_type_id}	
+</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_diary d left join kg_teacher t on d.teacher_id=t.id
+		<where>
+			<if test="diary_type_id!=null and diary_type_id!=''">
+				and diary_type_id like #{diary_type_id}
+	 </if>
+	 <if test="teacher_id!=null and teacher_id!=''">
+				and teacher_id like #{teacher_id}
+	 </if>
+		</where>
+	</select>
+	<delete id="deleteByIds" >
+	delete from kg_diary where id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+	</delete>
+	<insert id="addDiary">
+	insert into kg_diary(diary_type_id,path,teacher_id,create_time,content,min_path)
+	values(#{diary_type_id},#{path},#{teacher_id},#{create_time},#{content},#{min_path})
+	</insert>
+	<select id="findAllDiaryType" resultType="DiaryType">
+	select * from kg_diary_type
+	</select>
+	<select id="findDiaryByMap" resultType="Diary">
+	select * from kg_diary <where>
+	teacher_id=#{teacher_id} and diary_type_id=#{diary_type_id}
+	<if test="create_time!=null and create_time!=''">
+	and create_time=#{create_time}
+	</if>
+	order by id desc
+	</where>
+	</select>
+	<select id="getDiaryByIds" resultType="Diary">
+	select * from kg_diary where id in <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+	</select>
+</mapper>

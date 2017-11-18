@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.spaceOrder.dao">
+	<sql id="columnsAs">
+		t1.id, t1.space_volume, t1.price, t1.order_status, t1.company_id, t1.create_time, t1.effective_time
+	</sql>
+
+	<select id="selectSpaceOrderPage" resultType="com.cgwas.spaceOrder.entity.SpaceOrderVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		z_space_order t1
+		join
+		(SELECT
+		id
+		from
+		z_space_order
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectSpaceOrderCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from z_space_order
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

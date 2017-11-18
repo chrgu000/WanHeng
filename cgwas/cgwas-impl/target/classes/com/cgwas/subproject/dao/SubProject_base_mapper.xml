@@ -1,0 +1,534 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.subproject.dao">
+<update id="updateProjectState">
+  update p_sub_project set project_status_id=#{project_status_id} where id=#{project_id}
+</update>
+<select id="getSubProjectsByIds" resultType="com.cgwas.subproject.entity.SubProjectVo">
+  select * from p_sub_project where id in  <foreach collection="ids" open="(" close=")" separator="," item="id">#{id}</foreach>
+</select>
+<update id="updateProject">
+update p_sub_project set is_parent=0 <where> id in <foreach collection="parentProjectIds" open="(" close=")" separator="," item="id">#{id}</foreach></where>
+</update>
+<resultMap type="com.cgwas.subproject.entity.SubProjectVo" id="psMap">
+		<id property="id" column="id" />
+		<association property="projectStatus" column="project_status_id"
+			javaType="com.cgwas.projectStatus.entity.ProjectStatusVo" select="getProjectStatusVoById" />
+		<collection property="principals" column="id" javaType="arrayList"
+			ofType="com.cgwas.principal.entity.PrincipalVo" select="getPrincipalsById"></collection>
+			<collection property="roles" column="user_id" javaType="arrayList"
+			ofType="com.cgwas.role.entity.Role" select="getRolesById"></collection>
+	</resultMap>
+	<select id="getRolesById" resultType="com.cgwas.role.entity.Role">
+	   select * from p_g_role where id in (select role_id from p_group_user where user_id=#{user_id})
+	</select>
+<select id="getSubProjectsByUserId" resultMap="psMap">
+   select p.*,g.user_id from p_sub_project p  left join p_group_user g on p.id=g.project_id where g.user_id=#{user_id} and g.is_parent_project=0 
+</select>
+<select id="getParentId" resultType="java.lang.Long">
+select sub_parent_project_id from
+		p_sub_project where id=#{id}
+</select>
+	<select id="getParentParentId" resultType="java.lang.Long">
+		select project_id from
+		p_sub_project where id=#{project_id}
+	</select>
+	<select id="getSubParentId" resultType="java.lang.Long">
+		select
+		sub_parent_project_id from p_sub_project where id=#{project_id} and company_id=#{company_id}
+	</select>
+	<select id="getSubProjectIds" resultType="java.lang.Long">
+		select id from p_sub_project where sub_parent_project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getModelTaskIds" resultType="java.lang.Long">
+		select id from p_model_task where is_parent_poject=0 and project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getAnimationLightTaskIds" resultType="java.lang.Long">
+		select id from p_animation_light_task where is_parent_poject=0 and project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getModelTaskIdByMaps" resultType="java.lang.Long">
+		select id from p_model_task where
+		is_parent_poject=#{is_parent_project} and project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+	<select id="getAnimationLightTaskIdByMaps" resultType="java.lang.Long">
+		select id from p_animation_light_task where
+		is_parent_poject=#{is_parent_project} and project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+
+
+	<select id="getSubProjectSearch" resultType="com.cgwas.projectSearch.entity.ProjectSearch">
+		select * from
+		p_sub_project_search
+	</select>
+	<sql id="columns">
+		id, project_id,sub_parent_project_id, total,
+		project_status_id, duration,
+		name,is_parent,
+		cover_path, introduce,
+		project_folder, creater_name,
+		user_id,head_pic_path,
+		create_time, modified_time,
+		begin_time, end_time,company_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{project_id},#{sub_parent_project_id}, #{total},
+		#{project_status_id},
+		#{duration}, #{name},#{is_parent}, #{cover_path},
+		#{introduce},
+		#{project_folder},#{creater_name}, #{user_id},#{head_pic_path},
+		#{create_time},
+		#{modified_time}, #{begin_time},
+		#{end_time},#{company_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="project_id != null and project_id != ''">
+			and project_id = #{project_id}
+		</if>
+		<if test="sub_parent_project_id != null and sub_parent_project_id != ''">
+			and sub_parent_project_id = #{sub_parent_project_id}
+		</if>
+		<if test="total != null and total != ''">
+			and total = #{total}
+		</if>
+		<if test="project_status_id != null and project_status_id != ''">
+			and project_status_id = #{project_status_id}
+		</if>
+		<if test="duration != null and duration != ''">
+			and duration = #{duration}
+		</if>
+		<if test="name != null and name!= ''">
+			and name = #{name}
+		</if>
+		<if test="is_parent != null and is_parent != ''">
+			and is_parent = #{is_parent}
+		</if>
+		<if test="cover_path != null and cover_path != ''">
+			and cover_path = #{cover_path}
+		</if>
+		<if test="introduce != null and introduce != ''">
+			and introduce = #{introduce}
+		</if>
+		<if test="project_folder != null and project_folder != ''">
+			and project_folder = #{project_folder}
+		</if>
+		<if test="creater_name != null and creater_name != ''">
+			and creater_name = #{creater_name}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+				and head_pic_path=#{head_pic_path}
+			</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="modified_time != null">
+			and modified_time = #{modified_time}
+		</if>
+		<if test="begin_time != null">
+			and begin_time = #{begin_time}
+		</if>
+		<if test="end_time != null">
+			and end_time = #{end_time}
+		</if>
+		<if test="company_id != null">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveSubProject" parameterType="com.cgwas.subproject.entity.SubProject"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_sub_project (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveSubProjectVo" parameterType="com.cgwas.subproject.entity.SubProjectVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into p_sub_project (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+	<delete id="deleteSubProject">
+		delete from p_sub_project where id=#{id}
+	</delete>
+	<delete id="deleteAll">
+		delete from p_sub_project where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleterProjectPrincipalByProjectId">
+		delete from p_project_principal where is_parent_project=0 and project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteProjectScreenwriterByProjectId">
+		delete from p_project_screenwriter where is_parent_project=0 and  project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteProjectDirectorByProjectId">
+		delete from p_project_director where is_parent_project=0 and  project_id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<delete id="deleteByExampleSubProject">
+		delete from p_sub_project
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleSubProjectVo">
+		delete from p_sub_project
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadSubProject" resultType="com.cgwas.subproject.entity.SubProjectVo">
+		select
+		<include refid="columns" />
+		from p_sub_project
+		where id=#{id}
+	</select>
+
+	<select id="selectSubProject" resultType="com.cgwas.subproject.entity.SubProjectVo">
+		select
+		<include refid="columns" />
+		from p_sub_project
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateSubProject">
+		update p_sub_project
+		<set>
+			id=#{id},
+			project_id=#{project_id},
+			total=#{total},
+			project_status_id=#{project_status_id},
+			duration=#{duration},
+			name=#{name},
+			is_parent=#{is_parent},
+			cover_path=#{cover_path},
+			introduce=#{introduce},
+			project_folder=#{project_folder},
+			creater_name=#{creater_name},
+			user_id=#{user_id},
+			head_pic_path=#{head_pic_path},
+			create_time=#{create_time},
+			modified_time=#{modified_time},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateSubProjectVo">
+		update p_sub_project
+		<set>
+			id=#{id},
+			project_id=#{project_id},
+			total=#{total},
+			project_status_id=#{project_status_id},
+			duration=#{duration},
+			name=#{name},
+			is_parent=#{is_parent},
+			cover_path=#{cover_path},
+			introduce=#{introduce},
+			project_folder=#{project_folder},
+			creater_name=#{creater_name},
+			user_id=#{user_id},
+			head_pic_path=#{head_pic_path},
+			create_time=#{create_time},
+			modified_time=#{modified_time},
+			begin_time=#{begin_time},
+			end_time=#{end_time},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullSubProject">
+		update p_sub_project
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			project_id=#{project_id},
+			sub_parent_project_id = #{sub_parent_project_id},
+			<if test="total != null and total != ''">
+				total=#{total},
+			</if>
+			<if test="project_status_id != null and project_status_id != ''">
+				project_status_id=#{project_status_id},
+			</if>
+			<if test="duration != null and duration != ''">
+				duration=#{duration},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="is_parent != null and is_parent != ''">
+				is_parent = #{is_parent},
+			</if>
+			<if test="cover_path != null and cover_path != ''">
+				cover_path=#{cover_path},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="project_folder != null and project_folder != ''">
+				project_folder=#{project_folder},
+			</if>
+			<if test="creater_name != null and creater_name != ''">
+				creater_name=#{creater_name},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="company_id != null">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullSubProjectVo">
+		update p_sub_project
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			project_id=#{project_id},
+			sub_parent_project_id = #{sub_parent_project_id},
+			<if test="total != null and total != ''">
+				total=#{total},
+			</if>
+			<if test="project_status_id != null and project_status_id != ''">
+				project_status_id=#{project_status_id},
+			</if>
+			<if test="duration != null and duration != ''">
+				duration=#{duration},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="is_parent != null and is_parent != ''">
+				is_parent = #{is_parent},
+			</if>
+			<if test="cover_path != null and cover_path != ''">
+				cover_path=#{cover_path},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="project_folder != null and project_folder != ''">
+				project_folder=#{project_folder},
+			</if>
+			<if test="creater_name != null and creater_name != ''">
+				creater_name=#{creater_name},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="company_id != null">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleSubProject">
+		update p_sub_project
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			project_id=#{project_id},
+			sub_parent_project_id = #{sub_parent_project_id},
+			<if test="total != null and total != ''">
+				total=#{total},
+			</if>
+			<if test="project_status_id != null and project_status_id != ''">
+				project_status_id=#{project_status_id},
+			</if>
+			<if test="duration != null and duration != ''">
+				duration=#{duration},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+
+			<if test="is_parent != null and is_parent != ''">
+				is_parent = #{is_parent},
+			</if>
+			<if test="cover_path != null and cover_path != ''">
+				cover_path=#{cover_path},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="project_folder != null and project_folder != ''">
+				project_folder=#{project_folder},
+			</if>
+			<if test="creater_name != null and creater_name != ''">
+				creater_name=#{creater_name},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="company_id != null">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleSubProjectVo">
+		update p_sub_project
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			project_id=#{project_id},
+			sub_parent_project_id = #{sub_parent_project_id},
+			<if test="total != null and total != ''">
+				total=#{total},
+			</if>
+			<if test="project_status_id != null and project_status_id != ''">
+				project_status_id=#{project_status_id},
+			</if>
+			<if test="duration != null and duration != ''">
+				duration=#{duration},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+
+			<if test="is_parent != null and is_parent != ''">
+				is_parent = #{is_parent},
+			</if>
+			<if test="cover_path != null and cover_path != ''">
+				cover_path=#{cover_path},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="project_folder != null and project_folder != ''">
+				project_folder=#{project_folder},
+			</if>
+			<if test="creater_name != null and creater_name != ''">
+				creater_name=#{creater_name},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="modified_time != null">
+				modified_time=#{modified_time},
+			</if>
+			<if test="begin_time != null">
+				begin_time=#{begin_time},
+			</if>
+			<if test="end_time != null">
+				end_time=#{end_time},
+			</if>
+			<if test="company_id != null">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<select id="getSubProjects" resultType="com.cgwas.subproject.entity.SubProjectVo">
+		select * from
+		p_sub_project
+		<where>
+			<if test="is_parent==1">and project_id=#{project_id}</if>
+			<if test="is_parent==0">and sub_parent_project_id=#{project_id}</if>
+		</where>
+	</select>
+</mapper>

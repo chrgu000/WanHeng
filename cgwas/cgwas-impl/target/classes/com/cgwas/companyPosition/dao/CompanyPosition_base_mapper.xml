@@ -1,0 +1,279 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong -->
+<mapper namespace="com.cgwas.companyPosition.dao">
+
+	<sql id="columns">
+		id, position_name, position_details, company_id,is_delete
+	</sql>
+	<sql id="vals">
+		#{id}, #{position_name}, #{position_details},
+		#{company_id},#{is_delete}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="position_name != null and position_name != ''">
+			and position_name = #{position_name}
+		</if>
+		<if test="position_details != null and position_details != ''">
+			and position_details = #{position_details}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyPosition" parameterType="com.cgwas.companyPosition.entity.CompanyPosition"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_position (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCompanyPositionVo" parameterType="com.cgwas.companyPosition.entity.CompanyPositionVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_company_position (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCompanyPosition">
+		delete from u_company_position
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCompanyPositionVo">
+		delete from u_company_position
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCompanyPosition">
+		delete from u_company_position
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCompanyPositionVo">
+		delete from u_company_position
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCompanyPosition" resultType="com.cgwas.companyPosition.entity.CompanyPositionVo">
+		select
+		<include refid="columns" />
+		from u_company_position
+		where id=#{id}
+	</select>
+
+	<select id="selectCompanyPosition" resultType="com.cgwas.companyPosition.entity.CompanyPositionVo">
+		select
+		<include refid="columns" />
+		from u_company_position
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompanyPosition">
+		update u_company_position
+		<set>
+			id=#{id},
+			position_name=#{position_name},
+			position_details=#{position_details},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateCompanyPositionVo">
+		update u_company_position
+		<set>
+			id=#{id},
+			position_name=#{position_name},
+			position_details=#{position_details},
+			company_id=#{company_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullCompanyPosition">
+		update u_company_position
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="position_name != null and position_name != ''">
+				position_name=#{position_name},
+			</if>
+			<if test="position_details != null and position_details != ''">
+				position_details=#{position_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullCompanyPositionVo">
+		update u_company_position
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="position_name != null and position_name != ''">
+				position_name=#{position_name},
+			</if>
+			<if test="position_details != null and position_details != ''">
+				position_details=#{position_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCompanyPosition">
+		update u_company_position
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="position_name != null and position_name != ''">
+				position_name=#{position_name},
+			</if>
+			<if test="position_details != null and position_details != ''">
+				position_details=#{position_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCompanyPositionVo">
+		update u_company_position
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="position_name != null and position_name != ''">
+				position_name=#{position_name},
+			</if>
+			<if test="position_details != null and position_details != ''">
+				position_details=#{position_details},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取可管理职位列表 -->
+	<select id="getCompanyPositionList" resultType="com.cgwas.companyPosition.entity.CompanyPosition">
+		select * from u_company_position
+		where 1 = 1 and is_delete = 'N'
+		<choose>
+			<when test="companyPosition.id!=null">
+				and id=#{companyPosition.id}
+			</when>
+			<when test="companyPosition.position_name!=null">
+				and position_name like
+				CONCAT('%',#{companyPosition.position_name},'%')
+			</when>
+			<when test="companyPosition.position_details!=null">
+				and position_details like
+				CONCAT('%',#{companyPosition.position_details},'%')
+			</when>
+			<when test="companyPosition.company_id!=null">
+				and company_id=#{companyPosition.company_id}
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="flag !='all' and page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取可管理职位列表(数量) -->
+	<select id="getCompanyPositionListCount" resultType="java.lang.Long">
+		select COUNT(*) from u_company_position
+		where 1 = 1 and is_delete = 'N'
+		<choose>
+			<when test="companyPosition.id!=null">
+				and id=#{companyPosition.id}
+			</when>
+			<when test="companyPosition.position_name!=null">
+				and position_name like
+				CONCAT('%',#{companyPosition.position_name},'%')
+			</when>
+			<when test="companyPosition.position_details!=null">
+				and position_details like
+				CONCAT('%',#{companyPosition.position_details},'%')
+			</when>
+			<when test="companyPosition.company_id!=null">
+				and company_id=#{companyPosition.company_id}
+			</when>
+		</choose>
+	</select>
+	<!--删除职位(批量) -->
+	<update id="batchDeleteCompanyPosition">
+		update u_company_position
+		<set>
+			<if test="is_delete != null">
+				is_delete=#{is_delete}
+			</if>
+		</set>
+		where id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+		 and company_id = #{company_id}
+	</update>
+	<!-- 更改职位 -->
+	<update id="updateCompanyPositionByInfo">
+		update u_company_position
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="position_name != null and position_name != ''">
+				position_name=#{position_name},
+			</if>
+			<if test="position_details != null and position_details != ''">
+				position_details=#{position_details},
+			</if>
+		</set>
+		where id = #{id} and company_id = #{company_id}
+	</update>
+
+</mapper>

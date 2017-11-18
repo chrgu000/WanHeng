@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="KinderGarten"
+  id="myeclipse.1489489360120"
+  context-root="/KinderGarten"
+  j2ee-spec="5.0"
+  archive="KinderGarten.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

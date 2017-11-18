@@ -1,0 +1,9 @@
+.labelError{
+float:right;
+margin-right:95px;
+margin-top:10px;
+display:none;
+width:150px;
+text-align:center;
+padding:10px 0;
+}

@@ -1,0 +1,453 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userInfo.dao">
+
+	<sql id="columns">
+		id, sex, name, nation, birth, head_pic_path, email, qq,
+		weixin, user_id, province, city, area, address,money
+	</sql>
+	<sql id="vals">
+		#{id}, #{sex}, #{name}, #{nation}, #{birth},
+		#{head_pic_path}, #{email}, #{qq}, #{weixin}, #{user_id}, #{province},
+		#{city}, #{area}, #{address},#{money}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="sex != null and sex != ''">
+			and sex = #{sex}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="nation != null and nation != ''">
+			and nation = #{nation}
+		</if>
+		<if test="birth != null">
+			and birth = #{birth}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			and head_pic_path = #{head_pic_path}
+		</if>
+		<if test="email != null and email != ''">
+			and email = #{email}
+		</if>
+		<if test="qq != null and qq != ''">
+			and qq = #{qq}
+		</if>
+		<if test="weixin != null and weixin != ''">
+			and weixin = #{weixin}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="province != null and province != ''">
+			and province = #{province}
+		</if>
+		<if test="city != null and city != ''">
+			and city = #{city}
+		</if>
+		<if test="area != null and area != ''">
+			and area = #{area}
+		</if>
+		<if test="address != null and address != ''">
+			and address = #{address}
+		</if>
+	</sql>
+
+	<insert id="saveUserInfo" parameterType="com.cgwas.userInfo.entity.UserInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserInfoVo" parameterType="com.cgwas.userInfo.entity.UserInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserInfo">
+		delete from u_user_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserInfoVo">
+		delete from u_user_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserInfo">
+		delete from u_user_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserInfoVo">
+		delete from u_user_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserInfo" resultType="com.cgwas.userInfo.entity.UserInfoVo">
+		select
+		<include refid="columns" />
+		from u_user_info
+		where id=#{id}
+	</select>
+
+	<select id="selectUserInfo" resultType="com.cgwas.userInfo.entity.UserInfoVo">
+		select
+		<include refid="columns" />
+		from u_user_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserInfo">
+		update u_user_info
+		<set>
+			id=#{id},
+			sex=#{sex},
+			name=#{name},
+			nation=#{nation},
+			birth=#{birth},
+			head_pic_path=#{head_pic_path},
+			email=#{email},
+			qq=#{qq},
+			weixin=#{weixin},
+			user_id=#{user_id},
+			province=#{province},
+			city=#{city},
+			area=#{area},
+			address=#{address}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserInfoVo">
+		update u_user_info
+		<set>
+			id=#{id},
+			sex=#{sex},
+			name=#{name},
+			nation=#{nation},
+			birth=#{birth},
+			head_pic_path=#{head_pic_path},
+			email=#{email},
+			qq=#{qq},
+			weixin=#{weixin},
+			user_id=#{user_id},
+			province=#{province},
+			city=#{city},
+			area=#{area},
+			address=#{address}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserInfo">
+		update u_user_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="nation != null and nation != ''">
+				nation=#{nation},
+			</if>
+			<if test="birth != null">
+				birth=#{birth},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="qq != null and qq != ''">
+				qq=#{qq},
+			</if>
+			<if test="weixin != null and weixin != ''">
+				weixin=#{weixin},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address}
+			</if>
+		</set>
+		where id=#{id} or user_id=#{user_id}
+	</update>
+
+	<update id="updateIgnoreNullUserInfoVo">
+		update u_user_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="nation != null and nation != ''">
+				nation=#{nation},
+			</if>
+			<if test="birth != null">
+				birth=#{birth},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="qq != null and qq != ''">
+				qq=#{qq},
+			</if>
+			<if test="weixin != null and weixin != ''">
+				weixin=#{weixin},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserInfo">
+		update u_user_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="nation != null and nation != ''">
+				nation=#{nation},
+			</if>
+			<if test="birth != null">
+				birth=#{birth},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="qq != null and qq != ''">
+				qq=#{qq},
+			</if>
+			<if test="weixin != null and weixin != ''">
+				weixin=#{weixin},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserInfoVo">
+		update u_user_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="nation != null and nation != ''">
+				nation=#{nation},
+			</if>
+			<if test="birth != null">
+				birth=#{birth},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="qq != null and qq != ''">
+				qq=#{qq},
+			</if>
+			<if test="weixin != null and weixin != ''">
+				weixin=#{weixin},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据电话号或用户名得到用户登录信息 -->
+	<select id="getUserInfoById" resultType="com.cgwas.userInfo.entity.UserInfo">
+		select
+		*
+		from u_user_info
+		where user_id = #{userId}
+	</select>
+	<!-- 更改用户信息 -->
+	<update id="updateUserInfoByUserId">
+		update u_user_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="sex != null and sex != ''">
+				sex=#{sex},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="nation != null and nation != ''">
+				nation=#{nation},
+			</if>
+			<if test="birth != null">
+				birth=#{birth},
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+				head_pic_path=#{head_pic_path},
+			</if>
+			<if test="email != null and email != ''">
+				email=#{email},
+			</if>
+			<if test="qq != null and qq != ''">
+				qq=#{qq},
+			</if>
+			<if test="weixin != null and weixin != ''">
+				weixin=#{weixin},
+			</if>
+			<if test="province != null and province != ''">
+				province=#{province},
+			</if>
+			<if test="city != null and city != ''">
+				city=#{city},
+			</if>
+			<if test="area != null and area != ''">
+				area=#{area},
+			</if>
+			<if test="address != null and address != ''">
+				address=#{address},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where user_id = #{user_id}
+	</update>
+	<!-- 根据帐号获取email -->
+	<select id="getEmailByAccount" resultType="java.lang.String">
+		SELECT
+		b.email
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_info AS b ON a.id = b.user_id
+		where a.tel =
+		#{tel} or a.username = #{username}
+	</select>
+	<!-- 存取金额 -->
+	<update id="rechargeMoney">
+		update u_user_info
+		<set>
+			<if test="money != null and money != ''">
+				money=#{money}
+			</if>
+		</set>
+		where user_id = #{user_id}
+	</update>
+	<!-- 根据用户名字获取头像列表 -->
+	<select id="getUserHeardPicByName" resultType="com.cgwas.userInfo.entity.UserInfo">
+		SELECT
+		user_id AS id,
+		NAME,
+		head_pic_path
+		FROM
+		u_user_info as a LEFT JOIN u_user as b on a.user_id = b.id
+		WHERE NAME LIKE
+		CONCAT('%',#{name},'%') and b.is_delete = 'N'
+	</select>
+
+</mapper>

@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.spaceOrder.dao">
+
+	<sql id="columns">
+		id, space_volume, price, order_status, company_id, create_time, effective_time
+	</sql>
+	<sql id="vals">
+		#{id}, #{space_volume}, #{price}, #{order_status}, #{company_id}, #{create_time}, #{effective_time}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="space_volume != null and space_volume != ''">
+			and space_volume = #{space_volume}
+		</if>
+		<if test="price != null and price != ''">
+			and price = #{price}
+		</if>
+		<if test="order_status != null and order_status != ''">
+			and order_status = #{order_status}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="effective_time != null">
+			and effective_time = #{effective_time}
+		</if>
+	</sql>
+
+	<insert id="saveSpaceOrder" parameterType="com.cgwas.spaceOrder.entity.SpaceOrder" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_space_order (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveSpaceOrderVo" parameterType="com.cgwas.spaceOrder.entity.SpaceOrderVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into z_space_order (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteSpaceOrder">
+		delete from z_space_order
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteSpaceOrderVo">
+		delete from z_space_order
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleSpaceOrder">
+		delete from z_space_order
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleSpaceOrderVo">
+		delete from z_space_order
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadSpaceOrder" resultType="com.cgwas.spaceOrder.entity.SpaceOrderVo">
+		select 
+		<include refid="columns"/>
+		from z_space_order
+		where id=#{id} 
+	</select>
+	
+	<select id="selectSpaceOrder" resultType="com.cgwas.spaceOrder.entity.SpaceOrderVo">
+		select 
+		<include refid="columns"/>
+		from z_space_order
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	<select id="getSumSpace" resultType="java.lang.Integer">
+		select IFNULL(sum(space_volume),0)
+		from z_space_order
+		where order_status = 'SUCCESS'
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="effective_time != null">
+			and effective_time > #{effective_time}
+		</if>
+	</select>
+
+	<update id="updateSpaceOrder">
+		update z_space_order
+		<set>
+			id=#{id}, 
+			space_volume=#{space_volume}, 
+			price=#{price}, 
+			order_status=#{order_status}, 
+			company_id=#{company_id}, 
+			create_time=#{create_time}, 
+			effective_time=#{effective_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateSpaceOrderVo">
+		update z_space_order
+		<set>
+			id=#{id}, 
+			space_volume=#{space_volume}, 
+			price=#{price}, 
+			order_status=#{order_status}, 
+			company_id=#{company_id}, 
+			create_time=#{create_time}, 
+			effective_time=#{effective_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullSpaceOrder">
+		update z_space_order
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="space_volume != null and space_volume != ''">
+			space_volume=#{space_volume}, 
+		</if>
+		<if test="price != null and price != ''">
+			price=#{price}, 
+		</if>
+		<if test="order_status != null and order_status != ''">
+			order_status=#{order_status}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}, 
+		</if>
+		<if test="effective_time != null">
+			effective_time=#{effective_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullSpaceOrderVo">
+		update z_space_order
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="space_volume != null and space_volume != ''">
+			space_volume=#{space_volume}, 
+		</if>
+		<if test="price != null and price != ''">
+			price=#{price}, 
+		</if>
+		<if test="order_status != null and order_status != ''">
+			order_status=#{order_status}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="create_time != null">
+			create_time=#{create_time}, 
+		</if>
+		<if test="effective_time != null">
+			effective_time=#{effective_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleSpaceOrder">
+		update z_space_order
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="space_volume != null and space_volume != ''">
+			space_volume=#{space_volume}, 
+			</if>
+			<if test="price != null and price != ''">
+			price=#{price}, 
+			</if>
+			<if test="order_status != null and order_status != ''">
+			order_status=#{order_status}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}, 
+			</if>
+			<if test="effective_time != null">
+			effective_time=#{effective_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleSpaceOrderVo">
+		update z_space_order
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="space_volume != null and space_volume != ''">
+			space_volume=#{space_volume}, 
+			</if>
+			<if test="price != null and price != ''">
+			price=#{price}, 
+			</if>
+			<if test="order_status != null and order_status != ''">
+			order_status=#{order_status}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="create_time != null">
+			create_time=#{create_time}, 
+			</if>
+			<if test="effective_time != null">
+			effective_time=#{effective_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

@@ -1,0 +1,631 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.employee.dao">
+
+	<sql id="columns">
+		id, name, section_id, position_id, user_id, company_id,
+		emp_status_id, begin_date, end_date,is_delete
+	</sql>
+	<sql id="vals">
+		#{id}, #{name}, #{section_id}, #{position_id}, #{user_id},
+		#{company_id}, #{emp_status_id}, #{begin_date},
+		#{end_date},#{is_delete}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="section_id != null and section_id != ''">
+			and section_id = #{section_id}
+		</if>
+		<if test="position_id != null and position_id != ''">
+			and position_id = #{position_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="emp_status_id != null and emp_status_id != ''">
+			and emp_status_id = #{emp_status_id}
+		</if>
+		<if test="begin_date != null">
+			and begin_date = #{begin_date}
+		</if>
+		<if test="end_date != null">
+			and end_date = #{end_date}
+		</if>
+	</sql>
+
+	<insert id="saveEmployee" parameterType="com.cgwas.employee.entity.Employee"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_employee (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveEmployeeVo" parameterType="com.cgwas.employee.entity.EmployeeVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_employee (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteEmployee">
+		delete from u_employee
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteEmployeeVo">
+		delete from u_employee
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleEmployee">
+		delete from u_employee
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleEmployeeVo">
+		delete from u_employee
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadEmployee" resultType="com.cgwas.employee.entity.EmployeeVo">
+		select
+		<include refid="columns" />
+		from u_employee
+		where id=#{id}
+	</select>
+
+	<select id="selectEmployee" resultType="com.cgwas.employee.entity.EmployeeVo">
+		select
+		<include refid="columns" />
+		from u_employee
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateEmployee">
+		update u_employee
+		<set>
+			id=#{id},
+			name=#{name},
+			section_id=#{section_id},
+			position_id=#{position_id},
+			user_id=#{user_id},
+			company_id=#{company_id},
+			emp_status_id=#{emp_status_id},
+			begin_date=#{begin_date},
+			end_date=#{end_date}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateEmployeeVo">
+		update u_employee
+		<set>
+			id=#{id},
+			name=#{name},
+			section_id=#{section_id},
+			position_id=#{position_id},
+			user_id=#{user_id},
+			company_id=#{company_id},
+			emp_status_id=#{emp_status_id},
+			begin_date=#{begin_date},
+			end_date=#{end_date}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullEmployee">
+		update u_employee
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullEmployeeVo">
+		update u_employee
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleEmployee">
+		update u_employee
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleEmployeeVo">
+		update u_employee
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据公司ID获取员工列表 -->
+	<select id="getEmployeeList" resultType="com.cgwas.employee.entity.EmployeeInfo">
+		SELECT
+		a.id,
+		d.company_id as company_id,
+		c.user_id,
+		b.nickname as username,
+		c.head_pic_path,
+		c.`name`,
+		c.sex,
+		c.birth,
+		c.email,
+		b.tel,
+		d.section_name,
+		d.id as sectionId,
+		e.position_name,
+		e.id as positionId,
+		b.last_login_time,
+		a.emp_status_id,
+		f.status_name,
+		a.begin_date,
+		a.end_date
+		FROM
+		u_employee AS a
+		LEFT JOIN
+		u_user AS b ON
+		a.user_id =
+		b.id
+		LEFT JOIN u_user_info AS c ON b.id =
+		c.user_id
+		LEFT JOIN
+		u_company_section AS d ON a.section_id = d.id
+		LEFT
+		JOIN
+		u_company_position AS e ON a.position_id = e.id
+		LEFT JOIN
+		u_employee_status AS f ON a.emp_status_id = f.id
+		WHERE
+		a.company_Id
+		=#{company_Id} AND a.is_delete = 'N'
+
+		<choose>
+			<when test="employeeInfo.id!=null">
+				and a.id=#{employeeInfo.id}
+			</when>
+			<when test="employeeInfo.username!=null">
+				and b.username like
+				CONCAT('%',#{employeeInfo.username},'%')
+			</when>
+			<when test="employeeInfo.name!=null">
+				and c.name like CONCAT('%',#{employeeInfo.name},'%')
+			</when>
+			<when test="employeeInfo.birth!=null">
+				and c.birth = = like
+				CONCAT('%',#{employeeInfo.birth},'%')
+			</when>
+			<when test="employeeInfo.tel!=null">
+				and b.tel = like
+				CONCAT('%',#{employeeInfo.tel},'%')
+			</when>
+			<when test="employeeInfo.section_name!=null">
+				and d.section_name like
+				CONCAT('%',#{employeeInfo.section_name},'%')
+			</when>
+			<when test="employeeInfo.position_name!=null">
+				and e.position_name like
+				CONCAT('%',#{employeeInfo.position_name},'%')
+			</when>
+			<when test="employeeInfo.last_login_time!=null">
+				and b.last_login_time like
+				CONCAT('%',#{employeeInfo.last_login_time},'%')
+			</when>
+			<when test="employeeInfo.emp_status_id!=null">
+				and a.emp_status_id like
+				CONCAT('%',#{employeeInfo.emp_status_id},'%')
+			</when>
+			<when test="employeeInfo.status_name!=null">
+				and f.status_name like
+				CONCAT('%',#{employeeInfo.status_name},'%')
+			</when>
+			<when test="employeeInfo.begin_date!=null">
+				and a.begin_date like
+				CONCAT('%',#{employeeInfo.begin_date},'%')
+			</when>
+			<when test="employeeInfo.end_date!=null">
+				and a.end_date like
+				CONCAT('%',#{employeeInfo.end_date},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 根据公司ID获取员工列表 (数量) -->
+	<select id="getEmployeeListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_employee AS a
+		LEFT JOIN u_user AS b ON a.user_id =
+		b.id
+		LEFT JOIN
+		u_user_info AS c ON b.id = c.user_id
+		LEFT JOIN
+		u_company_section AS d ON
+		a.section_id = d.id
+		LEFT JOIN
+		u_company_position AS e ON a.position_id =
+		e.id
+		LEFT JOIN
+		u_employee_status AS f ON a.emp_status_id = f.id
+		WHERE
+		a.company_Id
+		=#{company_Id} AND a.is_delete = 'N'
+		<choose>
+			<when test="employeeInfo.id!=null">
+				and a.id=#{employeeInfo.id}
+			</when>
+			<when test="employeeInfo.username!=null">
+				and b.username like
+				CONCAT('%',#{employeeInfo.username},'%')
+			</when>
+			<when test="employeeInfo.name!=null">
+				and c.name like CONCAT('%',#{employeeInfo.name},'%')
+			</when>
+			<when test="employeeInfo.birth!=null">
+				and c.birth like
+				CONCAT('%',#{employeeInfo.birth},'%')
+			</when>
+			<when test="employeeInfo.tel!=null">
+				and b.tel like
+				CONCAT('%',#{employeeInfo.tel},'%')
+			</when>
+			<when test="employeeInfo.section_name!=null">
+				and d.section_name like
+				CONCAT('%',#{employeeInfo.section_name},'%')
+			</when>
+			<when test="employeeInfo.position_name!=null">
+				and e.position_name like
+				CONCAT('%',#{employeeInfo.position_name},'%')
+			</when>
+			<when test="employeeInfo.last_login_time!=null">
+				and b.last_login_time like
+				CONCAT('%',#{employeeInfo.last_login_time},'%')
+			</when>
+			<when test="employeeInfo.emp_status_id!=null">
+				and a.emp_status_id like
+				CONCAT('%',#{employeeInfo.emp_status_id},'%')
+			</when>
+			<when test="employeeInfo.status_name!=null">
+				and f.status_name like
+				CONCAT('%',#{employeeInfo.status_name},'%')
+			</when>
+			<when test="employeeInfo.begin_date!=null">
+				and a.begin_date like
+				CONCAT('%',#{employeeInfo.begin_date},'%')
+			</when>
+			<when test="employeeInfo.end_date!=null">
+				and a.end_date like
+				CONCAT('%',#{employeeInfo.end_date},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 更改员工信息(单个) -->
+	<update id="updateEmployeeOne">
+		update u_employee
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date}
+			</if>
+			<if test="is_delete != null">
+				is_delete=#{is_delete}
+			</if>
+		</set>
+		where 1=1
+		<if test="id != null and id != ''">
+			and id=#{id}
+		</if>
+		<if test="id == null and user_id != null">
+			and user_id=#{user_id}
+		</if>
+	</update>
+	<!-- 更改员工信息(批量) -->
+	<update id="updateEmployeeBatch">
+		update u_employee
+		<set>
+			<if test="section_id != null and section_id != ''">
+				section_id=#{section_id},
+			</if>
+			<if test="position_id != null and position_id != ''">
+				position_id=#{position_id},
+			</if>
+			<if test="company_id != null and company_id != ''">
+				company_id=#{company_id},
+			</if>
+			<if test="emp_status_id != null and emp_status_id != ''">
+				emp_status_id=#{emp_status_id},
+			</if>
+			<if test="begin_date != null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date != null">
+				end_date=#{end_date},
+			</if>
+			<if test="is_delete != null">
+				is_delete=#{is_delete}
+			</if>
+		</set>
+		where id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+
+	</update>
+	<!-- 获取员工信息（用户自己） -->
+	<select id="getEmployeeInfo" resultType="com.cgwas.employee.entity.EmployeeInfo">
+		SELECT
+		a.id,
+		b.username,
+		a.company_id,
+		a.user_id,
+		c.`name`,
+		c.sex,
+		c.birth,
+		b.tel,
+		c.email,
+		d.section_name,
+		d.id AS sectionId,
+		e.position_name,
+		e.id AS positionId,
+		b.last_login_time,
+		a.emp_status_id,
+		f.status_name,
+		a.begin_date
+		FROM
+		u_employee AS a
+		LEFT JOIN u_user AS b ON
+		a.user_id = b.id
+		LEFT JOIN
+		u_user_info AS c ON b.id = c.user_id
+		LEFT
+		JOIN u_company_section AS d ON
+		a.section_id = d.id
+		LEFT JOIN
+		u_company_position AS e ON a.position_id =
+		e.id
+		LEFT JOIN
+		u_employee_status AS f ON a.emp_status_id = f.id
+		where
+		b.id=#{user_id}
+		AND a.is_delete = 'N'
+	</select>
+	<!-- 获取员工信息（管理员） -->
+	<select id="getEmployeeInfoAdmin" resultType="com.cgwas.employee.entity.EmployeeInfo">
+		SELECT
+		a.id,
+		a.company_id,
+		a.user_id,
+		b.username,
+		c.`name`,
+		c.sex,
+		c.birth,
+		b.tel,
+		d.section_name,
+		d.id AS sectionId,
+		e.position_name,
+		e.id AS positionId,
+		b.last_login_time,
+		a.emp_status_id,
+		f.status_name,
+		a.begin_date,
+		c.email
+		FROM
+		u_employee AS a
+		LEFT JOIN u_user AS b ON a.user_id = b.id
+		LEFT JOIN
+		u_user_info AS c ON b.id = c.user_id
+		LEFT JOIN u_company_section AS d
+		ON a.section_id = d.id
+		LEFT JOIN u_company_position AS e ON
+		a.position_id = e.id
+		LEFT JOIN u_employee_status AS f ON
+		a.emp_status_id = f.id
+		WHERE
+		a.id = #{employee_id}
+		AND a.is_delete = 'N'
+
+	</select>
+	<!-- 根据公司ID和用户Id得到员工信息 -->
+	<select id="getEmployeeInfoByCompanyIdAndUserId" resultType="com.cgwas.employee.entity.EmployeeInfo">
+		SELECT
+		a.user_id,b.email
+		FROM
+		u_employee AS a
+		LEFT JOIN u_user_info AS b
+		ON a.user_id = b.user_id
+		WHERE
+		a.company_id = #{company_id}
+		AND a.user_id
+		= #{user_id} AND is_delete = 'N' and a.emp_status_id !=2
+	</select>
+	<!-- 根据公司Id和用户id得到信息 -->
+	<select id="checkEmployee" resultType="com.cgwas.employee.entity.Employee">
+		SELECT * FROM u_employee
+		WHERE user_id = #{user_id} AND company_id = #{company_id} LIMIT 0,1
+	</select>
+	<!-- 批量删除员工 -->
+	<delete id="deleteEmployeeBeatch">
+		delete from u_employee
+		where id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</delete>
+
+
+
+</mapper>

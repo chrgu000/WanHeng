@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.SearchDao">
+	<select id="findAllSearch" resultType="Search">
+		select * from jxc_search
+		order
+		by num desc
+	</select>
+	<select id="findAllSearchByPage" resultType="Search">
+		select * from jxc_search
+		<where>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				and title like "%"#{title}"%"
+			</if>
+		</where>
+		order by num desc limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_search
+		<where>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				and title like "%"#{title}"%"
+			</if>
+		</where>
+	</select>
+	<select id="findSearchById" resultType="Search">
+		select * from jxc_search
+		where id=#{id}
+	</select>
+	<insert id="addSearch">
+		insert into jxc_search(title,chr,url,num)values(#{title},#{chr},#{url},#{num})
+	</insert>
+	<update id="updateSearch" parameterType="Search">
+		update jxc_search
+		<set>
+			<if test="title!=null&amp;&amp;!title.equals('')">
+				title=#{title},
+			</if>
+			<if test="chr!=null&amp;&amp;!chr.equals('')">
+				chr=#{chr},
+			</if>
+				<if test="url!=null&amp;&amp;!url.equals('')">
+				url=#{url},
+			</if>
+				<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteSearchById">
+		delete from jxc_search where id=#{id}
+	</delete>
+</mapper>

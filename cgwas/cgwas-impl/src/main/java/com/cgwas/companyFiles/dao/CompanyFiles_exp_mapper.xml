@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.companyFiles.dao">
+   <resultMap type="com.cgwas.companyFiles.entity.CompanyFilesVo" id="companyFilesVoMap">
+		<id property="id" column="id" />
+		<!-- <association property="projectStatus" column="project_status_id"
+			javaType="com.cgwas.projectStatus.entity.ProjectStatusVo" select="getProjectStatusVoById"></association> -->
+		<collection property="privilegeInfoList" column="{id = id,user_id=user_id}" javaType="arrayList"
+			ofType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo" select="getPrivilegeInfoById"></collection>
+		<!-- <collection property="privilegeInfoList" column="company_file_id" ofType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">    
+            <id property="id" column="id" javaType="int" jdbcType="INTEGER"/>    
+            <result property="telnumber" column="telnumber" javaType="string" jdbcType="VARCHAR"/>    
+        </collection> -->
+	</resultMap>
+	<sql id="columnsAs">
+		id, file_name, sort, task_type, file_type, is_file, for_id, parent_id, company_id, update_time, create_time
+	</sql>
+	
+	<select id="getPrivilegeInfoById" resultType="com.cgwas.privilegeInfo.entity.PrivilegeInfoVo">
+		SELECT spi.id,spi.privilege_name,spi.privilege_url,spi.privilege_mark,pgrp.role_id
+		FROM s_privilege_info spi 
+		LEFT JOIN p_g_role_privilege pgrp ON spi.id=pgrp.privilege_id
+		LEFT JOIN p_group_user pgu ON pgu.role_id=pgrp.role_id
+		WHERE pgrp.company_file_id=#{id} AND pgu.user_id=#{user_id};
+	</select>
+
+	<select id="selectFilesPage" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT pcf.id,
+		<if test="parent_id == 0">
+			uc.company_name,
+		</if>
+		pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		<if test="parent_id == 0">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		WHERE pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		ORDER BY pcf.id DESC
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectFilesCount" resultType="java.lang.Long">
+		select
+		count(pcf.id)
+		from p_company_files pcf
+		<if test="parent_id == 0">
+		LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		WHERE pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+	</select>
+	
+	 <!-- <select id="selectListForCompany" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT pcf.id,
+		<if test="parent_id == 0">
+			uc.company_name,
+		</if>
+		pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		<if test="parent_id == 0">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		WHERE 1=1
+		<if test="parent_id == 0">
+			AND pcf.creator_id=#{user_id} 
+		</if>
+		AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		ORDER BY pcf.id DESC
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectCountForCompany" resultType="java.lang.Long">
+		select
+		count(pcf.id)
+		from p_company_files pcf
+		<if test="parent_id == 0">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		WHERE 1=1
+		<if test="parent_id == 0">
+			AND pcf.creator_id=#{user_id} 
+		</if>
+		AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+	</select>
+	<select id="selectListForGRole" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT pcf.id,
+		<if test="parent_id == 0">
+			uc.company_name,
+		</if>
+		pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		<if test="parent_id == 0">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		<if test="visible == 0">
+			LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		</if>
+		WHERE 1=1 
+		<if test="visible == 0">
+			AND pcfu.user_id=#{user_id} 
+		</if>
+		AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		ORDER BY pcf.id DESC
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectCountForGRole" resultType="java.lang.Long">
+		select
+		count(pcf.id)
+		from p_company_files pcf
+		<if test="parent_id == 0">
+			LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		</if>
+		<if test="visible == 0">
+			LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		</if>
+			WHERE 1=1
+		<if test="visible == 0">
+			AND pcfu.user_id=#{user_id} 
+		</if>
+			AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!='' and parent_id != 0">
+			AND pcf.file_name like #{file_name}
+		</if>
+		<if test="file_name!=null and file_name!='' and parent_id == 0">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		
+	</select> -->
+	
+	<select id="selectListForCompany" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT DISTINCT pcf.id,uc.company_name,
+		pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		WHERE ((pcfu.user_id=#{user_id} AND pcf.parent_id=0)  OR (pcf.creator_id=#{user_id} AND pcf.parent_id=0))
+		<if test="file_name!=null and file_name!=''">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		ORDER BY pcf.id DESC
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectCountForCompany" resultType="java.lang.Long">
+	SELECT count(t.id) FROM (
+	SELECT DISTINCT pcf.id,uc.company_name,
+		pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		LEFT JOIN u_company uc ON pcf.company_id=uc.id
+		LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		WHERE ((pcfu.user_id=#{user_id} AND pcf.parent_id=0)  OR (pcf.creator_id=#{user_id} AND pcf.parent_id=0))
+		<if test="file_name!=null and file_name!=''">
+			AND (pcf.file_name like #{file_name} OR uc.company_name like #{file_name})
+		</if>
+		) t
+	</select>
+	
+	<select id="selectListForGRole" resultType="com.cgwas.companyFiles.entity.CompanyFilesVo">
+		SELECT DISTINCT pcf.id,pcf.file_name,pcf.file_type,pcf.is_file from p_company_files pcf
+		LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		WHERE 1=1 AND pcfu.user_id=#{user_id} AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!=''">
+			AND pcf.file_name like #{file_name}
+		</if>
+		ORDER BY pcf.id DESC
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectCountForGRole" resultType="java.lang.Long">
+		SELECT
+		count(t.id) FROM (
+		SELECT DISTINCT pcf.id,pcf.file_name,pcf.file_type,pcf.is_file FROM p_company_files pcf
+		LEFT JOIN p_company_files_user pcfu ON pcfu.company_files_id=pcf.id
+		WHERE 1=1 AND pcfu.user_id=#{user_id} AND pcf.parent_id=#{parent_id}
+		<if test="file_name!=null and file_name!=''">
+			AND pcf.file_name like #{file_name}
+		</if>
+		) t
+	</select>
+</mapper>

@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.messageDetail.dao">
+
+	<sql id="columns">
+		id, read_state, sort, send_id, user_id, message_id,
+		send_time, read_time,is_delete,read_content
+	</sql>
+	<sql id="vals">
+		#{id}, #{read_state}, #{sort}, #{send_id}, #{user_id},
+		#{message_id}, #{send_time}, #{read_time},#{is_delete},#{read_content}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="read_state != null and read_state != ''">
+			and read_state = #{read_state}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+		<if test="send_id != null and send_id != ''">
+			and send_id = #{send_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="message_id != null and message_id != ''">
+			and message_id = #{message_id}
+		</if>
+		<if test="send_time != null">
+			and send_time = #{send_time}
+		</if>
+		<if test="read_time != null">
+			and read_time = #{read_time}
+		</if>
+	</sql>
+
+	<insert id="saveMessageDetail" parameterType="com.cgwas.messageDetail.entity.MessageDetail"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_message_detail (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveMessageDetailVo" parameterType="com.cgwas.messageDetail.entity.MessageDetailVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into s_message_detail (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteMessageDetail">
+		delete from s_message_detail
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteMessageDetailVo">
+		delete from s_message_detail
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleMessageDetail">
+		delete from s_message_detail
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleMessageDetailVo">
+		delete from s_message_detail
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadMessageDetail" resultType="com.cgwas.messageDetail.entity.MessageDetailVo">
+		select
+		<include refid="columns" />
+		from s_message_detail
+		where id=#{id}
+	</select>
+
+	<select id="selectMessageDetail" resultType="com.cgwas.messageDetail.entity.MessageDetailVo">
+		select
+		<include refid="columns" />
+		from s_message_detail
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateMessageDetail">
+		update s_message_detail
+		<set>
+			id=#{id},
+			read_state=#{read_state},
+			sort=#{sort},
+			send_id=#{send_id},
+			user_id=#{user_id},
+			message_id=#{message_id},
+			send_time=#{send_time},
+			read_time=#{read_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateMessageDetailVo">
+		update s_message_detail
+		<set>
+			id=#{id},
+			read_state=#{read_state},
+			sort=#{sort},
+			send_id=#{send_id},
+			user_id=#{user_id},
+			message_id=#{message_id},
+			send_time=#{send_time},
+			read_time=#{read_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullMessageDetail">
+		update s_message_detail
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="read_state != null and read_state != ''">
+				read_state=#{read_state},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="send_id != null and send_id != ''">
+				send_id=#{send_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="message_id != null and message_id != ''">
+				message_id=#{message_id},
+			</if>
+			<if test="send_time != null">
+				send_time=#{send_time},
+			</if>
+			<if test="read_time != null">
+				read_time=#{read_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullMessageDetailVo">
+		update s_message_detail
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="read_state != null and read_state != ''">
+				read_state=#{read_state},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="send_id != null and send_id != ''">
+				send_id=#{send_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="message_id != null and message_id != ''">
+				message_id=#{message_id},
+			</if>
+			<if test="send_time != null">
+				send_time=#{send_time},
+			</if>
+			<if test="read_time != null">
+				read_time=#{read_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleMessageDetail">
+		update s_message_detail
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="read_state != null and read_state != ''">
+				read_state=#{read_state},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="send_id != null and send_id != ''">
+				send_id=#{send_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="message_id != null and message_id != ''">
+				message_id=#{message_id},
+			</if>
+			<if test="send_time != null">
+				send_time=#{send_time},
+			</if>
+			<if test="read_time != null">
+				read_time=#{read_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleMessageDetailVo">
+		update s_message_detail
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="read_state != null and read_state != ''">
+				read_state=#{read_state},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="send_id != null and send_id != ''">
+				send_id=#{send_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="message_id != null and message_id != ''">
+				message_id=#{message_id},
+			</if>
+			<if test="send_time != null">
+				send_time=#{send_time},
+			</if>
+			<if test="read_time != null">
+				read_time=#{read_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 批量删除信息 -->
+	<update id="batchDeleteMessage">
+		update s_message_detail
+		<set>
+			is_delete='Y'
+		</set>
+		where send_id=#{userId} and message_id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</update>
+	<!-- 搜索信息列表 -->
+	<select id="selectMessageInfoList" resultType="com.cgwas.messageDetail.entity.MessageInfo">
+		SELECT
+		b.id,
+		a.message_type,
+		a.content,
+		a.send_time,
+		a.for_id,
+		b.read_state,
+		b.sort,
+		b.send_id,
+		b.user_id,
+		b.read_time,
+		b.read_content,
+		c.`name` AS send_name,
+		d.`name` AS user_name
+		FROM
+		s_message AS a
+		LEFT JOIN
+		s_message_detail AS b ON a.id = b.message_id
+		LEFT JOIN u_user_info AS c
+		ON c.user_id = b.send_id
+		LEFT JOIN u_user_info AS d ON d.user_id =
+		b.user_id
+		WHERE
+		1 = 1
+		<choose>
+			<when test="messageInfo.id!=null">
+				and b.id=#{messageInfo.id}
+			</when>
+			<when test="messageInfo.message_type!=null">
+				and a.message_type = #{messageInfo.message_type}
+			</when>
+			<when test="messageInfo.content!=null">
+				and a.content like
+				CONCAT('%',#{messageInfo.content},'%')
+			</when>
+			<when test="messageInfo.for_id!=null">
+				and a.for_id = #{messageInfo.for_id}
+			</when>
+			<when test="messageInfo.read_state!=null">
+				and b.read_state = like
+				CONCAT('%',#{messageInfo.read_state},'%')
+			</when>
+			<when test="messageInfo.sort!=null">
+				and b.sort like
+				CONCAT('%',#{messageInfo.sort},'%')
+			</when>
+			<when test="messageInfo.read_content!=null">
+				and b.read_content = #{messageInfo.read_content}
+			</when>
+		</choose>
+		and (b.send_id =#{messageInfo.send_id} or b.user_id =
+		#{messageInfo.user_id})
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if
+			test="page.limit != null and page.start !=null and page.limit > 0 and page.start >=0">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+
+	</select>
+	<!-- 搜索信息列表（数量） -->
+	<select id="selectMessageInfoListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		s_message AS a
+		LEFT JOIN s_message_detail AS b ON
+		a.id = b.message_id
+		WHERE
+		1 = 1
+		<choose>
+			<when test="messageInfo.id!=null">
+				and a.id=#{messageInfo.id}
+			</when>
+			<when test="messageInfo.message_type!=null">
+				and a.message_type = #{messageInfo.message_type}
+			</when>
+			<when test="messageInfo.content!=null">
+				and a.content like
+				CONCAT('%',#{messageInfo.content},'%')
+			</when>
+			<when test="messageInfo.for_id!=null">
+				and a.for_id= = like
+				CONCAT('%',#{messageInfo.for_id},'%')
+			</when>
+			<when test="messageInfo.read_state!=null">
+				and b.read_state = like
+				CONCAT('%',#{messageInfo.read_state},'%')
+			</when>
+			<when test="messageInfo.sort!=null">
+				and b.sort like
+				CONCAT('%',#{messageInfo.sort},'%')
+			</when>
+		</choose>
+		and (b.send_id =#{messageInfo.send_id} or b.user_id =
+		#{messageInfo.user_id})
+	</select>
+	<!-- 根据ID得到信息详情 -->
+	<select id="getMessageInfoById" resultType="com.cgwas.messageDetail.entity.MessageInfo">
+		SELECT
+		a.id,
+		a.message_type,
+		a.content,
+		a.send_time,
+		a.for_id,
+		b.read_state,
+		b.sort,
+		b.send_id,
+		b.user_id,
+		b.read_time,
+		b.read_content,
+		c.`name` AS send_name,
+		d.`name` AS user_name
+		FROM
+		s_message AS a
+		LEFT JOIN s_message_detail AS b
+		ON a.id = b.message_id
+		LEFT JOIN u_user_info AS c ON c.user_id =
+		b.send_id
+		LEFT JOIN u_user_info AS d ON d.user_id = b.user_id
+		WHERE
+		b.message_id = #{id} limit 0,1
+
+	</select>
+	<!-- 得到信息及回复信息 -->
+	<select id="getMessageInfoForRe" resultType="com.cgwas.messageDetail.entity.MessageInfo">
+		SELECT
+		a.*, b.content,
+		c.`name` AS send_name,
+		d.`name` AS user_name
+		FROM
+		s_message_detail AS a
+		LEFT JOIN s_message AS b ON a.message_id = b.id
+		LEFT JOIN u_user_info AS c ON c.user_id = a.send_id
+		LEFT JOIN u_user_info AS d ON d.user_id = a.user_id
+		WHERE
+		b.for_id = #{id} AND b.message_type = 4
+		ORDER BY
+		b.send_time DESC
+	</select>
+
+	<!-- 得到各类信息未读信息的数量 -->
+	<select id="selectUnReadMessageListCount" resultType="Map">
+		SELECT d.`value`,IFNULL((SELECT COUNT(1) count from s_message  b 
+		LEFT JOIN s_message_detail a ON b.id=a.message_id
+		WHERE a.read_state='N'
+		AND a.user_id=#{user_id} AND b.message_type=d.`value`
+		AND a.send_id=#{user_id} AND b.message_type=d.`value`
+		GROUP BY b.message_type),0) count 
+		FROM s_dict d
+		WHERE d.group_id=26
+	</select>
+
+</mapper>

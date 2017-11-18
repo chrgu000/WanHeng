@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.screenwriter.dao">
+<select id="getScreenwriterByUserId" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+select 
+		<include refid="columns"/>
+		from p_screenwriter
+		where user_id=#{id} 
+</select>
+<select id="getScreenwriterByName" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+select 
+		<include refid="columns"/>
+		from p_screenwriter
+		where screenwriter_name=#{name} 
+		</select>
+	<sql id="columns">
+		id, screenwriter_name, user_id, head_pic_path
+	</sql>
+	<sql id="vals">
+		#{id}, #{screenwriter_name}, #{user_id}, #{head_pic_path}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="screenwriter_name != null and screenwriter_name != ''">
+			and screenwriter_name = #{screenwriter_name}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			and head_pic_path = #{head_pic_path}
+		</if>
+	</sql>
+
+	<insert id="saveScreenwriter" parameterType="com.cgwas.screenwriter.entity.Screenwriter" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_screenwriter (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveScreenwriterVo" parameterType="com.cgwas.screenwriter.entity.ScreenwriterVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_screenwriter (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteScreenwriter">
+		delete from p_screenwriter
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteScreenwriterVo">
+		delete from p_screenwriter
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleScreenwriter">
+		delete from p_screenwriter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleScreenwriterVo">
+		delete from p_screenwriter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadScreenwriter" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+		select 
+		<include refid="columns"/>
+		from p_screenwriter
+		where id=#{id} 
+	</select>
+	
+	<select id="selectScreenwriter" resultType="com.cgwas.screenwriter.entity.ScreenwriterVo">
+		select 
+		<include refid="columns"/>
+		from p_screenwriter
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateScreenwriter">
+		update p_screenwriter
+		<set>
+			id=#{id}, 
+			screenwriter_name=#{screenwriter_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateScreenwriterVo">
+		update p_screenwriter
+		<set>
+			id=#{id}, 
+			screenwriter_name=#{screenwriter_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullScreenwriter">
+		update p_screenwriter
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="screenwriter_name != null and screenwriter_name != ''">
+			screenwriter_name=#{screenwriter_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullScreenwriterVo">
+		update p_screenwriter
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="screenwriter_name != null and screenwriter_name != ''">
+			screenwriter_name=#{screenwriter_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleScreenwriter">
+		update p_screenwriter
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="screenwriter_name != null and screenwriter_name != ''">
+			screenwriter_name=#{screenwriter_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleScreenwriterVo">
+		update p_screenwriter
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="screenwriter_name != null and screenwriter_name != ''">
+			screenwriter_name=#{screenwriter_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

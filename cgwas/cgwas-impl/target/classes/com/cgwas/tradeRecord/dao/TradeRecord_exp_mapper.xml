@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.tradeRecord.dao">
+	<resultMap type="com.cgwas.tradeRecord.entity.TradeRecordVo" id="TradeRecordVoMap">
+		<id property="id" column="id" />
+		<collection property="scheduleList" column="id" javaType="arrayList"
+			ofType="com.cgwas.messageDetail.entity.MessageDetailVo" select="scheduleList">
+		</collection>
+	</resultMap>
+	
+	<select id="scheduleList" resultType="Map">
+		SELECT trade_record_id, create_time
+		FROM u_schedule u
+		WHERE u.trade_record_id=#{id}
+		ORDER BY u.create_time 
+	</select>
+	
+	<select id="selectTradeRecordPage" resultMap="TradeRecordVoMap">
+		SELECT u.id,u.trade_price,u.trade_type,u.trade_state,u.trade_content,u.trade_time,u.bank_num FROM u_trade_record
+		WHERE user_id = #{user_id}
+		<choose>
+			<when test="id!=null">
+				and id=#{id}
+			</when>
+			<when test="trade_type!=null">
+				and trade_type=#{trade_type}
+			</when>
+			<when test="trade_content!=null">
+				and trade_content like
+				CONCAT('%',#{trade_content},'%')
+			</when>
+		</choose>
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+	
+	<select id="selectTradeRecordCount" resultType="java.lang.Long">
+		SELECT count(*) FROM u_trade_record
+		WHERE user_id = #{user_id}
+		<choose>
+			<when test="id!=null">
+				and id=#{id}
+			</when>
+			<when test="trade_type!=null">
+				and trade_type=#{trade_type}
+			</when>
+			<when test="trade_content!=null">
+				and trade_content like
+				CONCAT('%',#{trade_content},'%')
+			</when>
+		</choose>
+	</select>
+
+</mapper>

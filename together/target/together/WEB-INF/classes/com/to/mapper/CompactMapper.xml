@@ -1,0 +1,203 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+	<mapper namespace="com.to.dao.CompactDao">
+	<resultMap id="compactMap" type="Compact">
+		<result column="id" property="id"></result>
+	    <result property="compactNum" column="compact_num" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="houseNum" column="house_num" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="hostName" column="host_name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="hostTel" column="host_tel" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="hostIdCardNum" column="host_id_card_num" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="idCardNum" column="id_card_num" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="powerWay" column="power_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="waterWay" column="water_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="condoWay" column="condo_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="gasWay" column="gas_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="startTime" column="start_time" javaType="java.sql.Date" jdbcType="DATE"></result>
+		<result property="endTime" column="end_time" javaType="java.sql.Date" jdbcType="DATE"></result>
+		<result property="totalPrice" column="total_price" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<association property="payWay" select="getPayWayById" javaType="PayWay" column="pay_way_id"/>
+		<association property="house" select="getHouseById" javaType="House" column="house_id"/>
+		<collection property="gases" select="getGasByCompactId" javaType="arrayList" ofType="Gas" column="id"/>
+		<collection property="powers" select="getPowerByCompactId" javaType="arrayList" ofType="Power" column="id"/>
+		<collection property="condos" select="getCondoByCompactId" javaType="arrayList" ofType="Condo" column="id"/>
+		<collection property="waters" select="getWaterCompactId" javaType="arrayList" ofType="Water" column="id"/>
+	</resultMap>
+	<resultMap id="compactMaps" type="Compact">
+		<result column="id" property="id"></result>
+		<result property="compactNum" column="compact_num" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="houseNum" column="house_num" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<result property="hostName" column="host_name" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="hostTel" column="host_tel" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="hostIdCardNum" column="host_id_card_num" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="idCardNum" column="id_card_num" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="powerWay" column="power_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="waterWay" column="water_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="condoWay" column="condo_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="gasWay" column="gas_way" jdbcType="VARCHAR" javaType="java.lang.String"></result>
+		<result property="createTime" column="create_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="modifiedTime" column="modified_time" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"></result>
+		<result property="startTime" column="start_time" javaType="java.sql.Date" jdbcType="DATE"></result>
+		<result property="endTime" column="end_time" javaType="java.sql.Date" jdbcType="DATE"></result>
+		<result property="totalPrice" column="total_price" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+		<association property="house" select="getHouseById" javaType="House" column="house_id"/>
+		<association property="payWay" select="getPayWayById" javaType="PayWay" column="pay_way_id"/>
+	</resultMap>
+	<select id="getGasByCompactId" resultMap="GasMap">
+		select * from to_gas where compact_id=#{id}
+	</select>
+	<select id="getPowerByCompactId" resultMap="PowerMap">
+		select * from to_power where compact_id=#{id}
+	</select>
+	<select id="getCondoByCompactId" resultMap="CondoMap">
+		select * from to_condo where compact_id=#{id}
+	</select>
+	<select id="getWaterCompactId" resultMap="WaterMap">
+		select * from to_water where compact_id=#{id}
+	</select>
+	<resultMap id="GasMap" type="Gas">
+		<result javaType="java.sql.Date" property="joinTime" column="join_time" jdbcType="DATE" ></result>
+	</resultMap>
+	<resultMap id="CondoMap" type="Condo">
+		<result javaType="java.sql.Date" property="joinTime" column="join_time" jdbcType="DATE" ></result>
+	</resultMap>
+	<resultMap id="WaterMap" type="Water">
+		<result javaType="java.sql.Date" property="joinTime" column="join_time" jdbcType="DATE" ></result>
+	</resultMap>
+	<resultMap id="PowerMap" type="Power">
+		<result javaType="java.sql.Date" property="joinTime" column="join_time" jdbcType="DATE" ></result>
+	</resultMap>
+	<resultMap id="houseMap" type="House">
+		<result column="garden_name" property="gardenName" javaType="java.lang.String" jdbcType="VARCHAR"></result>
+	</resultMap>
+	<select id="getHouseById" resultMap="houseMap">
+		select * from to_house where id=#{house_id}
+	</select>
+	<select id="getCompactByHouseId" resultMap="compactMap">
+		select * from to_compact where house_id=#{hosueId}
+	</select>
+	<select id="getPayWayById" resultType="PayWay">
+		select * from to_pay_way where id=#{pay_way_id}
+	</select>
+	<select id="getCompactByStatus" resultMap="compactMaps">
+		select * from to_compact where status=#{status} and user_id=#{userId}
+	</select>
+	<insert id="save" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		to_compact(house_id,compact_num,house_num,host_name,host_tel,host_id_card_num,name,tel
+		,id_card_num,start_time,end_time,pay_way_id,deposit,rent,condo_way,water_way,
+		power_way,gas_way,create_time,modified_time,status,delflag,user_id,state)
+		values(#{houseId},#{compactNum},#{houseNum},#{hostName},#{hostTel},#{hostIdCardNum},#{name},#{tel}
+		,#{idCardNum},#{startTime},#{endTime},#{payWayId},#{deposit},#{rent},#{condoWay},#{waterWay},
+		#{powerWay},#{gasWay},#{createTime},#{modifiedTime},#{status},#{delflag},#{userId},#{state})
+	</insert>
+	<update id="update">
+		update to_compact
+		<set>
+			<if test="houseNum!=null and houseNum!=''">
+				house_num=#{houseNum},
+			</if>
+			<if test="name!=null and name!=''">
+				name=#{name},
+			</if>
+			<if test="tel!=null and tel!=''">
+				tel=#{tel},
+			</if>
+			<if test="idCardNum!=null and idCardNum!=''">
+				id_card_num=#{idCardNum},
+			</if>
+			<if test="startTime!=null and startTime!=''">
+				start_time=#{startTime},
+			</if>
+			<if test="endTime!=null and endTime!=''">
+				end_time=#{endTime},
+			</if>
+			<if test="deposit!=null and deposit!=''">
+				deposit=#{deposit},
+			</if>
+			<if test="totalPrice!=null and totalPrice!=''">
+				total_price=#{totalPrice},
+			</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+			</if>
+			<if test="state!=null and state!=''">
+				state=#{state},
+			</if>
+			<if test="renter_img!=null and renter_img!=''">
+				renter_img=#{renter_img},
+			</if>
+			<if test="user_img!=null and user_img!=''">
+				user_img=#{user_img},
+			</if>
+			<if test="modifiedTime!=null and modifiedTime!=''">
+				modified_time=#{modifiedTime},
+			</if>
+			<if test="delflag!=null and delflag!=''">
+			delflag=#{delflag},
+		</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		update   to_compact set delflag=1  where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultMap="compactMap">
+		select * from to_compact
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="compactMap">
+		select * from to_compact <where>
+		delflag=2
+		<if test="status!=null and status!=''">
+		and status=#{status}
+		</if>
+	</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from to_compact <where>
+		delflag=2
+		<if test="status!=null and status!=''">
+			and status=#{status}
+		</if>
+	</where>
+	</select>
+    <insert id="addGas">
+		insert into to_gas(join_time,compact_id)values(#{joinTime},#{compactId})
+	</insert>
+	<insert id="addCondo">
+		insert into to_condo(join_time,compact_id)values(#{joinTime},#{compactId})
+	</insert>
+	<insert id="addPower">
+		insert into to_power(join_time,compact_id)values(#{joinTime},#{compactId})
+	</insert>
+	<insert id="addWater">
+		insert into to_water(join_time,compact_id)values(#{joinTime},#{compactId})
+	</insert>
+<update id="updatePower">
+	update to_power set price=#{powerPrice} where id=#{powerId}
+</update>
+	<update id="updateCondo">
+		update to_condo set price=#{condoPrice} where id=#{condoId}
+	</update>
+	<update id="updateGas">
+		update to_gas set price=#{gasPrice} where id=#{gasId}
+	</update>
+	<update id="updateWater">
+	update to_water set price=#{waterPrice} where id=#{waterId}
+</update>
+	<select id="getCompactByStatusAndUser" resultMap="compactMap">
+			select * from to_compact where status=#{status} and tel=#{tel} and state!=0
+	</select>
+<select id="getAllPrice" resultType="Price">
+	select * from to_price where delflag=2 order by num asc
+</select>
+</mapper>

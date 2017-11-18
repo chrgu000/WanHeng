@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.companyCredibility.dao">
+
+	<sql id="columns">
+		id, cedibility, match_degree, rating_points, good_at, company_id, creat_time,update_tiems
+	</sql>
+	<sql id="vals">
+		#{id}, #{cedibility}, #{match_degree}, #{rating_points}, #{good_at}, #{company_id}, #{creat_time},#{update_tiems}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="cedibility != null and cedibility != ''">
+			and cedibility = #{cedibility}
+		</if>
+		<if test="match_degree != null and match_degree != ''">
+			and match_degree = #{match_degree}
+		</if>
+		<if test="rating_points != null and rating_points != ''">
+			and rating_points = #{rating_points}
+		</if>
+		<if test="good_at != null and good_at != ''">
+			and good_at = #{good_at}
+		</if>
+		<if test="company_id != null and company_id != ''">
+			and company_id = #{company_id}
+		</if>
+		<if test="creat_time != null">
+			and creat_time = #{creat_time}
+		</if>
+	</sql>
+
+	<insert id="saveCompanyCredibility" parameterType="com.cgwas.companyCredibility.entity.CompanyCredibility" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_company_credibility (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCompanyCredibilityVo" parameterType="com.cgwas.companyCredibility.entity.CompanyCredibilityVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into u_company_credibility (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCompanyCredibility">
+		delete from u_company_credibility
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCompanyCredibilityVo">
+		delete from u_company_credibility
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCompanyCredibility">
+		delete from u_company_credibility
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCompanyCredibilityVo">
+		delete from u_company_credibility
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCompanyCredibility" resultType="com.cgwas.companyCredibility.entity.CompanyCredibilityVo">
+		select 
+		<include refid="columns"/>
+		from u_company_credibility
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCompanyCredibility" resultType="com.cgwas.companyCredibility.entity.CompanyCredibilityVo">
+		select 
+		<include refid="columns"/>
+		from u_company_credibility
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCompanyCredibility">
+		update u_company_credibility
+		<set>
+			id=#{id}, 
+			cedibility=#{cedibility}, 
+			match_degree=#{match_degree}, 
+			rating_points=#{rating_points}, 
+			good_at=#{good_at}, 
+			company_id=#{company_id}, 
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCompanyCredibilityVo">
+		update u_company_credibility
+		<set>
+			id=#{id}, 
+			cedibility=#{cedibility}, 
+			match_degree=#{match_degree}, 
+			rating_points=#{rating_points}, 
+			good_at=#{good_at}, 
+			company_id=#{company_id}, 
+			creat_time=#{creat_time}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCompanyCredibility">
+		update u_company_credibility
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="cedibility != null and cedibility != ''">
+			cedibility=#{cedibility}, 
+		</if>
+		<if test="match_degree != null and match_degree != ''">
+			match_degree=#{match_degree}, 
+		</if>
+		<if test="rating_points != null and rating_points != ''">
+			rating_points=#{rating_points}, 
+		</if>
+		<if test="good_at != null and good_at != ''">
+			good_at=#{good_at}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="creat_time != null">
+			creat_time=#{creat_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCompanyCredibilityVo">
+		update u_company_credibility
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="cedibility != null and cedibility != ''">
+			cedibility=#{cedibility}, 
+		</if>
+		<if test="match_degree != null and match_degree != ''">
+			match_degree=#{match_degree}, 
+		</if>
+		<if test="rating_points != null and rating_points != ''">
+			rating_points=#{rating_points}, 
+		</if>
+		<if test="good_at != null and good_at != ''">
+			good_at=#{good_at}, 
+		</if>
+		<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+		</if>
+		<if test="creat_time != null">
+			creat_time=#{creat_time}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCompanyCredibility">
+		update u_company_credibility
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="cedibility != null and cedibility != ''">
+			cedibility=#{cedibility}, 
+			</if>
+			<if test="match_degree != null and match_degree != ''">
+			match_degree=#{match_degree}, 
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+			rating_points=#{rating_points}, 
+			</if>
+			<if test="good_at != null and good_at != ''">
+			good_at=#{good_at}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="creat_time != null">
+			creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCompanyCredibilityVo">
+		update u_company_credibility
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="cedibility != null and cedibility != ''">
+			cedibility=#{cedibility}, 
+			</if>
+			<if test="match_degree != null and match_degree != ''">
+			match_degree=#{match_degree}, 
+			</if>
+			<if test="rating_points != null and rating_points != ''">
+			rating_points=#{rating_points}, 
+			</if>
+			<if test="good_at != null and good_at != ''">
+			good_at=#{good_at}, 
+			</if>
+			<if test="company_id != null and company_id != ''">
+			company_id=#{company_id}, 
+			</if>
+			<if test="creat_time != null">
+			creat_time=#{creat_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据公司id得到信誉 信息 -->
+	<select id="GetCompanyCredibilityByCompanyId" resultType="com.cgwas.companyCredibility.entity.CompanyCredibility">
+		select * from u_company_credibility  WHERE company_id = #{company_id} LIMIT 0,1
+	</select>
+</mapper>

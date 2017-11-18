@@ -1,0 +1,379 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userGrowth.dao">
+
+	<sql id="columns">
+		id, prestige, flat, user_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{prestige}, #{flat}, #{user_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="prestige != null and prestige != ''">
+			and prestige = #{prestige}
+		</if>
+		<if test="flat != null and flat != ''">
+			and flat = #{flat}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveUserGrowth" parameterType="com.cgwas.userGrowth.entity.UserGrowth"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_growth (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserGrowthVo" parameterType="com.cgwas.userGrowth.entity.UserGrowthVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_growth (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserGrowth">
+		delete from u_user_growth
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserGrowthVo">
+		delete from u_user_growth
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserGrowth">
+		delete from u_user_growth
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserGrowthVo">
+		delete from u_user_growth
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserGrowth" resultType="com.cgwas.userGrowth.entity.UserGrowthVo">
+		select
+		<include refid="columns" />
+		from u_user_growth
+		where id=#{id}
+	</select>
+
+	<select id="selectUserGrowth" resultType="com.cgwas.userGrowth.entity.UserGrowthVo">
+		select
+		<include refid="columns" />
+		from u_user_growth
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserGrowth">
+		update u_user_growth
+		<set>
+			id=#{id},
+			prestige=#{prestige},
+			flat=#{flat},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserGrowthVo">
+		update u_user_growth
+		<set>
+			id=#{id},
+			prestige=#{prestige},
+			flat=#{flat},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserGrowth">
+		update u_user_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserGrowthVo">
+		update u_user_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserGrowth">
+		update u_user_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserGrowthVo">
+		update u_user_growth
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige},
+			</if>
+			<if test="flat != null and flat != ''">
+				flat=#{flat},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据用户ID获取成长信息 -->
+	<select id="getUserGrowthByUserId" resultType="com.cgwas.userGrowth.entity.UserGrowth">
+		select
+		<include refid="columns" />
+		from
+		u_user_growth
+		where user_id=#{user_id}
+	</select>
+	<!-- 奖罚用户积分 -->
+	<update id="reduceOrAddGrowth">
+		update u_user_growth
+		<set>
+			<if test="flat != null and flat != ''">
+				flat=flat+#{flat},
+			</if>
+			<if test="prestige != null and prestige != ''">
+				prestige=#{prestige}
+			</if>
+		</set>
+		where user_id=#{user_id}
+	</update>
+	<!-- 清零用户积分 -->
+	<update id="cleanGrowth">
+		update u_user_growth
+		<set>
+			flat=0 , prestige=0,
+		</set>
+		where user_id=#{user_id}
+	</update>
+	<!-- 获取可修改用户积分列表 -->
+	<select id="getUserListForGrowth" resultType="com.cgwas.userGrowth.entity.UserForGrowth">
+		SELECT
+		a.id,
+		a.nickname,
+		b.`name`,
+		c.prestige,
+		c.flat
+		FROM
+		u_user AS a
+		LEFT
+		JOIN u_user_info AS b ON a.id = b.user_id
+		LEFT JOIN u_user_growth AS c
+		ON a.id = c.user_id
+		where 1=1
+		<choose>
+			<when test="userGrowth.id!=null">
+				and a.id=#{userGrowth.id}
+			</when>
+			<when test="userGrowth.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{userGrowth.nickname},'%')
+			</when>
+			<when test="userGrowth.name!=null">
+				and b.name like
+				CONCAT('%',#{userGrowth.name},'%')
+			</when>
+
+			<when test="userGrowth.flat!=null">
+				and c.flat like
+				CONCAT('%',#{userGrowth.flat},'%')
+			</when>
+		</choose>
+
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取可修改公司积分列表 -->
+	<select id="getCompanyListForGrowth" resultType="com.cgwas.userGrowth.entity.CompanyForGrowth">
+		SELECT
+		a.id,c.nickname,a.company_name,d.contribute,d.flat
+		FROM
+		u_company
+		AS a
+		LEFT JOIN u_user_company AS b ON a.id = b.company_id
+		LEFT JOIN
+		u_user as c on b.use_id = c.id
+		LEFT JOIN u_company_growth as d ON a.id
+		= d.company_id
+		where 1=1 and b.relation = '1' 
+		<choose>
+			<when test="companyForGrowth.id!=null">
+				and a.id=#{companyForGrowth.id}
+			</when>
+			<when test="companyForGrowth.nickname!=null">
+				and c.nickname=#{companyForGrowth.nickname}
+			</when>
+			<when test="companyForGrowth.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{companyForGrowth.company_name},'%')
+			</when>
+			<when test="companyForGrowth.flat!=null">
+				and d.flat like
+				CONCAT('%',#{companyForGrowth.flat},'%')
+			</when>
+			<when test="companyForGrowth.contribute!=null">
+				and d.contribute like
+				CONCAT('%',#{companyForGrowth.contribute},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取可修改用户积分列表(数量) -->
+	<select id="getUserListForGrowthCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_user AS a
+		LEFT
+		JOIN u_user_info AS b ON a.id =
+		b.user_id
+		LEFT JOIN u_user_growth AS c
+		ON a.id = c.user_id
+		where 1=1
+		<choose>
+			<when test="userGrowth.id!=null">
+				and a.id=#{userGrowth.id}
+			</when>
+			<when test="userGrowth.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{userGrowth.nickname},'%')
+			</when>
+			<when test="userGrowth.name!=null">
+				and b.name like
+				CONCAT('%',#{userGrowth.name},'%')
+			</when>
+
+			<when test="userGrowth.flat!=null">
+				and c.flat like
+				CONCAT('%',#{userGrowth.flat},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 获取可修改公司积分列表 (数量) -->
+	<select id="getCompanyListForGrowthCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_company
+		AS a
+		LEFT JOIN u_user_company AS b ON a.id =
+		b.company_id
+		LEFT JOIN
+		u_user as c on b.use_id = c.id
+		LEFT JOIN
+		u_company_growth as d ON a.id
+		= d.company_id
+		where 1=1 and b.relation = '1' 
+		<choose>
+			<when test="companyForGrowth.id!=null">
+				and a.id=#{companyForGrowth.id}
+			</when>
+			<when test="companyForGrowth.nickname!=null">
+				and c.nickname=#{companyForGrowth.nickname}
+			</when>
+			<when test="companyForGrowth.company_name!=null">
+				and a.company_name like
+				CONCAT('%',#{companyForGrowth.company_name},'%')
+			</when>
+			<when test="companyForGrowth.flat!=null">
+				and d.flat like
+				CONCAT('%',#{companyForGrowth.flat},'%')
+			</when>
+			<when test="companyForGrowth.contribute!=null">
+				and d.contribute like
+				CONCAT('%',#{companyForGrowth.contribute},'%')
+			</when>
+		</choose>
+	</select>
+</mapper>

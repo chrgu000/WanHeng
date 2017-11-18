@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.walletInfo.dao">
+	<sql id="columnsAs">
+		t1.id, t1.remaining_sum, t1.currency_type, t1.user_id
+	</sql>
+
+	<select id="selectWalletInfoPage" resultType="com.cgwas.walletInfo.entity.WalletInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_wallet_info t1
+		join
+		(SELECT
+		id
+		from
+		u_wallet_info
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectWalletInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_wallet_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

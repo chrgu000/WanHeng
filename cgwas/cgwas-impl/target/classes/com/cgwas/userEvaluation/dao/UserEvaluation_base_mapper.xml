@@ -1,0 +1,418 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userEvaluation.dao">
+
+	<sql id="columns">
+		id, content, reply, evaluate_type, degree_id, comment_id,
+		user_id, create_time,
+		reply_time,status,production_speed,production_quality,
+		tag,task_id,task_type
+
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{reply}, #{evaluate_type},
+		#{degree_id}, #{comment_id}, #{user_id}, #{create_time},
+		#{reply_time},#{status},#{production_speed},#{production_quality},
+		#{tag},#{task_id},#{task_type}
+
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="reply != null and reply != ''">
+			and reply = #{reply}
+		</if>
+		<if test="evaluate_type != null and evaluate_type != ''">
+			and evaluate_type = #{evaluate_type}
+		</if>
+		<if test="degree_id != null and degree_id != ''">
+			and degree_id = #{degree_id}
+		</if>
+		<if test="comment_id != null and comment_id != ''">
+			and comment_id = #{comment_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="create_time != null">
+			and create_time = #{create_time}
+		</if>
+		<if test="reply_time != null">
+			and reply_time = #{reply_time}
+		</if>
+	</sql>
+
+	<insert id="saveUserEvaluation" parameterType="com.cgwas.userEvaluation.entity.UserEvaluation"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_evaluation (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserEvaluationVo" parameterType="com.cgwas.userEvaluation.entity.UserEvaluationVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user_evaluation (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUserEvaluation">
+		delete from u_user_evaluation
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserEvaluationVo">
+		delete from u_user_evaluation
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUserEvaluation">
+		delete from u_user_evaluation
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserEvaluationVo">
+		delete from u_user_evaluation
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUserEvaluation" resultType="com.cgwas.userEvaluation.entity.UserEvaluationVo">
+		select
+		<include refid="columns" />
+		from u_user_evaluation
+		where id=#{id}
+	</select>
+
+	<select id="selectUserEvaluation" resultType="com.cgwas.userEvaluation.entity.UserEvaluationVo">
+		select
+		<include refid="columns" />
+		from u_user_evaluation
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUserEvaluation">
+		update u_user_evaluation
+		<set>
+			id=#{id},
+			content=#{content},
+			reply=#{reply},
+			evaluate_type=#{evaluate_type},
+			degree_id=#{degree_id},
+			comment_id=#{comment_id},
+			user_id=#{user_id},
+			create_time=#{create_time},
+			reply_time=#{reply_time}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserEvaluationVo">
+		update u_user_evaluation
+		<set>
+			id=#{id},
+			content=#{content},
+			reply=#{reply},
+			evaluate_type=#{evaluate_type},
+			degree_id=#{degree_id},
+			comment_id=#{comment_id},
+			user_id=#{user_id},
+			create_time=#{create_time},
+			reply_time=#{reply_time}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUserEvaluation">
+		update u_user_evaluation
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="reply != null and reply != ''">
+				reply=#{reply},
+			</if>
+			<if test="evaluate_type != null and evaluate_type != ''">
+				evaluate_type=#{evaluate_type},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="comment_id != null and comment_id != ''">
+				comment_id=#{comment_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="reply_time != null">
+				reply_time=#{reply_time}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserEvaluationVo">
+		update u_user_evaluation
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="status != null">
+				status=#{status}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUserEvaluation">
+		update u_user_evaluation
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="reply != null and reply != ''">
+				reply=#{reply},
+			</if>
+			<if test="evaluate_type != null and evaluate_type != ''">
+				evaluate_type=#{evaluate_type},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="comment_id != null and comment_id != ''">
+				comment_id=#{comment_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="reply_time != null">
+				reply_time=#{reply_time}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserEvaluationVo">
+		update u_user_evaluation
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="reply != null and reply != ''">
+				reply=#{reply},
+			</if>
+			<if test="evaluate_type != null and evaluate_type != ''">
+				evaluate_type=#{evaluate_type},
+			</if>
+			<if test="degree_id != null and degree_id != ''">
+				degree_id=#{degree_id},
+			</if>
+			<if test="comment_id != null and comment_id != ''">
+				comment_id=#{comment_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_time != null">
+				create_time=#{create_time},
+			</if>
+			<if test="reply_time != null">
+				reply_time=#{reply_time}
+			</if>
+
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 条件搜索评论(数量) -->
+	<select id="getUserEvaluationVListCount" resultType="java.lang.Long">
+		SELECT
+		Count(*)
+		FROM
+		u_user_evaluation
+		WHERE 1=1
+		<choose>
+			<when test="sEvaluation.id!=null">
+				and id=#{sEvaluation.id}
+			</when>
+			<when test="sEvaluation.content!=null">
+				and content like
+				CONCAT('%',#{sEvaluation.content},'%')
+			</when>
+
+			<when test="sEvaluation.reply!=null">
+				and reply = #{sEvaluation.reply}
+			</when>
+			<when test="sEvaluation.evaluate_type!=null">
+				and evaluate_type =#{sEvaluation.evaluate_type}
+			</when>
+			<when test="sEvaluation.degree_id!=null">
+				and degree_id=#{sEvaluation.degree_id}
+			</when>
+			<when test="sEvaluation.comment_id!=null">
+				and comment_id = #{sEvaluation.comment_id}
+			</when>
+			<when test="sEvaluation.user_id!=null">
+				and user_id = #{sEvaluation.user_id}
+			</when>
+			<when test="sEvaluation.status!=null">
+				and status = #{sEvaluation.status}
+			</when>
+			<when test="sEvaluation.production_speed != null">
+				and production_speed=#{sEvaluation.production_speed}
+			</when>
+			<when test="sEvaluation.production_quality!= null">
+				and
+				production_quality=#{sEvaluation.production_quality}
+			</when>
+			<when test="sEvaluation.tag != null">
+				and tag like
+				CONCAT('%',#{sEvaluation.tag},'%')
+			</when>
+			<when test="sEvaluation.task_id != null">
+				and task_id=#{sEvaluation.task_id}
+			</when>
+			<when test="sEvaluation.task_type != null">
+				and task_type=#{sEvaluation.task_type}
+			</when>
+		</choose>
+	</select>
+	<!-- 条件搜索评论 -->
+	<select id="getUserEvaluationVList" resultType="com.cgwas.userEvaluation.entity.UserEvaluationVo">
+		SELECT
+		a.id,a.content,a.evaluate_type,a.degree_id,a.comment_id,a.create_time,a.reply_time,b.company_name,
+		a.reply,
+		a.tag,
+		a.`status`,
+		a.user_id,
+		a.task_id,
+		a.task_type
+		,c.`name`
+		,d.pattern_number as name1
+		FROM
+		u_user_evaluation AS a
+		LEFT JOIN
+		u_company AS b ON
+		a.comment_id =
+		b.id
+		LEFT JOIN p_model_task as c on c.id
+		= a.task_id
+		LEFT
+		JOIN p_animation_light_task as d on d.id = a.task_id
+		where 1 = 1
+		<choose>
+			<when test="sEvaluation.id!=null">
+				and a.id=#{sEvaluation.id}
+			</when>
+			<when test="sEvaluation.content!=null">
+				and a.content like
+				CONCAT('%',#{sEvaluation.content},'%')
+			</when>
+			<when test="sEvaluation.reply!=null">
+				and a.reply = #{sEvaluation.reply}
+			</when>
+			<when test="sEvaluation.evaluate_type!=null">
+				and a.evaluate_type =#{sEvaluation.evaluate_type}
+			</when>
+			<when test="sEvaluation.degree_id!=null">
+				and a.degree_id=#{sEvaluation.degree_id}
+			</when>
+			<when test="sEvaluation.comment_id!=null">
+				and a.comment_id = #{sEvaluation.comment_id}
+			</when>
+			<when test="sEvaluation.user_id!=null">
+				and a.user_id = #{sEvaluation.user_id}
+			</when>
+			<when test="sEvaluation.status!=null">
+				and a.status = #{sEvaluation.status}
+			</when>
+			<when test="sEvaluation.production_speed != null">
+				and
+				a.production_speed=#{sEvaluation.production_speed}
+			</when>
+			<when test="sEvaluation.production_quality!= null">
+				and
+				a.production_quality=#{sEvaluation.production_quality}
+			</when>
+			<when test="sEvaluation.tag != null">
+				and a.tag like
+				CONCAT('%',#{sEvaluation.tag},'%')
+			</when>
+			<when test="sEvaluation.task_id != null">
+				and a.task_id=#{sEvaluation.task_id}
+			</when>
+			<when test="sEvaluation.task_type != null">
+				and a.task_type=#{sEvaluation.task_type}
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="flag !='any' and page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+		<if test="flag =='any'">
+			ORDER BY
+			create_time DESC
+			LIMIT 0, 5
+
+		</if>
+	</select>
+	<!-- 获取人员擅长 -->
+	<select id="getUserTag" resultType="com.cgwas.userEvaluation.entity.UserEvaluationVo">
+		select tag,COUNT(*) as
+		tagcount FROM u_user_evaluation WHERE user_id =
+		#{user_id} GROUP BY tag
+		ORDER BY tagcount DESC LIMIT 0,5
+	</select>
+	<!-- 获取好中差评论数 -->
+	<select id="getGCBEvaluationCount" resultType="java.lang.Long">
+		Select COUNT(*) as num from u_user_evaluation WHERE user_id =
+		#{user_id} and
+		evaluate_type = #{evaluate_type} AND `status` = 1
+	</select>
+
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.arbitrateUserInfo.dao">
+	<sql id="columnsAs">
+		t1.id, t1.arbitrate_content, t1.user_type, t1.is_pass, t1.arbitrate_id, t1.user_id, t1.company_id
+	</sql>
+
+	<select id="selectArbitrateUserInfoPage" resultType="com.cgwas.arbitrateUserInfo.entity.ArbitrateUserInfoVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_arbitrate_user_info t1
+		join
+		(SELECT
+		id
+		from
+		u_arbitrate_user_info
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectArbitrateUserInfoCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_arbitrate_user_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

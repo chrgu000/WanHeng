@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.bankInfo.dao">
+
+	<sql id="columns">
+		id, bank__name, bank_num, bank_ico, bank_type, sort,
+		preinstall_phone, user_id, create_date,status
+	</sql>
+	<sql id="vals">
+		#{id}, #{bank__name}, #{bank_num}, #{bank_ico},
+		#{bank_type}, #{sort}, #{preinstall_phone}, #{user_id},
+		#{create_date},#{status}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="bank__name != null and bank__name != ''">
+			and bank__name = #{bank__name}
+		</if>
+		<if test="bank_num != null and bank_num != ''">
+			and bank_num = #{bank_num}
+		</if>
+		<if test="bank_ico != null and bank_ico != ''">
+			and bank_ico = #{bank_ico}
+		</if>
+		<if test="bank_type != null and bank_type != ''">
+			and bank_type = #{bank_type}
+		</if>
+		<if test="sort != null and sort != ''">
+			and sort = #{sort}
+		</if>
+		<if test="preinstall_phone != null and preinstall_phone != ''">
+			and preinstall_phone = #{preinstall_phone}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="create_date != null">
+			and create_date = #{create_date}
+		</if>
+	</sql>
+
+	<insert id="saveBankInfo" parameterType="com.cgwas.bankInfo.entity.BankInfo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_bank_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveBankInfoVo" parameterType="com.cgwas.bankInfo.entity.BankInfoVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_bank_info (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteBankInfo">
+		delete from u_bank_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteBankInfoVo">
+		delete from u_bank_info
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleBankInfo">
+		delete from u_bank_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleBankInfoVo">
+		delete from u_bank_info
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadBankInfo" resultType="com.cgwas.bankInfo.entity.BankInfoVo">
+		select
+		<include refid="columns" />
+		from u_bank_info
+		where id=#{id}
+	</select>
+
+	<select id="selectBankInfo" resultType="com.cgwas.bankInfo.entity.BankInfoVo">
+		select
+		<include refid="columns" />
+		from u_bank_info
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateBankInfo">
+		update u_bank_info
+		<set>
+			id=#{id},
+			bank__name=#{bank__name},
+			bank_num=#{bank_num},
+			bank_ico=#{bank_ico},
+			bank_type=#{bank_type},
+			sort=#{sort},
+			preinstall_phone=#{preinstall_phone},
+			user_id=#{user_id},
+			create_date=#{create_date}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateBankInfoVo">
+		update u_bank_info
+		<set>
+			id=#{id},
+			bank__name=#{bank__name},
+			bank_num=#{bank_num},
+			bank_ico=#{bank_ico},
+			bank_type=#{bank_type},
+			sort=#{sort},
+			preinstall_phone=#{preinstall_phone},
+			user_id=#{user_id},
+			create_date=#{create_date}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullBankInfo">
+		update u_bank_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="bank__name != null and bank__name != ''">
+				bank__name=#{bank__name},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+				bank_num=#{bank_num},
+			</if>
+			<if test="bank_ico != null and bank_ico != ''">
+				bank_ico=#{bank_ico},
+			</if>
+			<if test="bank_type != null and bank_type != ''">
+				bank_type=#{bank_type},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="preinstall_phone != null and preinstall_phone != ''">
+				preinstall_phone=#{preinstall_phone},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullBankInfoVo">
+		update u_bank_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="bank__name != null and bank__name != ''">
+				bank__name=#{bank__name},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+				bank_num=#{bank_num},
+			</if>
+			<if test="bank_ico != null and bank_ico != ''">
+				bank_ico=#{bank_ico},
+			</if>
+			<if test="bank_type != null and bank_type != ''">
+				bank_type=#{bank_type},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="preinstall_phone != null and preinstall_phone != ''">
+				preinstall_phone=#{preinstall_phone},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleBankInfo">
+		update u_bank_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="bank__name != null and bank__name != ''">
+				bank__name=#{bank__name},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+				bank_num=#{bank_num},
+			</if>
+			<if test="bank_ico != null and bank_ico != ''">
+				bank_ico=#{bank_ico},
+			</if>
+			<if test="bank_type != null and bank_type != ''">
+				bank_type=#{bank_type},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="preinstall_phone != null and preinstall_phone != ''">
+				preinstall_phone=#{preinstall_phone},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleBankInfoVo">
+		update u_bank_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="bank__name != null and bank__name != ''">
+				bank__name=#{bank__name},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+				bank_num=#{bank_num},
+			</if>
+			<if test="bank_ico != null and bank_ico != ''">
+				bank_ico=#{bank_ico},
+			</if>
+			<if test="bank_type != null and bank_type != ''">
+				bank_type=#{bank_type},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="preinstall_phone != null and preinstall_phone != ''">
+				preinstall_phone=#{preinstall_phone},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 获取用户银行卡信息 -->
+	<select id="getUserBankList" resultType="com.cgwas.bankInfo.entity.BankInfo">
+		SELECT * from
+		u_bank_info WHERE user_id = #{user_id} and `status` = 1 ORDER BY sort
+	</select>
+	<!-- 更改银行卡状态 -->
+	<update id="updateStatusBankById">
+		update u_bank_info
+		<set>
+			<if test="status != null and status != ''">
+				status=#{status},
+			</if>
+		</set>
+		where id=#{id} AND user_id = #{user_id}
+	</update>
+	<!-- 更改银行卡信息 -->
+	<update id="updateBankById">
+		update u_bank_info
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="bank__name != null and bank__name != ''">
+				bank__name=#{bank__name},
+			</if>
+			<if test="bank_num != null and bank_num != ''">
+				bank_num=#{bank_num},
+			</if>
+			<if test="bank_ico != null and bank_ico != ''">
+				bank_ico=#{bank_ico},
+			</if>
+			<if test="bank_type != null and bank_type != ''">
+				bank_type=#{bank_type},
+			</if>
+			<if test="sort != null and sort != ''">
+				sort=#{sort},
+			</if>
+			<if test="preinstall_phone != null and preinstall_phone != ''">
+				preinstall_phone=#{preinstall_phone},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date}
+			</if>
+		</set>
+		where id=#{id} AND user_id = #{user_id}
+	</update>
+	<!--  -->
+	<select id="getBankInfoByUserId" resultType="com.cgwas.bankInfo.entity.BankInfo">
+		select * from u_bank_info where user_id = #{user_id} and id =
+		#{id} and `status` = 1
+	</select>
+
+
+</mapper>

@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.AdminDao">
+	<insert id="save">
+		insert into
+		dq_admin(username,password,role_id,join_time)values(#{username},#{password},#{role_id},#{join_time})
+	</insert>
+	<update id="update">
+		update dq_admin
+		<set>
+		<if test="username!=null and username!=''">
+				username=#{username},
+</if>
+			<if test="password!=null and password!=''">
+				password=#{password},
+</if>
+			<if test="role_id!=null and role_id!=''">
+				role_id=#{role_id},
+</if>
+
+			<if test="ip !=null and ip !=''">
+				ip=#{ip},
+			</if>
+			<if test="token !=null and token !=''">
+				token=#{token},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_admin where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="Admin">
+		select * from dq_admin
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="adminMaps">
+		select * from dq_admin
+		<where>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+		</where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Admin" id="adminMaps">
+		<association property="role" column="role_id" javaType="Role"
+			select="getRoleById" />
+	</resultMap>
+	<select id="getRoleById" resultType="Role">
+		select * from dq_role where id=#{role_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_admin
+		<where>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+		</where>
+	</select>
+	<select id="login" resultType="Admin">
+		select * from dq_admin where username=#{username}
+		<if test="password !=null and password !=''">
+			and password=#{password} 
+		</if>
+	</select>
+	<select id="getPermissions" resultType="string">
+		select m.url from
+		dq_admin a left join dq_role_module rm on
+		a.role_id=rm.role_id left
+		join dq_module m on rm.module_id=m.mid
+		where a.username=#{username}
+	</select>
+	<select id="getAdminByUsername" resultType="Admin">
+		select * from
+		dq_admin where username=#{username}
+	</select>
+</mapper>

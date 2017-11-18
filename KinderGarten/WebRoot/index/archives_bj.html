@@ -1,0 +1,434 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="css/bootstrap.min.css">
+		<link rel="stylesheet" href="css/style.css">
+		<link href="css/date.min.css" rel="stylesheet" type="text/css" />
+	<style>
+[v-cloak] {
+	display: none;
+}
+a{
+text-decoration:none
+}
+</style>
+	</head>
+	
+	<body>
+
+		<div class="back">
+			<a class="back_btn" href="baby.html">
+				<img src="img/left_icon.png" class="img-responsive"/>
+			</a>
+			<div class="back_center">
+				编辑资料
+			</div>
+			<input type="hidden" id="id" v-model="data"/>
+			<div class="back_right">
+				<a href="#" onclick="update({{data}})">保存</a>
+			</div>
+		</div>
+		<div class="archives" v-cloak>
+		<input type="hidden" id="imgStr"/>
+			<ul>
+<!--				<li>-->
+<!--					<a style="line-height: 45px;" class="photo">-->
+<!--						<div class="pull-left">-->
+<!--							宝宝头像-->
+<!--						</div>-->
+<!--						<div class="pull-right "  style="width: 50px;height: 50px; border-radius: 12%; overflow:hidden;margin-right:4%;">-->
+<!--							<img :src="'..'+data.header_pic_path" style="width:100%" class="img-responsive" id="img" onclick="path.click()">-->
+<!--						</div>-->
+<!--					<div style="">-->
+<!--							<input type="text" size="20" name="upfile" id="upfile"-->
+<!--								style="display: none">-->
+<!--							<input type="file" id="path" name="file" style="display: none"-->
+<!--								onchange="return ajaxFileUpload();">-->
+<!--							<input name="diimgs" id="pics" type="hidden" />-->
+<!--						</div>-->
+<!--					 </a>-->
+<!--				</li>-->
+<li>
+            <a style="line-height: 45px;" class="photo">
+                <div class="pull-left" >宝宝头像</div>
+                <div class="pull-right ">
+                <div id="view" :style="{background:'url(..'+data.header_pic_path+') no-repeat center' }">
+        </div>
+                </div>
+            </a>
+        </li>
+				<li>
+					<a>
+						<div class="pull-left">
+							宝宝姓名
+						</div>
+						<div class="pull-right">
+							<input type="text" id="username" v-model="data.username"
+								placeholder="宝宝姓名">
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							宝宝小名
+						</div>
+						<div class="pull-right">
+							<input type="text" id="small_name" v-model="data.small_name"
+								placeholder="宝宝小名">
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							性别
+						</div>
+						<div class="pull-right  sex" id="sex">
+							<span id="s">{{data.sex}}</span><i v-if="data.sex=='男'">女</i><i
+								v-else>男</i>
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							宝宝生日
+						</div>
+						<div class="pull-right">
+							<input id="beginTime1" class="kbtn" v-model="data.birth_date"
+								placeholder="宝宝生日" />
+						</div>
+						<div id="datePlugin"></div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							家庭住址
+						</div>
+						<div class="pull-right">
+							<input id="address" class="kbtn" v-model="data.address"
+								placeholder="家庭住址" />
+						</div>
+						 </a>
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							过敏史/病史
+						</div>
+						<div class="pull-right" >
+						<textarea rows="10" cols="32" id="content" style="border:1px solid #e4e4e4;background:#f4f4f4">{{data.content}}</textarea>
+						</div> </a>
+				</li>
+			</ul>
+			<ul class="active">
+				
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							宝贝介绍
+						</div>
+						<div class="pull-right" >
+						<textarea rows="10" cols="32" id="introduce" style="border:1px solid #e4e4e4;background:#f4f4f4">{{data.introduce}}</textarea>
+						</div> </a>
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							对宝贝的期望
+						</div>
+						<div class="pull-right" >
+						<textarea rows="10" cols="32" id="expectation" style="border:1px solid #e4e4e4;background:#f4f4f4">{{data.expectation}}</textarea>
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							父亲姓名
+						</div>
+						<div class="pull-right">
+							<input type="text" id="father_name" placeholder="父亲"
+								v-model="data.father_name">
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							父亲电话
+						</div>
+						<div class="pull-right">
+							<input type="text" id="father_tel" placeholder="父亲电话"
+								v-model="data.father_tel">
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							母亲姓名
+						</div>
+						<div class="pull-right">
+							<input type="text" id="mother_name" placeholder="母亲"
+								v-model="data.mother_name">
+						</div> </a>
+
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							母亲电话
+						</div>
+						<div class="pull-right">
+							<input type="text" id="mother_tel" placeholder="请输入母亲电话"
+								v-model="data.mother_tel">
+						</div> </a>
+				</li>
+			</ul>
+			<ul>
+				<li>
+					<a>
+						<div class="pull-left">
+							紧急联系人姓名
+						</div>
+						<div class="pull-right">
+							<input type="text" id="emergency_contact_name"
+								v-model="data.emergency_contact_name" placeholder="紧急联系人">
+						</div> </a>
+				</li>
+				<li>
+					<a>
+						<div class="pull-left">
+							紧急联系人电话
+						</div>
+						<div class="pull-right">
+							<input type="text" id="emergency_contact_tel"
+								v-model="data.emergency_contact_tel" placeholder="请输入紧急联系人电话">
+						</div> </a>
+				</li>
+			</ul>
+		</div>
+		<div class="archives_modals">
+        <div id="clipArea"></div>
+        <input type="file" id="file" style="display:none" onchange="upfile.value=this.value">
+        <input type="text" size="20" name="upfile" id="upfile" style="display: none">
+        <input type="button" value="打开文件" onclick="file.click()" class="file">
+        <button id="clipBtn" class="close_btn">截取</button>
+</div>
+		
+		<script src="js/jquery.min.js">
+</script>
+		<script src="js/vue.min.js">
+</script>
+		<script type="text/javascript" src="js/date1.js">
+</script>
+		<script type="text/javascript" src="js/iscroll.js">
+</script>
+		<script src="js/style.js">
+</script>
+	<script type="text/javascript" src="../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../static/LD.sot/pop.ups/init.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+		<script src="js/ajaxfileupload.js">
+</script>
+<script type="text/javascript" src="js/baby_cookie.js">
+</script>
+		<script type="text/javascript">
+		function ajaxFileUpload() {
+			$.pop.load(true, "上传中...");
+			$.ajaxFileUpload( {
+				url : '../UploadFile.do',// servlet请求路径 
+				type : "post",
+				secureuri : false,
+				fileElementId : 'path',// 上传控件的id  
+				dataType : 'text',
+				success : function(data, status) {
+					var id=$("#id").val();
+					$.pop.load(false, null);
+					if (data == "error") {
+						$.pop.tips("文件非图片格式");
+					} else {
+						$("#img").attr("src", ".." + data);
+					$.ajax({
+						url:"../baby/updBabyById.do",
+						type:"post",
+						data:{id:id,header_pic_path:data},
+						dataType:"json",
+						success:function(data){
+							 $.pop.tips("头像上传成功!");
+						},error:function(){}
+					});
+			}
+},
+error : function(data, status, e) {
+	return false;
+}
+	});
+}
+$(function() {
+	$('#beginTime1').date( {
+	})
+});
+function update(id) {
+	var username = $("#username").val();
+	var small_name=$("#small_name").val();
+	var address=$("#address").val();
+	var content=$("#content").val();
+	var sex = $("#sex").text().trim();
+	if ($("#s").css("display") == "block") {
+		sex = sex.substring(0, 1);
+	} else {
+		sex = sex.substring(1, 2);
+	}
+	var birth_date=$("#beginTime1").val();
+	var father_name=$("#father_name").val();
+	var father_tel=$("#father_tel").val();
+	var mother_name=$("#mother_name").val();
+	var mother_tel=$("#mother_tel").val();
+	var emergency_contact_name=$("#emergency_contact_name").val();
+	var emergency_contact_tel=$("#emergency_contact_tel").val();
+	var introduce=$("#introduce").val();
+	var expectation=$("#expectation").val();
+	var imgStr=$("#imgStr").val();
+	var reg = /^1[3|4|5|7|8]\d{9}$/;
+		if (father_tel.trim()!=""&&!reg.test(father_tel)) {
+		$.pop.tips("父亲手机号格式不对,请重新输入!");
+		return;
+	     }
+		if (mother_tel.trim()!=""&&!reg.test(mother_tel)) {
+		$.pop.tips("母亲手机号格式不对,请重新输入!");
+		return;
+	     }
+		if (emergency_contact_tel.trim()!=""&&!reg.test(emergency_contact_tel)) {
+		$.pop.tips("紧急联系人手机号格式不对,请重新输入!");
+		return;
+	     }
+		if(emergency_contact_tel.trim()!=""&&emergency_contact_tel==father_tel){
+			$.pop.tips("紧急联系人手机号不能为父亲手机号!");
+			return;
+		}
+		if(emergency_contact_tel.trim()!=""&&emergency_contact_tel==mother_tel){
+			$.pop.tips("紧急联系人手机号不能为母亲手机号!");
+			return;
+		}
+	$.ajax( {
+		url : "../baby/updBabyById.do",
+		type : "post",
+		dataType : "json",
+		data : {
+			id : id,
+			sex:sex,
+			username : username,
+			small_name:small_name,
+			address:address,
+			content:content,
+			birth_date :birth_date,
+			father_name : father_name,
+			father_tel : father_tel,
+			mother_name:mother_name,
+			mother_tel:mother_tel,
+			emergency_contact_name:emergency_contact_name,
+			emergency_contact_tel:emergency_contact_tel,
+			introduce:introduce,
+			expectation:expectation,
+			imgStr:imgStr
+		},
+		success : function(data) {
+			if (data.hasError) {
+				$.pop.tips(data.errInfo);
+			} else {
+				$.pop.tips(data.errInfo);
+				setTimeout(function() {
+					 location.href="archives.html";
+				}, 500);
+			}
+		},
+		error : function() {
+		}
+	});
+}
+$(function() {
+	$.ajax( {
+		url : "../baby/getBabyById.do",
+		type : "post",
+		data : {},
+		dataType : "json",
+		success : function(data) {
+			new Vue( {
+				el : '.archives',
+				data : {
+					data : data
+				}
+			});
+			new Vue( {
+				el : '.back',
+				data : {
+					data : data.id
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+$("#sex").click(function() {
+$(this).find("span").toggle()
+})
+ 
+</script>
+<script>
+    $(document).ready(function(){
+        $('.photo').click(function () {
+            $(".archives_modals").fadeIn();
+        });
+        $('.close_btn').click(function () {
+            $(".archives_modals").fadeOut();
+        });
+    });
+</script>
+
+<script>
+    $(document).ready(function(){
+        var  windows=$(window).height();
+        var  banner=$(".modals_body").height();
+        var h=windows-banner;
+        var z=h/3;
+        $(".modals_body").css("margin-top",z);
+    });
+</script>
+<script src="js/iscroll-zoom.js"></script>
+<script src="js/hammer.js"></script>
+<script src="js/lrz.all.bundle.js"></script>
+<script src="js/jquery.photoClip.js"></script>
+<script>
+    //document.addEventListener('touchmove', function (e) { e.preventDefault(); }, false);
+    var clipArea = new bjj.PhotoClip("#clipArea", {
+        size: [260, 260],
+        outputSize: [640, 640],
+        file: "#file",
+        view: "#view",
+        ok: "#clipBtn",
+        loadStart: function() {
+            console.log("照片读取中");
+        },
+        loadComplete: function() {
+            console.log("照片读取完成");
+        },
+        clipFinish: function(dataURL) {
+          $("#imgStr").val(dataURL);
+        }
+    });
+    //clipArea.destroy();
+</script>
+	</body>
+</html>

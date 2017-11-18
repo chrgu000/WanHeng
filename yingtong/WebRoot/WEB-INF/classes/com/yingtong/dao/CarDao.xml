@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.CarDao">
+	<select id="findAllCarByPageAndTitleAddrId" resultMap="carMap">
+		select *
+		from yt_car
+		<where>
+			<if test="titleAddr_id!=null&amp;&amp;!titleAddr_id.equals('')">
+				and titleAddr_id=#{titleAddr_id}
+			</if>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="brand_id!=null&amp;&amp;!brand_id.equals('')">
+				and brand_id=#{brand_id}
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				and price_id=#{price_id}
+			</if>
+			<if test="state!=null&amp;&amp;!state.equals('')">
+				and state=#{state}
+			</if>
+		</where>
+		limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Car" id="carMap">
+		<association property="vehicle" column="vehicle_id"
+			javaType="Vehicle" select="findVehicleById"></association>
+		<association property="brand" column="brand_id" javaType="Brand"
+			select="findBrandById"></association>
+		<association property="titleAddr" column="titleAddr_id"
+			javaType="TitleAddr" select="findTitleAddrById">
+		</association>
+
+	</resultMap>
+	<select id="findVehicleById" resultType="Vehicle">
+		select * from yt_vehicle
+		where id=#{vehicle_id}
+	</select>
+	<select id="findBrandById" resultType="Brand">
+		select * from yt_brand
+		where
+		id=#{brand_id}
+	</select>
+	<select id="findTitleAddrById" resultType="TitleAddr">
+		select * from
+		yt_titleAddr where id=#{titleAddr_id}
+	</select>
+	<select id="findRowsByTitleAddrId" resultType="int">
+		select count(*)
+		from yt_car
+		<where>
+			<if test="titleAddr_id!=null&amp;&amp;!titleAddr_id.equals('')">
+				and titleAddr_id=#{titleAddr_id}
+			</if>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and name like "%"#{name}"%"
+			</if>
+			<if test="brand_id!=null&amp;&amp;!brand_id.equals('')">
+				and brand_id=#{brand_id}
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				and price_id=#{price_id}
+			</if>
+			<if test="state!=null&amp;&amp;!state.equals('')">
+				and state=#{state}
+			</if>
+		</where>
+	</select>
+	<select id="findIndexCarByState" resultType="Car">
+		select * from yt_car
+		where state=#{state}
+	</select>
+	<select id="findCarById" resultType="Car">
+		select * from yt_car where
+		id=#{id}
+	</select>
+	<select id="findCarsBySelectCar" resultType="Car">
+		select * from yt_car
+		<where>
+			<!-- <if test="buyAddr!=null&amp;&amp;!buyAddr.equals('')"> -->
+			<!-- and buyAddr like "%"#{buyAddr}"%" -->
+			<!-- </if> -->
+			<!-- <if test="sendAddr!=null&amp;&amp;!sendAddr.equals('')"> -->
+			<!-- and sendAddr like "%"#{sendAddr}"%" -->
+			<!-- </if> -->
+			<if test="days!=null&amp;&amp;!days.equals('')">
+				and days>=#{days}
+			</if>
+			<if test="vehicle_id!=null&amp;&amp;!vehicle_id.equals('')">
+				and vehicle_id=#{vehicle_id}
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				and price_id=#{price_id}
+			</if>
+			<if test="brand_id!=null&amp;&amp;!brand_id.equals('')">
+				and brand_id=#{brand_id}
+			</if>
+		</where>
+		order by rent_status
+	</select>
+	<insert id="addCar">
+		insert into yt_car
+		(name,vehicle_id,price_id,brand_id,path,place,autoNum,seatNum,
+		original_price,favourable_price
+		,buyAddr,sendAddr,state,days,titleAddr_id,num,rent_status)
+		values
+		(#{name},#{vehicle_id},#{price_id},#{brand_id},#{path},#{place},
+		#{autoNum},#{seatNum},
+		#{original_price},#{favourable_price},#{buyAddr},#{sendAddr},#{state},#{days},#{titleAddr_id},#{num},#{rent_status})
+	</insert>
+	<update id="updateCar">
+		update yt_car
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="vehicle_id!=null&amp;&amp;!vehicle_id.equals('')">
+				vehicle_id=#{vehicle_id},
+			</if>
+			<if test="price_id!=null&amp;&amp;!price_id.equals('')">
+				price_id=#{price_id},
+			</if>
+			<if test="brand_id!=null&amp;&amp;!brand_id.equals('')">
+				brand_id=#{brand_id},
+			</if>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="place!=null&amp;&amp;!place.equals('')">
+				place=#{place},
+			</if>
+			<if test="autoNum!=null&amp;&amp;!autoNum.equals('')">
+				autoNum=#{autoNum},
+			</if>
+			<if test="seatNum!=null&amp;&amp;!seatNum.equals('')">
+				seatNum=#{seatNum},
+			</if>
+			<if test="favourable_price!=null&amp;&amp;!favourable_price.equals('')">
+				favourable_price=#{favourable_price},
+			</if>
+			<if test="original_price!=null&amp;&amp;!original_price.equals('')">
+				original_price= #{original_price},
+			</if>
+			<if test="buyAddr!=null&amp;&amp;!buyAddr.equals('')">
+				buyAddr=#{buyAddr},
+			</if>
+			<if test="sendAddr!=null&amp;&amp;!sendAddr.equals('')">
+				sendAddr=#{sendAddr},
+			</if>
+			<if test="state!=null&amp;&amp;!state.equals('')">
+				state=#{state},
+			</if>
+			<if test="rent_status!=null&amp;&amp;!rent_status.equals('')">
+				rent_status=#{rent_status},
+			</if>
+			<if test="days!=null&amp;&amp;!days.equals('')">
+				days=#{days},
+			</if>
+			<if test="num!=null&amp;&amp;!num.equals('')">
+				num=#{num},
+			</if>
+			<if test="titleAddr_id!=null&amp;&amp;!titleAddr_id.equals('')">
+				titleAddr_id=#{titleAddr_id},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateCarRentStatus">
+		update yt_car set rent_status=#{rent_status} where id=#{id}
+	</update>
+	<delete id="deleteCarById">
+		delete from yt_car where id=#{id}
+	</delete>
+</mapper>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.userEvaluation.dao">
+	<sql id="columnsAs">
+		t1.id, t1.content, t1.reply, t1.evaluate_type, t1.degree_id, t1.comment_id, t1.user_id, t1.create_time, t1.reply_time
+	</sql>
+
+	<select id="selectUserEvaluationPage" resultType="com.cgwas.userEvaluation.entity.UserEvaluationVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		u_user_evaluation t1
+		join
+		(SELECT
+		id
+		from
+		u_user_evaluation
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectUserEvaluationCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from u_user_evaluation
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

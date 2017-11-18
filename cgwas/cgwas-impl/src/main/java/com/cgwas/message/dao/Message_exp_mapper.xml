@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.message.dao">
+	<resultMap type="com.cgwas.message.entity.MessageVo" id="messageVoMap">
+		<id property="id" column="id" />
+		<collection property="messageDetailList" column="id" javaType="arrayList"
+			ofType="com.cgwas.messageDetail.entity.MessageDetailVo" select="selectMessageDetails">
+		</collection>
+		
+	</resultMap>
+	<select id="selectMessageDetails" resultType="Map">
+		SELECT s.id,s.read_content,s.send_id,s.send_time
+		FROM s_message_detail s
+		WHERE s.message_id=#{id} AND s.is_delete='N' ORDER BY s.id  LIMIT 1,999
+	</select>
+	
+	<select id="selectMessagePage" resultMap="messageVoMap">
+		SELECT max(smd.id) ids,sm.id,sm.title,sm.content,sm.send_time,
+		max(smd.user_id) user_id,max(smd.send_id) sendId, sm.manipulate_status,
+		IF(max(smd.user_id)=#{user_id},'S','R') messageFlag,
+		IF((SELECT count(id) FROM s_message_detail WHERE read_state='N' AND send_id=#{user_id} AND message_id=sm.id)=0,'Y','N') readState,
+		max(c.`name`) sender_name,
+		max(d.`name`) user_name
+		<if test=" message_type != null and message_type == '4'.toString() ">
+		,max(c.head_pic_path) senderUrl,max(d.head_pic_path) userUrl
+		</if>
+		FROM s_message sm 
+		LEFT JOIN s_message_detail smd ON smd.message_id=sm.id
+		LEFT JOIN u_user_info AS c ON c.user_id = smd.send_id
+		LEFT JOIN u_user_info AS d ON d.user_id = smd.user_id
+		where (
+		smd.user_id=#{user_id}
+		<if test=" message_type != null and message_type != '4'.toString() ">
+			OR smd.send_id=#{user_id}
+		</if>
+		 ) 
+		AND sm.message_type=#{message_type}
+		GROUP BY sm.id
+		LIMIT #{firstrownum}, #{limit}
+	</select>
+	<!-- 
+	SELECT t.id,t.title,IF(t.send_id=#{user_id},'S','R') messageFlag,
+	IF(t.send_id=#{user_id},(SELECT uui.`name` FROM u_user_info uui WHERE uui.user_id=t.receive_id),
+	(SELECT uui.`name` FROM u_user_info uui WHERE uui.user_id=t.send_id)) userName,
+	IF((SELECT count(id) FROM s_message_detail WHERE read_state='N' AND t.send_id=17 AND message_id=t.id)=0,'Y','N') readState,
+	t.send_time FROM 
+	(SELECT max(smd.id) ids,sm.id,sm.message_type,sm.content,sm.title,sm.send_time,max(smd.user_id) receive_id,max(smd.send_id) send_id FROM s_message sm 
+	LEFT JOIN s_message_detail smd ON smd.message_id=sm.id
+	GROUP BY sm.id) t
+	LEFT JOIN u_user_info uui ON (uui.user_id=t.receive_id OR uui.user_id=t.send_id)
+	WHERE uui.user_id=#{user_id} AND t.message_type=#{message_type}
+	ORDER BY t.id
+	 -->
+	<select id="selectMessageCount" resultType="java.lang.Long">
+		select count(t.id) FROM (SELECT t.id,t.message_type,t.receive_id,t.send_id FROM (
+		SELECT max(smd.id) ids,sm.id,sm.message_type,max(smd.user_id) receive_id,max(smd.send_id) send_id FROM s_message sm 
+		LEFT JOIN s_message_detail smd ON smd.message_id=sm.id
+		GROUP BY sm.id) t
+		LEFT JOIN u_user_info uui ON (uui.user_id=t.receive_id OR uui.user_id=t.send_id)
+		WHERE uui.user_id=#{user_id} AND t.message_type=#{message_type}
+		ORDER BY t.id) t
+	</select>
+
+</mapper>

@@ -1,0 +1,289 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>搜索表单</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link href="../../assets/code/demo.css" rel="stylesheet">
+		<link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/dpl.css"
+			rel="stylesheet">
+		<link href="http://g.alicdn.com/bui/bui/1.1.21/css/bs3/bui.css"
+			rel="stylesheet">
+		<link href="../static/assets3/css/bs3/dpl-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets3/css/bs3/bui-min.css" rel="stylesheet"
+			type="text/css" />
+		<link href="../static/assets/css/page-min.css" rel="stylesheet"
+			type="text/css" />
+		<script charset="utf-8" src="../static/kindeditor/kindeditor.js">
+</script>
+		<script charset="utf-8" src="../static/kindeditor/lang/zh_CN.js">
+</script>
+		<script charset="utf-8"
+			src="../static/kindeditor/plugins/code/prettify.js">
+</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="row">
+				<form id="searchForm" class="form-horizontal span24">
+					<div class="row">
+						<div class="control-group span8">
+							<label class="control-label">
+								商品名称
+							</label>
+							<div class="controls">
+								<input type="text" class="control-text" name="name">
+								<input type="text" style="display: none">
+							</div>
+						</div>
+						<div class="control-group span8">
+							<label class="control-label">
+								<s>*</s>是否上架
+							</label>
+							<div class="controls" style="padding-top: 5px">
+								<div style="float: left">
+									<input name="isOnline" type="radio"
+										data-rules="{required:true}" value="0">
+									未上架
+								</div>
+								<div style="float: left">
+									<input name="isOnline" type="radio"
+										data-rules="{required:true}" value="1">
+									已上架
+								</div>
+							</div>
+						</div>
+						<div class="span3 offset"
+							style="float: right; margin-right: 10px;">
+							<button type="button" id="btnSearch"
+								class="button button-primary">
+								搜索
+							</button>
+						</div>
+					</div>
+				</form>
+			</div>
+			<div class="search-grid-container">
+				<div id="grid"></div>
+			</div>
+		</div>
+	 
+		<script type="text/javascript"
+			src="../static/common/jquery.min-2.1.3.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/bui.js">
+</script>
+		<script type="text/javascript" src="../static/assets/js/config.js">
+</script>
+		<script type="text/javascript" src="../static/vue/vue.min.js">
+</script>
+		<script type="text/javascript" language="javascript"
+			src="../static/common/getQueryString.js">
+</script>
+		<script type="text/javascript">
+var store;
+BUI
+		.use(
+				[ 'common/search', 'common/page' ],
+				function(Search, Grid, Data, Form, Tooltip) {
+					var Grid = BUI.Grid;
+					var Grid = BUI.Grid;
+					var enumObj1 = {
+						"0" : "未上架",
+						"1" : "已上架"
+					};
+					var columns = [
+							{
+								title : '商品名称',
+								dataIndex : 'name',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '商品图片',
+								dataIndex : '',
+								elCls : 'center',
+								width : 80,
+								renderer : function(value, obj) {
+									var delStr = "<img src='../"
+											+ obj.imgUrl
+											+ "' style='width:100px;height:100px'>";
+									return delStr;
+								}
+							},
+							{
+								title : '商品销量',
+								dataIndex : 'nums',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '商品添加时间',
+								dataIndex : 'join_time',
+								elCls : 'center',
+								width : 100
+							},
+							{
+								title : '是否上架',
+								dataIndex : 'isOnline',
+								width : 50,
+								elCls : 'center',
+								renderer : BUI.Grid.Format
+										.enumRenderer(enumObj1)
+							},
+							{
+								title : '兑换所需积分',
+								dataIndex : 'integral',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '商品编码',
+								dataIndex : 'code',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '商品描述',
+								dataIndex : 'details',
+								elCls : 'center',
+								width : 80
+							},
+							{
+								title : '操作',
+								dataIndex : '',
+								width : 100,
+								renderer : function(value, obj) {
+									var delStr = '<span class="grid-command btn-del" title="删除店铺信息">删除</span>', 
+									editStr2 = Search
+											.createLink( { //链接使用 此方式
+												id : 'edit' + obj.id,
+												title : '查看图片',
+												text : '查看图片',
+												href : '../admin/picture.html?product_id=' + obj.id,
+											});
+									return delStr + editStr2;
+								}
+							} ];
+					store = Search.createStore('../integral_product/loadProduct.do', {
+						proxy : {
+							save : {},
+							method : 'POST'
+						},
+						params : {
+						},
+						pageIndex : 0,
+						pageSize : 10,
+						autoSync : true
+					//保存数据后，自动更新
+							});
+					var gridCfg = Search
+							.createGridCfg(
+									columns,
+									{
+										forceFit : true,
+										tbar : {
+											items : [
+													{
+														text : '<i class="icon-plus"></i>新建',
+														btnCls : 'button button-small page-action btnAdd',
+														handler : addFunction
+													},
+													{
+														text : '<i class="icon-edit"></i>编辑',
+														btnCls : 'button button-small page-action btnUpd',
+														handler : updFunction
+													},
+													{
+														text : '<i class="icon-remove"></i>删除',
+														btnCls : 'button button-small',
+														handler : delFunction
+													} ]
+										},
+										loadMask : true, //加载数据时显示屏蔽层
+										plugins : [ BUI.Grid.Plugins.CheckSelection ]
+									// 插件形式引入多选表格
+									});
+					var search = new Search( {
+						store : store,
+						gridCfg : gridCfg
+					});
+					var grid = search.get('grid');
+					function addFunction() {
+						$(".btnAdd").attr("title", "新增");
+						$(".btnAdd").attr("data-href",
+								"../admin/integral_product_add.html");
+					}
+					function updFunction() {
+						var selections = grid.getSelection();
+						var ids = [];
+						BUI.each(selections, function(selections) {
+							ids.push(selections.id);
+						});
+						if (ids.length > 1) {
+							BUI.Message.Alert('只能选择一条记录', 'warning');
+						} else if (ids.length <= 0) {
+							BUI.Message.Alert('请选择要编辑的记录', 'warning');
+						} else {
+							$(".btnUpd").addClass("page-action grid-command");
+							$(".btnUpd").attr("title", "编辑");
+							$(".btnUpd").attr(
+									"data-href",
+									"../admin/integral_product_update.html?id="
+											+ selections[0].id);
+						}
+					}
+					function delFunction() {
+						var selections = grid.getSelection();
+						delItems(selections);
+					}
+					function delItems(items) {
+						var ids = [];
+						BUI.each(items, function(item) {
+							ids.push(item.id);
+						});
+						if (ids.length) {
+							BUI.Message.Confirm('确定要删除选中记录吗?', function() {
+								$.ajax( {
+									url : '../integral_product/deleteProduct.do',
+									dataType : "json",
+									data : {
+										"ids" : ids.toString()
+									},
+									type : "post",
+									async : true,
+									success : function(data) {
+										if (data.hasError == false) {
+											store.load();
+										} else {
+											BUI.Message.Alert(data.errInfo,
+													'warning');
+										}
+									},
+									error : function(XMLHttpRequest,
+											textStatus, errorThrow) {
+										BUI.Message.Alert('系统繁忙,请稍候'
+												+ XMLHttpRequest.status + ","
+												+ XMLHttpRequest.readyState,
+												+"," + textStatus, 'warning')
+									}
+								});
+							}, 'questions');
+						} else {
+							BUI.Message.Alert('请选择记录', function() {
+							}, 'warning');
+						}
+					}
+					grid.on('cellclick', function(ev) {
+						var sender = $(ev.domTarget);
+						if (sender.hasClass('btn-del')) {
+							var record = ev.record;
+							delItems( [ record ]);
+						}
+					});
+				});
+   
+</script>
+		<body>
+</html>
+

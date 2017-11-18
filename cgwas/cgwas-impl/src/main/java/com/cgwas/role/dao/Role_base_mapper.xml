@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yubangqiong  --> 
+<mapper namespace="com.cgwas.role.dao">
+
+	<sql id="columns">
+		id, role_name, role_details,role_type
+	</sql>
+	<sql id="vals">
+		#{id}, #{role_name}, #{role_details}, #{role_type}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="role_name != null and role_name != ''">
+			and role_name = #{role_name}
+		</if>
+		<if test="role_details != null and role_details != ''">
+			and role_details = #{role_details}
+		</if>
+		<if test="role_type != null and role_type != ''">
+			and role_type = #{role_type}
+		</if>
+	</sql>
+
+	<insert id="saveRole" parameterType="com.cgwas.role.entity.Role" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_role (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveRoleVo" parameterType="com.cgwas.role.entity.RoleVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_role (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteRole">
+		delete from s_role
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteAllRole">
+		delete from s_role
+		where id in <foreach collection="ids" open="(" close=")"  item="id" separator=",">#{id}</foreach> 
+	</delete>
+	
+	<delete id="deleteRoleVo">
+		delete from s_role
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleRole">
+		delete from s_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleRoleVo">
+		delete from s_role
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadRole" resultType="com.cgwas.role.entity.RoleVo">
+		select 
+		<include refid="columns"/>
+		from s_role
+		where id=#{id} 
+	</select>
+	
+	<select id="selectRole" resultType="com.cgwas.role.entity.RoleVo">
+		select 
+		<include refid="columns"/>
+		from s_role
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	<select id="selectRoleByUserId" resultType="com.cgwas.role.entity.RoleVo">
+		select id, role_name, role_details,role_type
+		from s_role
+		where 1=1
+		<include refid="conds" />
+	</select>
+	
+	<select id="selectForUserId" resultType="com.cgwas.role.entity.RoleVo">
+		select sr.id,sr.role_name,sr.role_details,sr.role_type from s_role  sr
+		LEFT JOIN u_user_role uur ON sr.id= uur.role_id
+		WHERE  uur.user_id=#{user_id}
+		LIMIT 1
+	</select>
+
+	<update id="updateRole">
+		update s_role
+		<set>
+			id=#{id}, 
+			role_name=#{role_name}, 
+			role_details=#{role_details}, 
+			role_type=#{role_type}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateRoleVo">
+		update s_role
+		<set>
+			id=#{id}, 
+			role_name=#{role_name}, 
+			role_details=#{role_details}, 
+			role_type=#{role_type}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullRole">
+		update s_role
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}, 
+		</if>
+		<if test="role_details != null and role_details != ''">
+			role_details=#{role_details}
+		</if>
+		<if test="role_type != null and role_type != ''">
+			role_type=#{role_type}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullRoleVo">
+		update s_role
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}, 
+		</if>
+		<if test="role_details != null and role_details != ''">
+			role_details=#{role_details}
+		</if>
+		<if test="role_type != null and role_type != ''">
+			role_type=#{role_type}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleRole">
+		update s_role
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}, 
+			</if>
+			<if test="role_details != null and role_details != ''">
+			role_details=#{role_details}
+			</if>
+			<if test="role_type != null and role_type != ''">
+			role_type=#{role_type}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleRoleVo">
+		update s_role
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="role_name != null and role_name != ''">
+			role_name=#{role_name}, 
+			</if>
+			<if test="role_details != null and role_details != ''">
+			role_details=#{role_details}
+			</if>
+			<if test="role_type != null and role_type != ''">
+			role_type=#{role_type}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

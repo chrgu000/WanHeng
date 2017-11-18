@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yingtong.dao.TitleAddrDao">
+	 <select id="findAllTitleAddr" resultType="TitleAddr">
+	 select * from yt_titleAddr
+	 </select>
+	 <select id="findTitleAddrById" resultMap="TitleAddrMap">
+	 select * from yt_titleAddr where id=#{id}
+	 </select>
+	 <resultMap type="TitleAddr" id="TitleAddrMap">
+	 <id column="id" property="id"/>
+	 <collection property="addresses" column="id" javaType="java.util.ArrayList"  ofType="Address" select="findAddressesByTitleId"></collection>
+	 </resultMap>
+	 <select id="findAddressesByTitleId" resultType="Address">
+	 select * from yt_address where titleAddr_id=#{id}
+	 </select>
+</mapper>

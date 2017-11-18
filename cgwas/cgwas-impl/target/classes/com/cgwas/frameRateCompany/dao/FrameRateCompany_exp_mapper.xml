@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun-->
+<mapper namespace="com.cgwas.frameRateCompany.dao">
+	<sql id="columnsAs">
+		t1.id, t1.content, t1.title, t1.company_id
+	</sql>
+
+	<select id="selectFrameRateCompanyPage" resultType="com.cgwas.frameRateCompany.entity.FrameRateCompanyVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		p_frame_rate_company t1
+		join
+		(SELECT
+		id
+		from
+		p_frame_rate_company
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectFrameRateCompanyCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from p_frame_rate_company
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

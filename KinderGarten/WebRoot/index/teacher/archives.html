@@ -1,0 +1,159 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+		<meta http-equiv="x-ua-compatible" content="ie=7" />
+		<meta http-equiv="x-ua-compatible" content="ie=9" />
+		<meta name="format-detection" content="telephone=no" />
+		<title>蒙台梭利</title>
+		<link rel="stylesheet" href="../css/bootstrap.min.css">
+		<link rel="stylesheet" href="../css/style.css">
+		<link href="../css/date.min.css" rel="stylesheet" type="text/css" />
+		<style>
+[v-cloak] {
+	display: none;
+}
+
+a:hover {
+	color: #999
+}
+</style>
+	</head>
+	<body>
+
+		<div class="back">
+			<a class="back_btn" href="class_style.html">
+				<img src="../img/left_icon.png" class="img-responsive"/>
+			</a>
+			<div class="back_center">
+				个人资料
+			</div>
+			<div class="back_right">
+				<a href="archives_bj.html">编辑</a>
+			</div>
+		</div>
+		<div class="archives" v-cloak>
+			<ul>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							教师姓名
+						</div>
+						<div class="pull-right">
+							{{data.username}}
+						</div> </a>
+				</li>
+				<li>
+					
+						<a style="line-height: 45px;background:none" class="photo ">
+							<div class="pull-left">
+								教师头像
+							</div>
+							<div class="pull-right " v-if="data.header_pic_path" style="width: 50px;height: 50px; overflow:hidden;;margin-right:4%;border-radius:12%">
+								<img :src="'../..'+data.header_pic_path" style="width:100%" class="img-responsive">
+							</div></a>
+					
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							性别
+						</div>
+						<div class="pull-right">
+							{{data.sex}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							教师园区
+						</div>
+						<div class="pull-right">
+							{{data.garden.name}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							手机号
+						</div>
+						<div class="pull-right">
+							{{data.tel}}
+						</div> </a>
+				</li>
+				<li>
+					<a style="background:none">
+						<div class="pull-left">
+							我的简介
+						</div>
+						<div class="" style="clear:both;float:left;color:#999999">
+							{{data.introduce}}
+						</div> 
+						</a>
+				</li>
+			</ul>
+			<div class="pull-right tuichu" onclick="loginOut()" style="color: gray">退出登录</div>
+		</div>
+
+		<script src="../js/jquery.min.js">
+</script>
+		<script src="../js/vue.min.js">
+</script>
+		<script src="../js/data.js">
+</script>
+		<script type="text/javascript" src="../js/date.js">
+</script>
+		<script type="text/javascript" src="../js/iscroll.js">
+</script>
+		<script src="../js/style.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/core.js">
+</script>
+		<script type="text/javascript" src="../../static/LD.sot/jquery.sot.js">
+</script>
+		<script type="text/javascript"
+			src="../../static/LD.sot/pop.ups/init.js">
+</script>
+		<script src="../js/teacher_cookie.js">
+</script>
+		<script>
+function loginOut() {
+	$.ajax( {
+		url : "../../teacher/loginOut.do",
+		type : "post",
+		data : {},
+		dataType : "json",
+		success : function(data) {
+			if (data == 1) {
+				location.reload();
+				location.href = "login.html";
+			}
+		},
+		error : function() {
+		}
+	});
+}
+$(function() {
+	$.ajax( {
+		url : "../../teacher/getTeacher.do",
+		type : "post",
+		data : {},
+		dataType : "json",
+		success : function(data) {
+			new Vue( {
+				el : '.archives',
+				data : {
+					data : data
+				}
+			});
+		},
+		error : function() {
+		}
+	});
+});
+</script>
+	</body>
+</html>

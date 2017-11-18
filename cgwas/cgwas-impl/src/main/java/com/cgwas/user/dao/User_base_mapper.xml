@@ -1,0 +1,501 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.user.dao">
+	<select id="getUserInfoByUserId" resultType="com.cgwas.userInfo.entity.UserInfoVo">
+		select
+		u2.* from
+		u_user u1 left join u_user_info u2 on u1.id=u2.user_id where
+		u1.id=#{id}
+	</select>
+	<select id="getUserId" resultType="java.lang.Long">
+		select u1.id from u_user u1
+		left join u_user_info u2 on u1.id=u2.user_id where
+		u2.name=#{createName}
+	</select>
+	<select id="getPrincipal_id" resultType="java.lang.Long">
+		select u1.id from u_user
+		u1 left join u_user_info u2 on u1.id=u2.user_id where
+		u2.name=#{principalName}
+	</select>
+	<select id="getDirector_id" resultType="java.lang.Long">
+		select u1.id from u_user
+		u1 left join u_user_info u2 on u1.id=u2.user_id where
+		u2.name=#{directorName}
+	</select>
+	<select id="getScreenwriter_id" resultType="java.lang.Long">
+		select u1.id from
+		u_user u1 left join u_user_info u2 on u1.id=u2.user_id
+		where
+		u2.name=#{screenwriterName}
+	</select>
+	<sql id="columns">
+		id, uuid, username, nickname, tel, password, regist_time,
+		last_login_time, ip, login_times,is_delete
+	</sql>
+	<sql id="vals">
+		#{id}, #{uuid}, #{username}, #{nickname}, #{tel},
+		#{password}, #{regist_time}, #{last_login_time}, #{ip}, #{login_times}
+		,#{is_delete}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="uuid != null and uuid != ''">
+			and uuid = #{uuid}
+		</if>
+		<if test="username != null and username != ''">
+			and username = #{username}
+		</if>
+		<if test="nickname != null and nickname != ''">
+			and nickname = #{nickname}
+		</if>
+		<if test="tel != null and tel != ''">
+			and tel = #{tel}
+		</if>
+		<if test="password != null and password != ''">
+			and password = #{password}
+		</if>
+		<if test="regist_time != null">
+			and regist_time = #{regist_time}
+		</if>
+		<if test="last_login_time != null and last_login_time != ''">
+			and last_login_time = #{last_login_time}
+		</if>
+		<if test="ip != null and ip != ''">
+			and ip = #{ip}
+		</if>
+		<if test="login_times != null and login_times != ''">
+			and login_times = #{login_times}
+		</if>
+	</sql>
+	<insert id="saveUser" parameterType="com.cgwas.user.entity.User"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveUserVo" parameterType="com.cgwas.user.entity.UserVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_user (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteUser">
+		delete from u_user
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteUserVo">
+		delete from u_user
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleUser">
+		delete from u_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleUserVo">
+		delete from u_user
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadUser" resultType="com.cgwas.user.entity.UserVo">
+		select
+		<include refid="columns" />
+		from u_user
+		where id=#{id}
+	</select>
+
+	<select id="selectUser" resultType="com.cgwas.user.entity.UserVo">
+		select
+		<include refid="columns" />
+		from u_user
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateUser">
+		update u_user
+		<set>
+			id=#{id},
+			uuid=#{uuid},
+			username=#{username},
+			nickname=#{nickname},
+			tel=#{tel},
+			password=#{password},
+			regist_time=#{regist_time},
+			last_login_time=#{last_login_time},
+			ip=#{ip},
+			login_times=#{login_times}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateUserVo">
+		update u_user
+		<set>
+			id=#{id},
+			uuid=#{uuid},
+			username=#{username},
+			nickname=#{nickname},
+			tel=#{tel},
+			password=#{password},
+			regist_time=#{regist_time},
+			last_login_time=#{last_login_time},
+			ip=#{ip},
+			login_times=#{login_times}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullUser">
+		update u_user
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="uuid != null and uuid != ''">
+				uuid=#{uuid},
+			</if>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="nickname != null and nickname != ''">
+				nickname=#{nickname},
+			</if>
+			<if test="tel != null and tel != ''">
+				tel=#{tel},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="regist_time != null">
+				regist_time=#{regist_time},
+			</if>
+			<if test="last_login_time != null and last_login_time != ''">
+				last_login_time=#{last_login_time},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="login_times != null and login_times != ''">
+				login_times=#{login_times}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullUserVo">
+		update u_user
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="uuid != null and uuid != ''">
+				uuid=#{uuid},
+			</if>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="nickname != null and nickname != ''">
+				nickname=#{nickname},
+			</if>
+			<if test="tel != null and tel != ''">
+				tel=#{tel},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="regist_time != null">
+				regist_time=#{regist_time},
+			</if>
+			<if test="last_login_time != null and last_login_time != ''">
+				last_login_time=#{last_login_time},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="login_times != null and login_times != ''">
+				login_times=#{login_times}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleUser">
+		update u_user
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="uuid != null and uuid != ''">
+				uuid=#{uuid},
+			</if>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="nickname != null and nickname != ''">
+				nickname=#{nickname},
+			</if>
+			<if test="tel != null and tel != ''">
+				tel=#{tel},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="regist_time != null">
+				regist_time=#{regist_time},
+			</if>
+			<if test="last_login_time != null and last_login_time != ''">
+				last_login_time=#{last_login_time},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="login_times != null and login_times != ''">
+				login_times=#{login_times}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleUserVo">
+		update u_user
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="uuid != null and uuid != ''">
+				uuid=#{uuid},
+			</if>
+			<if test="username != null and username != ''">
+				username=#{username},
+			</if>
+			<if test="nickname != null and nickname != ''">
+				nickname=#{nickname},
+			</if>
+			<if test="tel != null and tel != ''">
+				tel=#{tel},
+			</if>
+			<if test="password != null and password != ''">
+				password=#{password},
+			</if>
+			<if test="regist_time != null">
+				regist_time=#{regist_time},
+			</if>
+			<if test="last_login_time != null and last_login_time != ''">
+				last_login_time=#{last_login_time},
+			</if>
+			<if test="ip != null and ip != ''">
+				ip=#{ip},
+			</if>
+			<if test="login_times != null and login_times != ''">
+				login_times=#{login_times}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	<!-- 根据电话查询匹配数 -->
+	<select id="getNumByTel" resultType="java.lang.Integer">
+		select
+		count(*)
+		from u_user
+		where tel = #{tel} or username = #{username}
+	</select>
+	<!-- 根据电话号或用户名得到用户登录信息 -->
+	<select id="getUserByAccount" resultType="com.cgwas.user.entity.User">
+		select
+		*
+		from u_user
+		where tel = #{account} or username = #{account} AND is_delete IN ('N',
+		'A')
+	</select>
+	<!-- 更新用户登录时间 -->
+	<update id="updateByLastLoginTime">
+		update u_user
+		<set>
+			last_login_time=#{last_login_time},login_times=login_times+1
+			<if test="ip != null and ip != ''">
+				,ip=#{ip}
+			</if>
+		</set>
+		where id = #{id}
+	</update>
+	<!-- 批量删除用户 -->
+	<update id="batchDeleteUser">
+		update u_user
+		<set>
+			is_delete = 'Y'
+		</set>
+		where id in
+		<foreach item="idItem" collection="list" open="(" separator=","
+			close=")">
+			#{idItem}
+		</foreach>
+	</update>
+	<!-- 根据ID得到 用户信息 -->
+	<select id="serachUserById" resultType="com.cgwas.user.entity.User">
+		select
+		*
+		from u_user
+		where
+		id=#{id}
+	</select>
+	<!-- 根据帐户去修改密码 -->
+	<update id="updateUserByAccount">
+		update u_user
+		<set>
+			password=#{password}
+		</set>
+		where tel = #{tel} or username = #{username}
+	</update>
+
+	<!-- 获取管理用户列表 -->
+	<select id="getAdminUserList" resultType="com.cgwas.user.entity.AdminUser">
+		SELECT
+		a.id,
+		a.nickname,
+		b.`name`,
+		b.sex,
+		b.birth,
+		a.tel,
+		d.company_name,
+		e.section_name,
+		g.position_name,
+		a.regist_time,
+		a.last_login_time,
+		f.`status`
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_info AS b ON a.id = b.user_id
+		LEFT JOIN u_employee AS c ON a.id = c.user_id
+		LEFT JOIN u_company AS d ON c.company_id = d.id
+		LEFT JOIN u_company_section AS e ON e.id = c.section_id
+		LEFT JOIN u_user_auth_info AS f ON a.id = f.user_id
+		LEFT JOIN u_company_position AS g ON g.id = c.position_id
+		WHERE
+		1 = 1
+		AND a.is_delete = 'N'
+		AND f.`status` = '已认证'
+		<choose>
+			<when test="adminUser.id!=null">
+				and a.id=#{adminUser.id}
+			</when>
+			<when test="adminUser.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{adminUser.nickname},'%')
+			</when>
+
+			<when test="adminUser.name!=null">
+				and b.name like
+				CONCAT('%',#{adminUser.name},'%')
+			</when>
+			<when test="adminUser.sex!=null">
+				and b.sex =#{adminUser.sex}
+			</when>
+			<when test="adminUser.tel!=null">
+				and a.tel like
+				CONCAT('%',#{adminUser.tel},'%')
+			</when>
+			<when test="adminUser.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{adminUser.company_name},'%')
+			</when>
+			<when test="adminUser.section_name!=null">
+				and e.section_name like
+				CONCAT('%',#{adminUser.section_name},'%')
+			</when>
+		</choose>
+		<if
+			test="page.sortType=='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} DESC
+		</if>
+		<if
+			test="page.sortType!='DESC' and page.sortColumn !=null and page.sortColumn !='' ">
+			ORDER BY ${page.sortColumn} ASC
+		</if>
+		<if test="page.limit != null and page.start !=null">
+			LIMIT #{page.start}, #{page.limit}
+		</if>
+	</select>
+	<!-- 获取管理用户列表(数量) -->
+	<select id="getAdminUserListCount" resultType="java.lang.Long">
+		SELECT
+		COUNT(*)
+		FROM
+		u_user AS a
+		LEFT JOIN u_user_info AS b ON a.id =
+		b.user_id
+		LEFT JOIN u_employee AS c ON a.id = c.user_id
+		LEFT JOIN
+		u_company AS d ON c.company_id = d.id
+		LEFT JOIN u_company_section AS e
+		ON e.id = c.section_id
+		LEFT JOIN u_user_auth_info AS f ON a.id =
+		f.user_id
+		LEFT JOIN u_company_position AS g ON g.id = c.position_id
+		WHERE
+		1 = 1
+		AND a.is_delete = 'N'
+		AND f.`status` = '已认证'
+		<choose>
+			<when test="adminUser.id!=null">
+				and a.id=#{adminUser.id}
+			</when>
+			<when test="adminUser.nickname!=null">
+				and a.nickname like
+				CONCAT('%',#{adminUser.nickname},'%')
+			</when>
+
+			<when test="adminUser.name!=null">
+				and b.name like
+				CONCAT('%',#{adminUser.name},'%')
+			</when>
+			<when test="adminUser.sex!=null">
+				and b.sex =#{adminUser.sex}
+			</when>
+			<when test="adminUser.tel!=null">
+				and a.tel like
+				CONCAT('%',#{adminUser.tel},'%')
+			</when>
+			<when test="adminUser.company_name!=null">
+				and d.company_name like
+				CONCAT('%',#{adminUser.company_name},'%')
+
+			</when>
+			<when test="adminUser.section_name!=null">
+				and e.section_name like
+				CONCAT('%',#{adminUser.section_name},'%')
+			</when>
+		</choose>
+	</select>
+	<!-- 根据uuid获取用户信息 -->
+	<select id="getUserByUUID" resultType="com.cgwas.user.entity.User">
+		select * from u_user WHERE
+		uuid = #{uuid} LIMIT 0,1
+	</select>
+</mapper>

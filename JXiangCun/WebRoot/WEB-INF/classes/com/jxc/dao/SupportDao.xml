@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.SupportDao">
+	<select id="findAllSupport" resultType="Support">
+		select * from jxc_support
+	</select>
+	<select id="findAllSupportByPage" resultMap="SupportMaps">
+		select * from jxc_support 	 limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Support" id="SupportMaps">
+	<association property="product" column="product_id" javaType="Product"  select="findProductById"></association>
+	</resultMap>
+	<select id="findProductById" resultType="Product">
+	select * from jxc_product where id=#{product_id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_support
+	</select>
+	<select id="findSupportById" resultType="Support">
+		select * from jxc_support
+		where id=#{id}
+	</select>
+	<insert id="addSupport">
+		insert into jxc_support(path,nickname,support_time,product_id)
+		values(#{path},#{nickname},#{support_time},#{product_id})
+	</insert>
+	<update id="updateSupport" parameterType="Support">
+		update jxc_support
+		<set>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="nickname!=null&amp;&amp;!nickname.equals('')">
+				nickname=#{nickname},
+			</if>
+				<if test="support_time!=null&amp;&amp;!support_time.equals('')">
+				support_time=#{support_time},
+			</if>
+				<if test="product_id!=null&amp;&amp;!product_id.equals('')">
+				product_id=#{product_id},
+			</if>
+		</set>
+		<where>
+			id=#{id}
+		</where>
+	</update>
+	<delete id="deleteSupportById">
+		delete from jxc_Support where id=#{id}
+	</delete>
+</mapper>

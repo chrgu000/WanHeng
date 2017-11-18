@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.cgwas.statement.dao">
+
+	<sql id="columns">
+		id, money_type, bus_type, money, balance_money, status, create_date, finish_date,user_id,bank_num
+	</sql>
+	<sql id="vals">
+		#{id}, #{money_type}, #{bus_type}, #{money}, #{balance_money}, #{status}, #{create_date}, #{finish_date},#{user_id},#{bank_num}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="money_type != null and money_type != ''">
+			and money_type = #{money_type}
+		</if>
+		<if test="bus_type != null and bus_type != ''">
+			and bus_type = #{bus_type}
+		</if>
+		<if test="money != null and money != ''">
+			and money = #{money}
+		</if>
+		<if test="balance_money != null and balance_money != ''">
+			and balance_money = #{balance_money}
+		</if>
+		<if test="status != null and status != ''">
+			and status = #{status}
+		</if>
+		<if test="create_date != null">
+			and create_date = #{create_date}
+		</if>
+		<if test="finish_date != null">
+			and finish_date = #{finish_date}
+		</if>
+	</sql>
+
+	<insert id="saveStatement" parameterType="com.cgwas.statement.entity.Statement" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_statement (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveStatementVo" parameterType="com.cgwas.statement.entity.StatementVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into s_statement (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteStatement">
+		delete from s_statement
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteStatementVo">
+		delete from s_statement
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleStatement">
+		delete from s_statement
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleStatementVo">
+		delete from s_statement
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadStatement" resultType="com.cgwas.statement.entity.StatementVo">
+		select 
+		<include refid="columns"/>
+		from s_statement
+		where id=#{id} 
+	</select>
+	
+	<select id="selectStatement" resultType="com.cgwas.statement.entity.StatementVo">
+		select 
+		<include refid="columns"/>
+		from s_statement
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateStatement">
+		update s_statement
+		<set>
+			id=#{id}, 
+			money_type=#{money_type}, 
+			bus_type=#{bus_type}, 
+			money=#{money}, 
+			balance_money=#{balance_money}, 
+			status=#{status}, 
+			create_date=#{create_date}, 
+			finish_date=#{finish_date}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateStatementVo">
+		update s_statement
+		<set>
+			id=#{id}, 
+			money_type=#{money_type}, 
+			bus_type=#{bus_type}, 
+			money=#{money}, 
+			balance_money=#{balance_money}, 
+			status=#{status}, 
+			create_date=#{create_date}, 
+			finish_date=#{finish_date}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullStatement">
+		update s_statement
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="money_type != null and money_type != ''">
+			money_type=#{money_type}, 
+		</if>
+		<if test="bus_type != null and bus_type != ''">
+			bus_type=#{bus_type}, 
+		</if>
+		<if test="money != null and money != ''">
+			money=#{money}, 
+		</if>
+		<if test="balance_money != null and balance_money != ''">
+			balance_money=#{balance_money}, 
+		</if>
+		<if test="status != null and status != ''">
+			status=#{status}, 
+		</if>
+		<if test="create_date != null">
+			create_date=#{create_date}, 
+		</if>
+		<if test="finish_date != null">
+			finish_date=#{finish_date}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullStatementVo">
+		update s_statement
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="money_type != null and money_type != ''">
+			money_type=#{money_type}, 
+		</if>
+		<if test="bus_type != null and bus_type != ''">
+			bus_type=#{bus_type}, 
+		</if>
+		<if test="money != null and money != ''">
+			money=#{money}, 
+		</if>
+		<if test="balance_money != null and balance_money != ''">
+			balance_money=#{balance_money}, 
+		</if>
+		<if test="status != null and status != ''">
+			status=#{status}, 
+		</if>
+		<if test="create_date != null">
+			create_date=#{create_date}, 
+		</if>
+		<if test="finish_date != null">
+			finish_date=#{finish_date}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleStatement">
+		update s_statement
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="money_type != null and money_type != ''">
+			money_type=#{money_type}, 
+			</if>
+			<if test="bus_type != null and bus_type != ''">
+			bus_type=#{bus_type}, 
+			</if>
+			<if test="money != null and money != ''">
+			money=#{money}, 
+			</if>
+			<if test="balance_money != null and balance_money != ''">
+			balance_money=#{balance_money}, 
+			</if>
+			<if test="status != null and status != ''">
+			status=#{status}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="finish_date != null">
+			finish_date=#{finish_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleStatementVo">
+		update s_statement
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="money_type != null and money_type != ''">
+			money_type=#{money_type}, 
+			</if>
+			<if test="bus_type != null and bus_type != ''">
+			bus_type=#{bus_type}, 
+			</if>
+			<if test="money != null and money != ''">
+			money=#{money}, 
+			</if>
+			<if test="balance_money != null and balance_money != ''">
+			balance_money=#{balance_money}, 
+			</if>
+			<if test="status != null and status != ''">
+			status=#{status}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="finish_date != null">
+			finish_date=#{finish_date}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

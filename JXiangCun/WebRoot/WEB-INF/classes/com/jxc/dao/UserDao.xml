@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.UserDao">
+
+	<select id="findAllUserByPage" resultType="User">
+		select * from jxc_user
+		<where>
+			<if test="username!=null&amp;&amp;!username.equals('')">
+				and username like "%"#{username}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+			<if test="nickname!=null&amp;&amp;!nickname.equals('')">
+				and nickname like "%"#{nickname}"%"
+			</if>
+		</where>
+		order by regist_time desc limit #{begin},#{pageSize}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(*) from jxc_user
+		<where>
+			<if test="username!=null&amp;&amp;!username.equals('')">
+				and username like "%"#{username}"%"
+			</if>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+				and tel like "%"#{tel}"%"
+			</if>
+			<if test="nickname!=null&amp;&amp;!nickname.equals('')">
+				and nickname like "%"#{nickname}"%"
+			</if>
+		</where>
+	</select>
+	<select id="findUserByOpenId" resultType="User">
+		select * from jxc_user
+		where open_id=#{open_id}
+	</select>
+	<select id="findUserByTel" resultType="User">
+		select * from jxc_user
+		where tel=#{tel}
+	</select>
+	<select id="findUserById" resultType="User">
+	select * from jxc_user where id=#{user_id}
+	</select>
+	<delete id="deleteUserById">
+		delete from jxc_user where id=#{id}
+	</delete>
+	<insert id="addUser" useGeneratedKeys="true" keyProperty="id">
+		insert
+		into jxc_user(regist_time,open_id,path,nickname)
+		values(#{regist_time},#{open_id},#{path},#{nickname})
+	</insert>
+	<update id="updateUser">
+		update jxc_user
+		<set>
+			<if test="tel!=null&amp;&amp;!tel.equals('')">
+			tel=#{tel}
+			</if>
+			<if test="money!=null&amp;&amp;!money.equals('')">
+			money=#{money}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+</mapper>

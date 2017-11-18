@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.PictureDao">
+	<insert id="save">
+		insert into
+		dq_picture(product_id,imgUrl,type,join_time)
+		values(#{product_id},#{imgUrl},#{type},#{join_time})
+	</insert>
+	<update id="update">
+		update dq_picture
+		<set>
+			<if test="imgUrl!=null and imgUrl!=''">
+				imgUrl=#{imgUrl},
+</if>
+			<if test="type!=null and type!=''">
+				type=#{type},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from dq_picture where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="Picture">
+		select * from dq_picture
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultType="Picture">
+		select * from dq_picture 
+                       <where>
+                          <if test="product_id!=null">
+                           and  product_id=#{product_id}
+                          </if>
+                          <if test="product_id==null">
+                           and type=2
+                          </if>
+                       </where>
+		order by id desc limit #{begin},#{pageSize}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_picture
+                    <where>
+                          <if test="product_id!=null">
+                             and product_id=#{product_id}
+                          </if>
+                           <if test="product_id==null">
+                           and type=2
+                          </if>
+                    </where>
+	</select>
+</mapper>

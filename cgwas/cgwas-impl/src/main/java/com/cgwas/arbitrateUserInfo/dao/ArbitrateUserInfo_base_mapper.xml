@@ -1,0 +1,639 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+ <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+ <mapper namespace="com.cgwas.arbitrateUserInfo.dao">
+
+ 
+
+ 	<sql id="columns">
+
+ 		id, arbitrate_content, user_type, is_pass, arbitrate_id,
+
+ 		user_id, company_id
+
+ 	</sql>
+
+ 	<sql id="vals">
+
+ 		#{id}, #{arbitrate_content}, #{user_type}, #{is_pass},
+
+ 		#{arbitrate_id}, #{user_id}, #{company_id}
+
+ 	</sql>
+
+ 	<sql id="conds">
+
+ 		<if test="id != null and id != ''">
+
+ 			and id = #{id}
+
+ 		</if>
+
+ 		<if test="arbitrate_content != null and arbitrate_content != ''">
+
+ 			and arbitrate_content = #{arbitrate_content}
+
+ 		</if>
+
+ 		<if test="user_type != null and user_type != ''">
+
+ 			and user_type = #{user_type}
+
+ 		</if>
+
+ 		<if test="is_pass != null and is_pass != ''">
+
+ 			and is_pass = #{is_pass}
+
+ 		</if>
+
+ 		<if test="arbitrate_id != null and arbitrate_id != ''">
+
+ 			and arbitrate_id = #{arbitrate_id}
+
+ 		</if>
+
+ 		<if test="user_id != null and user_id != ''">
+
+ 			and user_id = #{user_id}
+
+ 		</if>
+
+ 		<if test="company_id != null and company_id != ''">
+
+ 			and company_id = #{company_id}
+
+ 		</if>
+
+ 	</sql>
+
+ 
+
+ 	<insert id="saveArbitrateUserInfo"
+
+ 		parameterType="com.cgwas.arbitrateUserInfo.entity.ArbitrateUserInfo"
+
+ 		useGeneratedKeys="true" keyProperty="id">
+
+ 		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+
+ 			select
+
+ 			last_insert_id()
+
+ 		</selectKey>
+
+ 		insert into u_arbitrate_user_info (
+
+ 		<include refid="columns" />
+
+ 		)
+
+ 		values (
+
+ 		<include refid="vals" />
+
+ 		)
+
+ 	</insert>
+
+ 
+
+ 	<insert id="saveArbitrateUserInfoVo"
+
+ 		parameterType="com.cgwas.arbitrateUserInfo.entity.ArbitrateUserInfoVo"
+
+ 		useGeneratedKeys="true" keyProperty="id">
+
+ 		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+
+ 			select
+
+ 			last_insert_id()
+
+ 		</selectKey>
+
+ 		insert into u_arbitrate_user_info (
+
+ 		<include refid="columns" />
+
+ 		)
+
+ 		values (
+
+ 		<include refid="vals" />
+
+ 		)
+
+ 	</insert>
+
+ 
+
+ 	<delete id="deleteArbitrateUserInfo">
+
+ 		delete from u_arbitrate_user_info
+
+ 		where id=#{id}
+
+ 	</delete>
+
+ 
+
+ 	<delete id="deleteArbitrateUserInfoVo">
+
+ 		delete from u_arbitrate_user_info
+
+ 		where id=#{id}
+
+ 	</delete>
+
+ 
+
+ 	<delete id="deleteByExampleArbitrateUserInfo">
+
+ 		delete from u_arbitrate_user_info
+
+ 		where 1=1
+
+ 		<include refid="conds" />
+
+ 	</delete>
+
+ 
+
+ 	<delete id="deleteByExampleArbitrateUserInfoVo">
+
+ 		delete from u_arbitrate_user_info
+
+ 		where 1=1
+
+ 		<include refid="conds" />
+
+ 	</delete>
+
+ 
+
+ 	<select id="loadArbitrateUserInfo"
+
+ 		resultType="com.cgwas.arbitrateUserInfo.entity.ArbitrateUserInfoVo">
+
+ 		select
+
+ 		<include refid="columns" />
+
+ 		from u_arbitrate_user_info
+
+ 		where id=#{id}
+
+ 	</select>
+
+ 
+
+ 	<select id="selectArbitrateUserInfo"
+
+ 		resultType="com.cgwas.arbitrateUserInfo.entity.ArbitrateUserInfoVo">
+
+ 		select
+
+ 		<include refid="columns" />
+
+ 		from u_arbitrate_user_info
+
+ 		where 1=1
+
+ 		<include refid="conds" />
+
+ 	</select>
+
+ 
+
+ 	<update id="updateArbitrateUserInfo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			id=#{id},
+
+ 			arbitrate_content=#{arbitrate_content},
+
+ 			user_type=#{user_type},
+
+ 			is_pass=#{is_pass},
+
+ 			arbitrate_id=#{arbitrate_id},
+
+ 			user_id=#{user_id},
+
+ 			company_id=#{company_id}
+
+ 		</set>
+
+ 		where id=#{id}
+
+ 	</update>
+ 	
+ 	
+ 	<update id="updateArbitrateUserInfoIsPass">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+
+ 			is_pass=#{is_pass}
+
+ 			
+ 		</set>
+
+ 		where user_type =#{user_type} AND arbitrate_id =#{arbitrate_id}
+
+ 	</update>
+
+ 
+
+ 	<update id="updateArbitrateUserInfoVo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			id=#{id},
+
+ 			arbitrate_content=#{arbitrate_content},
+
+ 			user_type=#{user_type},
+
+ 			is_pass=#{is_pass},
+
+ 			arbitrate_id=#{arbitrate_id},
+
+ 			user_id=#{user_id},
+
+ 			company_id=#{company_id}
+
+ 		</set>
+
+ 		where id=#{id}
+
+ 	</update>
+
+ 
+
+ 
+
+ 	<update id="updateIgnoreNullArbitrateUserInfo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			<if test="id != null and id != ''">
+
+ 				id=#{id},
+
+ 			</if>
+
+ 			<if test="arbitrate_content != null and arbitrate_content != ''">
+
+ 				arbitrate_content=#{arbitrate_content},
+
+ 			</if>
+
+ 			<if test="user_type != null and user_type != ''">
+
+ 				user_type=#{user_type},
+
+ 			</if>
+
+ 			<if test="is_pass != null and is_pass != ''">
+
+ 				is_pass=#{is_pass},
+
+ 			</if>
+
+ 			<if test="arbitrate_id != null and arbitrate_id != ''">
+
+ 				arbitrate_id=#{arbitrate_id},
+
+ 			</if>
+
+ 			<if test="user_id != null and user_id != ''">
+
+ 				user_id=#{user_id},
+
+ 			</if>
+
+ 			<if test="company_id != null and company_id != ''">
+
+ 				company_id=#{company_id}
+
+ 			</if>
+
+ 		</set>
+
+ 		where id=#{id}
+
+ 	</update>
+
+ 
+
+ 	<update id="updateIgnoreNullArbitrateUserInfoVo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			<if test="id != null and id != ''">
+
+ 				id=#{id},
+
+ 			</if>
+
+ 			<if test="arbitrate_content != null and arbitrate_content != ''">
+
+ 				arbitrate_content=#{arbitrate_content},
+
+ 			</if>
+
+ 			<if test="user_type != null and user_type != ''">
+
+ 				user_type=#{user_type},
+
+ 			</if>
+
+ 			<if test="is_pass != null and is_pass != ''">
+
+ 				is_pass=#{is_pass},
+
+ 			</if>
+
+ 			<if test="arbitrate_id != null and arbitrate_id != ''">
+
+ 				arbitrate_id=#{arbitrate_id},
+
+ 			</if>
+
+ 			<if test="user_id != null and user_id != ''">
+
+ 				user_id=#{user_id},
+
+ 			</if>
+
+ 			<if test="company_id != null and company_id != ''">
+
+ 				company_id=#{company_id}
+
+ 			</if>
+
+ 		</set>
+
+ 		where id=#{id}
+
+ 	</update>
+
+ 
+
+ 	<update id="updateByExampleArbitrateUserInfo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			<if test="id != null and id != ''">
+
+ 				id=#{id},
+
+ 			</if>
+
+ 			<if test="arbitrate_content != null and arbitrate_content != ''">
+
+ 				arbitrate_content=#{arbitrate_content},
+
+ 			</if>
+
+ 			<if test="user_type != null and user_type != ''">
+
+ 				user_type=#{user_type},
+
+ 			</if>
+
+ 			<if test="is_pass != null and is_pass != ''">
+
+ 				is_pass=#{is_pass},
+
+ 			</if>
+
+ 			<if test="arbitrate_id != null and arbitrate_id != ''">
+
+ 				arbitrate_id=#{arbitrate_id},
+
+ 			</if>
+
+ 			<if test="user_id != null and user_id != ''">
+
+ 				user_id=#{user_id},
+
+ 			</if>
+
+ 			<if test="company_id != null and company_id != ''">
+
+ 				company_id=#{company_id}
+
+ 			</if>
+
+ 		</set>
+
+ 		where 1=1
+
+ 		<include refid="conds" />
+
+ 	</update>
+
+ 
+
+ 	<update id="updateByExampleArbitrateUserInfoVo">
+
+ 		update u_arbitrate_user_info
+
+ 		<set>
+
+ 			<if test="id != null and id != ''">
+
+ 				id=#{id},
+
+ 			</if>
+
+ 			<if test="arbitrate_content != null and arbitrate_content != ''">
+
+ 				arbitrate_content=#{arbitrate_content},
+
+ 			</if>
+
+ 			<if test="user_type != null and user_type != ''">
+
+ 				user_type=#{user_type},
+
+ 			</if>
+
+ 			<if test="is_pass != null and is_pass != ''">
+
+ 				is_pass=#{is_pass},
+
+ 			</if>
+
+ 			<if test="arbitrate_id != null and arbitrate_id != ''">
+
+ 				arbitrate_id=#{arbitrate_id},
+
+ 			</if>
+
+ 			<if test="user_id != null and user_id != ''">
+
+ 				user_id=#{user_id},
+
+ 			</if>
+
+ 			<if test="company_id != null and company_id != ''">
+
+ 				company_id=#{company_id}
+
+ 			</if>
+
+ 		</set>
+
+ 		where 1=1
+
+ 		<include refid="conds" />
+
+ 	</update>
+
+ 	<!-- 获取用户仲裁信息 -->
+
+ 	<select id="getUserArbitrateInfo"
+
+ 		resultType="com.cgwas.arbitrateUserInfo.entity.UserArbitrateInfo">
+
+ 		SELECT
+
+ 		a.id,
+ 		a.is_pass,
+
+ 		b.nickname,
+
+ 		c.head_pic_path,
+
+ 		d.flat,
+
+ 		c.sex,
+
+ 		a.arbitrate_content,
+
+ 		a.user_type,
+
+ 		a.arbitrate_id,
+
+ 		a.company_id,
+
+ 		a.user_id,
+
+ 		e.company_name,
+
+ 		e.head_pic_path as head_pic_path1,
+
+ 		f.flat
+
+ 		FROM
+
+ 		u_arbitrate_user_info AS a
+
+ 		LEFT JOIN u_user AS b ON a.user_id = b.id
+
+ 		LEFT JOIN u_user_info AS c ON a.user_id = c.user_id
+
+ 		LEFT JOIN
+
+ 		u_user_growth AS d ON a.user_id = d.user_id
+
+ 		LEFT JOIN u_company AS e ON
+
+ 		a.company_id = e.id
+
+ 		LEFT JOIN u_company_growth AS f ON a.company_id =
+
+ 		f.company_id
+
+ 		WHERE
+
+ 		a.user_type =
+
+ 		#{user_type} AND a.arbitrate_id =
+
+ 		#{arbitrate_id}
+
+ 	</select>
+
+ 	<!-- 获取公司仲裁信息 -->
+
+ 	<select id="getCompanyArbitrateInfo"
+
+ 		resultType="com.cgwas.arbitrateUserInfo.entity.CompanyArbitrateInfo">
+
+ 		SELECT
+
+ 		a.id,
+
+ 		d.head_pic_path,
+
+ 		b.company_name,
+
+ 		c.flat,
+
+ 		a.arbitrate_content,
+
+ 		a.user_id,
+
+ 		a.company_id,
+
+ 		e.nickname,
+
+ 		b.head_pic_path as head_pic_path1,
+
+ 		f.flat,
+
+ 		d.sex
+
+ 		FROM
+
+ 		u_arbitrate_user_info AS a
+
+ 		LEFT JOIN u_company AS b ON a.company_id
+
+ 		=
+
+ 		b.id
+
+ 		LEFT JOIN u_company_growth AS c ON b.id = c.company_id
+
+ 		LEFT JOIN
+
+ 		u_user_info AS d ON a.user_id = d.user_id
+
+ 		LEFT JOIN u_user AS e ON
+
+ 		a.user_id = e.id
+
+ 		LEFT JOIN u_user_growth AS f ON a.user_id = f.user_id
+
+ 		WHERE
+
+ 		a.user_type = #{user_type}
+
+ 		AND a.arbitrate_id = #{arbitrate_id}
+
+ 	</select>
+
+ </mapper>

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.GroupOrderDao">
+	<insert id="save">
+		insert into
+		dq_group_order(order_num,join_time,total_price,status,mail,user_ticket_id,address,youbian,tel,name,user_id,payType)
+		values(#{order_num},#{join_time},#{total_price},#{status},#{mail},#{user_ticket_id},#{address},#{youbian},#{tel},#{name},#{user_id},#{payType})
+	</insert>
+	<update id="update">
+		update dq_group_order
+		<set>
+			<if test="sendtimes!=null and sendtimes!=''">
+				sendtimes=#{sendtimes},
+</if>
+			<if test="paytimes!=null and paytimes!=''">
+				paytimes=#{paytimes},
+</if>
+			<if test="status!=null and status!=''">
+				status=#{status},
+</if>
+<if test="code!=null and code!=''">
+				code=#{code},
+</if>
+<if test="express!=null and express!=''">
+				express=#{express},
+</if>
+<if test="name!=null and name!=''">
+				name=#{name},
+</if>
+<if test="youbian!=null and youbian!=''">
+				youbian=#{youbian},
+</if>
+<if test="tel!=null and tel!=''">
+				tel=#{tel},
+</if>
+<if test="address!=null and address!=''">
+				address=#{address},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="delete">
+		delete from dq_group_order where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getById" resultType="GroupOrder">
+		select * from dq_group_order
+		where
+		id=#{id}
+	</select>
+	<select id="getAllByPage" resultMap="GroupOrderMaps">
+		select * from dq_group_order go left join dq_user u on go.user_id=u.id
+                <where>
+                  <if test="nickname!=null and nickname!=''">
+                     and u.nickname like "%"#{nickname}"%"
+                  </if>
+                  <if test="status!=null and status!=''">
+                     and go.status=#{status}
+                  </if>
+                  <if test="user_id!=null">
+                   and user_id=#{user_id}
+                  </if>
+                </where>
+		order by go.id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="GroupOrder" id="GroupOrderMaps">
+	<association property="user" column="user_id" javaType="User" select="getUserById"/>
+	</resultMap>
+	<select id="getUserById" resultType="User">
+	select * from dq_user where id=#{user_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from dq_group_order go left join dq_user u on go.user_id=u.id
+                <where>
+                  <if test="nickname!=null and nickname!=''">
+                     and u.nickname like "%"#{nickname}"%"
+                  </if>
+                  <if test="status!=null and status!=''">
+                     and go.status=#{status}
+                  </if>
+                   <if test="user_id!=null">
+                   and user_id=#{user_id}
+                  </if>
+                </where>
+	</select>
+	<update id="updateByIds">
+	update dq_group_order set delflag=2 where id in 	
+	<foreach collection="ids" open="(" close=")" separator=","
+	   item="id">#{id}
+	</foreach>
+	</update>
+	<select id="getOrdersByGroupOrderId" resultMap="OrdersMap">
+	 select * from dq_orders where order_group_id=#{group_order_id}
+	</select>
+	<resultMap type="Orders" id="OrdersMap">
+	<association property="product" column="product_id" javaType="Product"    select="getProductById"/>
+	<association property="skuinfo" column="sku_id" javaType="Skuinfo" select="getSkuinfoById"/>
+	</resultMap>
+	<select id="getProductById" resultType="Product">
+	select * from dq_product where id=#{product_id}
+	</select>
+	<select id="getSkuinfoById" resultType="Skuinfo">
+	select * from skuinfo where skuid=#{sku_id}
+	</select>
+</mapper>

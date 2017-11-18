@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dq.dao.ShopCarDao">
+<select id="getShopCars" resultMap="ShopCarMaps">
+		select sp.* from dq_shopcar sc left join dq_shopcar_product sp on sc.id=sp.shopcar_id where sc.user_id=#{user_id}
+	</select>
+	<resultMap type="ShopCar" id="ShopCarMaps">
+	<association property="product" column="product_id"  javaType="Product" select="getProductById" />
+	<association property="skuinfo" column="sku_id" javaType="Skuinfo" select="getSkuinfoById"/>
+	</resultMap>
+	<select id="getSkuinfoById" resultType="Skuinfo">
+	select * from skuinfo where skuid=#{sku_id}
+	</select>
+	<select id="getProductById" resultType="Product">
+	select * from dq_product where id=#{product_id}
+	</select>
+</mapper>

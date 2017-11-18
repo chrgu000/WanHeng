@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.cgwas.director.dao">
+<select id="getDirectorByName" resultType="com.cgwas.director.entity.DirectorVo">
+select  <include refid="columns"/>
+		from p_director
+		where director_name=#{name} 
+</select>
+<select id="getDirectorByUserId" resultType="com.cgwas.director.entity.DirectorVo">
+		select 
+		<include refid="columns"/>
+		from p_director
+		where user_id=#{id} 
+	</select>
+	<sql id="columns">
+		id, director_name, user_id, head_pic_path
+	</sql>
+	<sql id="vals">
+		#{id}, #{director_name}, #{user_id}, #{head_pic_path}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="director_name != null and director_name != ''">
+			and director_name = #{director_name}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			and head_pic_path = #{head_pic_path}
+		</if>
+	</sql>
+
+	<insert id="saveDirector" parameterType="com.cgwas.director.entity.Director" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_director (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveDirectorVo" parameterType="com.cgwas.director.entity.DirectorVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into p_director (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteDirector">
+		delete from p_director
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteDirectorVo">
+		delete from p_director
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleDirector">
+		delete from p_director
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleDirectorVo">
+		delete from p_director
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadDirector" resultType="com.cgwas.director.entity.DirectorVo">
+		select 
+		<include refid="columns"/>
+		from p_director
+		where id=#{id} 
+	</select>
+	
+	<select id="selectDirector" resultType="com.cgwas.director.entity.DirectorVo">
+		select 
+		<include refid="columns"/>
+		from p_director
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateDirector">
+		update p_director
+		<set>
+			id=#{id}, 
+			director_name=#{director_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateDirectorVo">
+		update p_director
+		<set>
+			id=#{id}, 
+			director_name=#{director_name}, 
+			user_id=#{user_id}, 
+			head_pic_path=#{head_pic_path}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullDirector">
+		update p_director
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="director_name != null and director_name != ''">
+			director_name=#{director_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullDirectorVo">
+		update p_director
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="director_name != null and director_name != ''">
+			director_name=#{director_name}, 
+		</if>
+		<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+		</if>
+		<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleDirector">
+		update p_director
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="director_name != null and director_name != ''">
+			director_name=#{director_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleDirectorVo">
+		update p_director
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="director_name != null and director_name != ''">
+			director_name=#{director_name}, 
+			</if>
+			<if test="user_id != null and user_id != ''">
+			user_id=#{user_id}, 
+			</if>
+			<if test="head_pic_path != null and head_pic_path != ''">
+			head_pic_path=#{head_pic_path}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

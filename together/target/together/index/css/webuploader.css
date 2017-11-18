@@ -1,0 +1,19 @@
+.webuploader-container {
+	position: relative;
+}
+.webuploader-element-invisible {
+	position: absolute !important;
+	clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+    clip: rect(1px,1px,1px,1px);
+}
+.webuploader-pick{
+	width: 3rem;height: 3rem;margin: 0.25rem;background: url("../img/jia.png")no-repeat center;background-size: 100%;border: none;float: left;}
+.webuploader-pick-hover {
+
+}
+
+.webuploader-pick-disable {
+	opacity: 0.6;
+	pointer-events:none;
+}
+

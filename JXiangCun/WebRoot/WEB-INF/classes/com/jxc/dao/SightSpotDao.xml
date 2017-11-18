@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jxc.dao.SightSpotDao">
+	<select id="findSightSpotById" resultMap="SightSpotMap">
+		select distinct s.* from
+		jxc_sight_spot s left join jxc_sight_spot_title t on
+		s.id=t.sight_spot_id where s.id=#{id}
+	</select>
+	<resultMap type="SightSpot" id="SightSpotMap">
+		<id column="id" property="id" />
+		<collection property="titles" column="id" javaType="arrayList"
+			ofType="Title" select="findTitlesBySightSpotId"></collection>
+			<collection property="merchants" column="id" javaType="arrayList"
+			ofType="Merchant" select="findMerchantsBySightSpotId" />
+	</resultMap>
+	<select id="findTitlesBySightSpotId" resultType="Title">
+	select * from jxc_title t left join jxc_sight_spot_title s on t.id=s.title_id where s.sight_spot_id=#{id}
+	</select>
+	<select id="findRows" resultType="int">
+		select count(distinct s.id) from jxc_sight_spot s left join
+		jxc_sight_spot_title t on s.id=t.sight_spot_id
+		<where>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				and s.name like"%"#{name}"%"
+			</if>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				and s.city_id =#{city_id}
+			</if>
+			<if test="area_id!=null&amp;&amp;!area_id.equals('')">
+				and s.area_id =#{area_id}
+			</if>
+			<if test="title_id!=null&amp;&amp;!title_id.equals('')">
+				and t.title_id=#{title_id}
+			</if>
+		</where>
+	</select>
+	<select id="findAllSightSpot" resultType="SightSpot">
+		select * from
+		jxc_sight_spot
+	</select>
+	<select id="findSightSpotByCityId" resultType="SightSpot">
+		select * from
+		jxc_sight_spot where city_id=#{city_id}
+	</select>
+	<select id="findSightSpotByAreaId" resultType="SightSpot">
+	   select * from jxc_sight_spot where area_id=#{area_id}
+	</select>
+	<select id="findSightSpots" resultMap="SightSpots">
+		select * from jxc_sight_spot 
+	</select>
+	<resultMap type="SightSpot" id="SightSpots">
+		<id column="id" property="id" />
+		<collection property="merchants" column="id" javaType="arrayList"
+			ofType="Merchant" select="findMerchantsBySightSpotId" />
+	</resultMap>
+	<select id="findMerchantsBySightSpotId" resultMap="MerchantMap">
+		select * from
+		jxc_merchant where sight_spot_id=#{id}
+	</select>
+	<resultMap type="Merchant" id="MerchantMap">
+	<id column="id" property="id"/>
+	<collection property="titleIds" column="id" javaType="arrayList" ofType="int" select="findTitleIdsByMerchantId"/>
+	</resultMap>
+	<select id="findTitleIdsByMerchantId" resultType="int">
+	select title_id from jxc_merchant_title where merchant_id=#{id}
+	</select>
+	<insert id="addSightSpotTitle">
+		insert into
+		jxc_sight_spot_title(sight_spot_id,title_id)
+		values(#{sight_spot_id},#{title_id})
+	</insert>
+	<insert id="addSightSpot" useGeneratedKeys="true" keyProperty="id">
+		insert into
+		jxc_sight_spot(name,city_id,area_id,path,content,longitude,latitude)
+		values(#{name},#{city_id},#{area_id},#{path},#{content},#{longitude},#{latitude})
+	</insert>
+	<update id="updateSightSpot">
+		update jxc_sight_spot
+		<set>
+			<if test="name!=null&amp;&amp;!name.equals('')">
+				name=#{name},
+			</if>
+			<if test="city_id!=null&amp;&amp;!city_id.equals('')">
+				city_id=#{city_id},
+			</if>
+			<if test="area_id!=null&amp;&amp;!area_id.equals('')">
+				area_id=#{area_id},
+			</if>
+			<if test="path!=null&amp;&amp;!path.equals('')">
+				path=#{path},
+			</if>
+			<if test="content!=null&amp;&amp;!content.equals('')">
+				content=#{content},
+			</if>
+			<if test="longitude!=null&amp;&amp;!longitude.equals('')">
+				longitude=#{longitude},
+			</if>
+			<if test="latitude!=null&amp;&amp;!latitude.equals('')">
+				latitude=#{latitude},
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteSightSpotTitle">
+		delete from jxc_sight_spot_title where
+		sight_spot_id=#{sightSpotId}
+	</delete>
+	<delete id="deleteSightSpotById">
+		delete from jxc_sight_spot where id=#{id}
+	</delete>
+</mapper>

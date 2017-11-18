@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kg.dao.TeacherDao">
+	<insert id="addTeacher">
+		insert into
+		kg_teacher(username,password,garden_id,join_time,tel,state,sex)
+		values(#{username},#{password},#{garden_id},#{join_time},#{tel},#{state},#{sex})
+	</insert>
+	<update id="updateTeacher">
+		update kg_teacher
+		<set>
+			<if test="username!=null and username!=''">
+				username=#{username},
+		</if>
+			<if test="password!=null and password!=''">
+				password=#{password},
+</if>
+			<if test="tel!=null and tel!=''">
+				tel=#{tel},
+</if>
+			<if test="garden_id!=null and garden_id!=''">
+				garden_id=#{garden_id},
+</if>
+			<if test="sex!=null and sex!=''">
+				sex=#{sex},
+</if>
+			<if test="header_pic_path!=null and header_pic_path!=''">
+				header_pic_path=#{header_pic_path},
+</if>
+			<if test="introduce!=null and introduce!=''">
+				introduce=#{introduce},
+</if>
+			<if test="state!=null">
+				state=#{state},
+</if>
+		</set>
+		where id=#{id}
+	</update>
+	<delete id="deleteByIds">
+		delete from kg_teacher where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</delete>
+	<select id="getTeacherById" resultType="Teacher">
+		select * from kg_teacher
+		where id=#{id}
+	</select>
+	<select id="getTeacherByPage" resultMap="teacherMaps">
+		select * from kg_teacher
+		<where>
+			<if test="username!=null and username!=''">
+				and username like "%"#{username}"%"
+		</if>
+			<if test="garden_id!=null and garden_id!=''">
+				and garden_id=#{garden_id}
+		</if>
+			<if test="state!=null ">
+				and state=#{state}
+		</if>
+			<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+		</where>
+		order by garden_id desc,id desc limit #{begin},#{pageSize}
+	</select>
+	<resultMap type="Teacher" id="teacherMaps">
+		<association property="garden" column="garden_id"
+			javaType="Garden" select="getGardenById" />
+	</resultMap>
+	<select id="getTeacher" resultMap="teacherMaps">
+		select * from kg_teacher where
+		id=#{id}
+	</select>
+	<select id="getGardenById" resultType="Garden">
+		select * from kg_garden
+		where id=#{garden_id}
+	</select>
+	<select id="getRows" resultType="int">
+		select count(*) from kg_teacher
+		<where>
+			<if test="gardenIds!=null and gardenIds.size()>0">
+				and garden_id in
+				<foreach collection="gardenIds" open="(" close=")" item="id"
+					separator=",">#{id}</foreach>
+			</if>
+			<if test="username!=null and username!=''">
+				and username=#{username}
+		</if>
+			<if test="garden_id!=null and garden_id!=''">
+				and garden_id=#{garden_id}
+		</if>
+			<if test="state!=null ">
+				and state=#{state}
+		</if>
+		</where>
+	</select>
+	<select id="getTeachersByGardenId" resultType="Teacher">
+		select * from
+		kg_teacher where garden_id=#{id} and state=1
+	</select>
+	<select id="getTeacherByGardenIds" resultType="Teacher">
+		select * from kg_teacher
+		<where>
+			garden_id in
+			<foreach collection="ids" open="(" separator="," close=")"
+				item="id">#{id}</foreach>
+		</where>
+	</select>
+	<select id="findAllTeacher" resultType="Teacher">
+		select * from kg_teacher
+	</select>
+	<select id="login" resultType="Teacher">
+		select * from kg_teacher where
+		tel=#{tel} and password=#{password}
+	</select>
+	<select id="updatePwdByTel">
+		update kg_teacher set password=#{password} where
+		tel=#{tel}
+	</select>
+	<select id="getTeacherByIds" resultType="Teacher">
+		select * from kg_teacher where id in
+		<foreach collection="ids" open="(" close=")" separator=","
+			item="id">#{id}</foreach>
+	</select>
+</mapper>
