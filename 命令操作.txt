@@ -1,6 +1,6 @@
 1.git add .
 
-2.git commit -m  [commit]
+2.git commit -m  —©”Ú«‡÷Ò
 
 3.git push origin master
 
