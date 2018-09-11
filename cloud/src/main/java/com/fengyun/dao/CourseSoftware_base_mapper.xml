@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ICourseSoftwareDao">
+
+	<sql id="columns">
+		id, course_id, software_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{course_id}, #{software_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+		<if test="software_id != null and software_id != ''">
+			and software_id = #{software_id}
+		</if>
+	</sql>
+
+	<insert id="saveCourseSoftware" parameterType="com.fengyun.entity.CourseSoftware" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_course_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCourseSoftwareVo" parameterType="com.fengyun.entity.CourseSoftwareVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_course_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCourseSoftware">
+		delete from y_course_software
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCourseSoftwareVo">
+		delete from y_course_software
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCourseSoftware">
+		delete from y_course_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCourseSoftwareVo">
+		delete from y_course_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCourseSoftware" resultType="com.fengyun.entity.CourseSoftwareVo">
+		select 
+		<include refid="columns"/>
+		from y_course_software
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCourseSoftware" resultType="com.fengyun.entity.CourseSoftwareVo">
+		select 
+		<include refid="columns"/>
+		from y_course_software
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCourseSoftware">
+		update y_course_software
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			software_id=#{software_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCourseSoftwareVo">
+		update y_course_software
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			software_id=#{software_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCourseSoftware">
+		update y_course_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="software_id != null and software_id != ''">
+			software_id=#{software_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCourseSoftwareVo">
+		update y_course_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="software_id != null and software_id != ''">
+			software_id=#{software_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCourseSoftware">
+		update y_course_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="software_id != null and software_id != ''">
+			software_id=#{software_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCourseSoftwareVo">
+		update y_course_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="software_id != null and software_id != ''">
+			software_id=#{software_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

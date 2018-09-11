@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./../js/jquery.min.js"></script>
+<script type="text/javascript">
+//根据讲师用户id查询该讲师所讲的所有课程
+function getChapterListByUserMap(){
+  $.ajax({
+	  url:"../com/chapterAction/getChapterListByUserMap.action",
+	  data:{ 
+	   "pageSize": 10,
+       "pageNo": 1,
+       "startDate": "2017-11-01",
+   	   "endDate": "2017-11-07",
+   	   "check_status": "C",
+   	   "course_name":'1',
+   	   "chapter_name":'1'
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//审核人员获取课程列表信息
+function getCheckChapterList(){
+  $.ajax({
+	  url:"../com/chapterAction/getCheckChapterList.action",
+	  data:{ 
+	   "pageSize": 10,
+       "pageNo": 1,
+       "startDate": "2017-11-01",
+   	   "endDate": "2017-11-07",
+   	   "check_status": "C",
+   	   "chapter_name":'1'
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//审核员审核讲师更改信息
+function checkChapter(){
+	 $.ajax({
+		  url:"../com/chapterAction/update.action",
+		  data:{ 
+		   "id": 1,
+	       "check_status": "N",
+	       "check_idea": "申请资料有误!"
+		    
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+}
+$(function(){
+	checkChapter();
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>

@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.IInvitationLetterDao">
+<select id="getLetterNum" resultType="java.lang.Long">
+        select count(*) from  y_invitation_letter where teacher_user_id=#{user_id}  and is_replay is null
+</select>
+    <select id="getUnReplyLetterNumByUserId" resultType="java.lang.Long">
+        select count(*) from  y_invitation_letter where teacher_user_id=#{user_id} and is_agree='Y' and is_replay is null
+    </select>
+	<select id="getLastLetterOfIsNotRead" resultType="com.fengyun.entity.InvitationLetterVo">
+		select * from  y_invitation_letter where teacher_user_id=#{userId} and (is_replay is null or is_replay!='Y')  order by id desc limit 1
+	</select>
+	<select id="getLetterImgsByLetterId" resultType="com.fengyun.entity.LetterImg">
+		select * from y_letter_img where letter_id=#{id}
+	</select>
+	<resultMap type="com.fengyun.entity.InvitationLetterVo" id="InvitationLetterMap">
+		<id column="id" property="id" />
+		<collection property="letterImgs" column="id"
+			javaType="arrayList" ofType="com.fengyun.entity.LetterImg" select="getLetterImgsByLetterId"></collection>
+	</resultMap>
+	<select id="getInvitationLetterById" resultMap="InvitationLetterMap">
+		select
+		<include refid="columns" />
+		from y_invitation_letter
+		where id=#{id}
+	</select>
+	<insert id="addLetterImg">
+		insert into y_letter_img(letter_id,img_url) values(#{letter_id},#{img_url})
+	</insert>
+	<sql id="columns">
+		id, learner_user_id, teacher_user_id, content,
+		replay_content, invite_time, replay_time, is_agree, is_replay,
+		course_id,refuse_letter
+	</sql>
+	<sql id="vals">
+		#{id}, #{learner_user_id}, #{teacher_user_id}, #{content},
+		#{replay_content}, #{invite_time}, #{replay_time}, #{is_agree},
+		#{is_replay}, #{course_id},#{refuse_letter}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="learner_user_id != null and learner_user_id != ''">
+			and learner_user_id = #{learner_user_id}
+		</if>
+		<if test="teacher_user_id != null and teacher_user_id != ''">
+			and teacher_user_id = #{teacher_user_id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="replay_content != null and replay_content != ''">
+			and replay_content = #{replay_content}
+		</if>
+		<if test="invite_time != null">
+			and invite_time = #{invite_time}
+		</if>
+		<if test="replay_time != null">
+			and replay_time = #{replay_time}
+		</if>
+		<if test="is_agree != null and is_agree != ''">
+			and is_agree = #{is_agree}
+		</if>
+		<if test="is_replay != null and is_replay != ''">
+			and is_replay = #{is_replay}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+	</sql>
+
+	<insert id="saveInvitationLetter" parameterType="com.fengyun.entity.InvitationLetter"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_invitation_letter (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveInvitationLetterVo" parameterType="com.fengyun.entity.InvitationLetterVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_invitation_letter (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteInvitationLetter">
+		delete from y_invitation_letter
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteInvitationLetterVo">
+		delete from y_invitation_letter
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleInvitationLetter">
+		delete from y_invitation_letter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleInvitationLetterVo">
+		delete from y_invitation_letter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadInvitationLetter" resultType="com.fengyun.entity.InvitationLetterVo">
+		select
+		<include refid="columns" />
+		from y_invitation_letter
+		where id=#{id}
+	</select>
+
+	<select id="selectInvitationLetter" resultType="com.fengyun.entity.InvitationLetterVo">
+		select
+		<include refid="columns" />
+		from y_invitation_letter
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateInvitationLetter">
+		update y_invitation_letter
+		<set>
+			id=#{id},
+			learner_user_id=#{learner_user_id},
+			teacher_user_id=#{teacher_user_id},
+			content=#{content},
+			replay_content=#{replay_content},
+			invite_time=#{invite_time},
+			replay_time=#{replay_time},
+			is_agree=#{is_agree},
+			is_replay=#{is_replay},
+			course_id=#{course_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateInvitationLetterVo">
+		update y_invitation_letter
+		<set>
+			id=#{id},
+			learner_user_id=#{learner_user_id},
+			teacher_user_id=#{teacher_user_id},
+			content=#{content},
+			replay_content=#{replay_content},
+			invite_time=#{invite_time},
+			replay_time=#{replay_time},
+			is_agree=#{is_agree},
+			is_replay=#{is_replay},
+			course_id=#{course_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullInvitationLetter">
+		update y_invitation_letter
+		<set>
+			<if test="refuse_letter != null and refuse_letter != ''">
+		    	refuse_letter=#{refuse_letter},
+			</if>
+			<if test="learner_user_id != null and learner_user_id != ''">
+				learner_user_id=#{learner_user_id},
+			</if>
+			<if test="teacher_user_id != null and teacher_user_id != ''">
+				teacher_user_id=#{teacher_user_id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="replay_content != null and replay_content != ''">
+				replay_content=#{replay_content},
+			</if>
+			<if test="invite_time != null">
+				invite_time=#{invite_time},
+			</if>
+			<if test="replay_time != null">
+				replay_time=#{replay_time},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				is_agree=#{is_agree},
+			</if>
+			<if test="is_replay != null and is_replay != ''">
+				is_replay=#{is_replay},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullInvitationLetterVo">
+		update y_invitation_letter
+		<set>
+			<if test="learner_user_id != null and learner_user_id != ''">
+				learner_user_id=#{learner_user_id},
+			</if>
+			<if test="teacher_user_id != null and teacher_user_id != ''">
+				teacher_user_id=#{teacher_user_id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="replay_content != null and replay_content != ''">
+				replay_content=#{replay_content},
+			</if>
+			<if test="invite_time != null">
+				invite_time=#{invite_time},
+			</if>
+			<if test="replay_time != null">
+				replay_time=#{replay_time},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				is_agree=#{is_agree},
+			</if>
+			<if test="is_replay != null and is_replay != ''">
+				is_replay=#{is_replay},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleInvitationLetter">
+		update y_invitation_letter
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="learner_user_id != null and learner_user_id != ''">
+				learner_user_id=#{learner_user_id},
+			</if>
+			<if test="teacher_user_id != null and teacher_user_id != ''">
+				teacher_user_id=#{teacher_user_id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="replay_content != null and replay_content != ''">
+				replay_content=#{replay_content},
+			</if>
+			<if test="invite_time != null">
+				invite_time=#{invite_time},
+			</if>
+			<if test="replay_time != null">
+				replay_time=#{replay_time},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				is_agree=#{is_agree},
+			</if>
+			<if test="is_replay != null and is_replay != ''">
+				is_replay=#{is_replay},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleInvitationLetterVo">
+		update y_invitation_letter
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="learner_user_id != null and learner_user_id != ''">
+				learner_user_id=#{learner_user_id},
+			</if>
+			<if test="teacher_user_id != null and teacher_user_id != ''">
+				teacher_user_id=#{teacher_user_id},
+			</if>
+			<if test="content != null and content != ''">
+				content=#{content},
+			</if>
+			<if test="replay_content != null and replay_content != ''">
+				replay_content=#{replay_content},
+			</if>
+			<if test="invite_time != null">
+				invite_time=#{invite_time},
+			</if>
+			<if test="replay_time != null">
+				replay_time=#{replay_time},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				is_agree=#{is_agree},
+			</if>
+			<if test="is_replay != null and is_replay != ''">
+				is_replay=#{is_replay},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

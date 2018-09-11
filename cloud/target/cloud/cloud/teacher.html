@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./../js/jquery.min.js"></script>
+<script type="text/javascript">
+//获取老师的项目信息,供提交申请资料用
+function getTeacherInfoOfProject(){
+  $.ajax({
+	  url:"../com/teacherAction/getTeacherInfoOfProject.action",
+	  data:{ 
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+    //提交教师申请资料
+	function createTeacher(){
+	  $.ajax({
+		  url:"../com/teacherAction/create.action",
+		  data:{ 
+		    "evaluation_score": 5,//'综合评分',
+		    "course_num": 5,//'已授课程数量',
+		    "project_score":5,//'项目积分',
+		    "name": "5",//'真实名称',
+		    "introduce": "5",//'个人介绍',
+		    "head_pic_url": "5",// '头像封面路径',
+		    "teacher_certification": "5",//'教师资格证',
+		    "academic_certificate": "5",//'学历证书',
+		    "other_certificate": "5",//'其他证书',
+		    "certificate_name": "5"//'证书名称',
+		  },
+		  type:"get",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+    //讲师设置首页更改信息
+    function updateTeacher(){
+    	 $.ajax({
+   		  url:"../com/teacherAction/update.action",
+   		  data:{ 
+   			"id":1,
+   		    "name": "2",
+   		    "introduce": "2",
+   		    "head_pic_url": "2",
+   		    "other_certificate": "2"
+   		  },
+   		  type:"post",
+   		  dataType:"json",
+   		  success:(data)=>{
+   			  console.log(data);
+   		  },
+   		  error:()=>{
+   			  alert("error");
+   		  }
+   	  });
+    }
+    //审核员审核讲师更改信息
+    function checkTeacher(){
+   	 $.ajax({
+  		  url:"../com/teacherAction/update.action",
+  		  data:{ 
+		   "id": 1,
+	       "check_status": "N",
+	       "check_idea": "申请资料有误!"
+  		    
+  		  },
+  		  type:"post",
+  		  dataType:"json",
+  		  success:(data)=>{
+  			  console.log(data);
+  		  },
+  		  error:()=>{
+  			  alert("error");
+  		  }
+  	  });
+    }
+//     审核员到讲师管理页面获取讲师列表信息
+    function getCheckTeacherList(){
+	  $.ajax({
+		  url:"../com/teacherAction/getCheckTeacherList.action",
+		  data:{ 
+		   "pageSize": 10,
+   	       "pageNo": 1,
+   	       "startDate": "2017-11-11",
+	   	   "endDate": "2017-11-21",
+	   	   "check_status": "C",
+	   	   "role_type": "1"
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+//  根据用户id获取老师的信息，供讲师设置首页用,
+//也依据teacher是否为空作为当前人员是不是固定讲师的依据，在创建课程前加以判断
+    function getTeacherByUsrId(){
+	  $.ajax({
+		  url:"../com/teacherAction/getTeacherByUsrId.action",
+		  data:{ 
+			  flag:'create'
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+//  根据教师id获取老师的信息，供审核员查看审核讲师信息用
+    function getTeacherById(){
+	  $.ajax({
+		  url:"../com/teacherAction/getTeacherById.action",
+		  data:{ 
+			 "id":3
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+//  首页根据讲师名字搜索讲师列表信息
+    function searchTeacherList(){
+	  $.ajax({
+		  url:"../com/teacherAction/searchTeacherList.action",
+		  data:{ 
+		   "pageSize": 10,
+   	       "pageNo": 1,
+		   "name":1
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+	
+     
+  $(function(){
+ searchTeacherList();
+  });
+</script>
+</head>
+<body>
+
+</body>
+</html>

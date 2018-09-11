@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ILearnerCourseDao">
+
+	<sql id="columns">
+		id, course_id, type, create_date, delflag, is_free, is_buy,
+		learn_degree, user_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{course_id}, #{type}, #{create_date}, #{delflag},
+		#{is_free}, #{is_buy}, #{learn_degree}, #{user_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="create_date != null">
+			and create_date = #{create_date}
+		</if>
+		<if test="delflag != null and delflag != ''">
+			and delflag = #{delflag}
+		</if>
+		<if test="is_free != null and is_free != ''">
+			and is_free = #{is_free}
+		</if>
+		<if test="is_buy != null and is_buy != ''">
+			and is_buy = #{is_buy}
+		</if>
+		<if test="learn_degree != null and learn_degree != ''">
+			and learn_degree = #{learn_degree}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+	</sql>
+
+	<insert id="saveLearnerCourse" parameterType="com.fengyun.entity.LearnerCourse"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_learner_course (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveLearnerCourseVo" parameterType="com.fengyun.entity.LearnerCourseVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_learner_course (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteLearnerCourse">
+		delete from y_learner_course
+		where
+		course_id=#{course_id}
+	</delete>
+
+	<delete id="deleteLearnerCourseVo">
+		delete from y_learner_course
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleLearnerCourse">
+		delete from y_learner_course
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleLearnerCourseVo">
+		delete from y_learner_course
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadLearnerCourse" resultType="com.fengyun.entity.LearnerCourseVo">
+		select
+		<include refid="columns" />
+		from y_learner_course
+		where id=#{id}
+	</select>
+
+	<select id="getLearnerCourseByUserMap" resultType="com.fengyun.entity.LearnerCourse">
+		select
+		<include refid="columns" />
+		from y_learner_course
+		<where>
+			user_id=#{user_id} and course_id=#{course_id}
+			<if test="type!=null and type!=''">
+				and type=#{type}
+			</if>
+		</where>
+	</select>
+	<select id="selectLearnerCourse" resultType="com.fengyun.entity.LearnerCourseVo">
+		select
+		<include refid="columns" />
+		from y_learner_course
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateLearnerCourse">
+		update y_learner_course
+		<set>
+			id=#{id},
+			course_id=#{course_id},
+			type=#{type},
+			create_date=#{create_date},
+			delflag=#{delflag},
+			is_free=#{is_free},
+			is_buy=#{is_buy},
+			learn_degree=#{learn_degree},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateLearnerCourseVo">
+		update y_learner_course
+		<set>
+			id=#{id},
+			course_id=#{course_id},
+			type=#{type},
+			create_date=#{create_date},
+			delflag=#{delflag},
+			is_free=#{is_free},
+			is_buy=#{is_buy},
+			learn_degree=#{learn_degree},
+			user_id=#{user_id}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullLearnerCourse">
+		update y_learner_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date},
+			</if>
+			<if test="delflag != null and delflag != ''">
+				delflag=#{delflag},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="is_buy != null and is_buy != ''">
+				is_buy=#{is_buy},
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+				learn_degree=#{learn_degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		<where>
+			<if test="id!=null and id!=''">
+				and id=#{id}
+			</if>
+			<if test="course_id!=null and course_id!=''">
+				and course_id=#{course_id}
+			</if>
+			<if test="type!=null and type!=''">
+				and type=#{type}
+			</if>
+		</where>
+	</update>
+
+	<update id="updateIgnoreNullLearnerCourseVo">
+		update y_learner_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date},
+			</if>
+			<if test="delflag != null and delflag != ''">
+				delflag=#{delflag},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="is_buy != null and is_buy != ''">
+				is_buy=#{is_buy},
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+				learn_degree=#{learn_degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleLearnerCourse">
+		update y_learner_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date},
+			</if>
+			<if test="delflag != null and delflag != ''">
+				delflag=#{delflag},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="is_buy != null and is_buy != ''">
+				is_buy=#{is_buy},
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+				learn_degree=#{learn_degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleLearnerCourseVo">
+		update y_learner_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_id != null and course_id != ''">
+				course_id=#{course_id},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="create_date != null">
+				create_date=#{create_date},
+			</if>
+			<if test="delflag != null and delflag != ''">
+				delflag=#{delflag},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="is_buy != null and is_buy != ''">
+				is_buy=#{is_buy},
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+				learn_degree=#{learn_degree},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

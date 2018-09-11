@@ -1,0 +1,198 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun -->
+<mapper namespace="com.fengyun.dao.IChapterDao">
+	<sql id="columnsAs">
+		t1.id, t1.course_id, t1.chapter_name, t1.vedio_url,t1.video_status,
+		 t1.apply_date, t1.check_status, t1.check_idea,
+		t1.course_length, t1.delflag,t1.order_num,t1.union_site
+	</sql>
+	<select id="getTradeSkillById" resultType="com.fengyun.entity.TradeSkill">
+		select * from y_trade_skill where id in (select trade_skill_id from
+		y_course_trade_skill where course_id=#{id})
+	</select>
+	<select id="getSoftwareById" resultType="com.fengyun.entity.Software">
+		select * from y_software where id in (select software_id from
+		y_course_software where course_id =#{id})
+	</select>
+	<select id="getInterestDirectionById" resultType="com.fengyun.entity.InterestDirection">
+		select * from y_interest_direction where id=#{interest_direction_id}
+	</select>
+	<resultMap type="com.fengyun.entity.CourseVo" id="CourseVoMap1">
+		<id column="id" property="id" />
+		<association property="interestDirection" column="interest_direction_id"
+			javaType="com.fengyun.entity.InterestDirection" select="getInterestDirectionById" />
+			<association property="program" column="program_id" javaType="com.fengyun.entity.Program"
+			select="getProgramById"
+			></association>
+			<association property="type_obj" column="type_id" javaType="com.fengyun.entity.Type"
+			select="getTypeById"
+			></association>
+		<collection property="tradeSkills" column="id" javaType="arrayList"
+			ofType="com.fengyun.entity.TradeSkill" select="getTradeSkillById" />
+		<collection property="softwares" column="id" javaType="arrayList"
+			ofType="com.fengyun.entity.Software" select="getSoftwareById" />
+			
+	</resultMap>
+	<select id="getProgramById" resultType="com.fengyun.entity.Program">
+	  select * from y_program where id=#{program_id}
+	</select>
+	<select id="getTypeById" resultType="com.fengyun.entity.Type">
+	  select * from y_type where id=#{type_id}
+	</select>
+	<select id="getCourseByid1" resultMap="CourseVoMap1">
+		select * from y_course where id=#{course_id}
+	</select>
+	<select id="getCourseByid" resultType="com.fengyun.entity.CourseVo">
+		select t1.id, t1.course_name, t1.type, t1.interest_direction_id,
+		t1.is_free, t1.price, t1.user_id,
+		t1.teacher_delflag, t1.learner_delflag, t1.is_apply, t1.is_reply,t1.star_nums, t1.join_nums,t1.is_public  from y_course t1 where t1.id=#{course_id}
+	</select>
+	<resultMap type="com.fengyun.entity.ChapterVo" id="chapterMap2">
+		<association property="course" javaType="com.fengyun.entity.CourseVo"
+			column="course_id" select="getCourseByid1" />
+	</resultMap>
+	<resultMap type="com.fengyun.entity.ChapterVo" id="chapterMap1">
+		<association property="course" javaType="com.fengyun.entity.CourseVo"
+			column="course_id" select="getCourseByid" />
+	</resultMap>
+	<select id="getChapterById" resultMap="chapterMap2">
+		select * from y_chapter where id=#{id}
+	</select>
+	<select id="selectChapterPage" resultMap="chapterMap1">
+		select
+		<include refid="columnsAs" />
+		from y_chapter t1
+		left join y_course c on t1.course_id=c.id
+		<where>
+			<if test="search.user_id!=null and search.user_id!=''">
+				and c.user_id=#{search.user_id}
+			</if>
+			<if test="search.startDate!=null and search.startDate!=''">
+				and t1.apply_date>=#{search.startDate}
+			</if>
+			<if test="search.endDate!=null and search.endDate!=''">
+				and t1.apply_date&lt;=#{search.endDate}
+			</if>
+			<if test="chapter_name!=null and chapter_name!=''">
+				and t1.chapter_name like "%"#{chapter_name}"%"
+			</if>
+			<if test='check_status=="C" or check_status=="N"'>
+				and t1.check_status=#{check_status} and c.is_free='N'
+			</if>
+			<if test='check_status=="Y"'>
+				and (t1.check_status=#{check_status} or c.is_free='Y')
+			</if>
+			<if
+				test="search.course!=null and search.course.course_name!=null and search.course.course_name!=''">
+				and c.course_name like "%"#{search.course.course_name}"%"
+			</if>
+			and t1.delflag='N'
+			and c.teacher_delflag='N'
+			<if test="search.user_id==null">
+			  and c.type!=3
+			  and c.is_free='N'
+			</if>
+			
+		</where>
+		order by t1.id desc limit #{firstrownum}, #{limit}
+
+	</select>
+
+	<select id="selectChapterCount" resultType="java.lang.Long">
+		select
+		count(t1.id)
+		from y_chapter t1
+		left join y_course c on
+		t1.course_id=c.id
+		<where>
+			<if test="search.user_id!=null and search.user_id!=''">
+				and c.user_id=#{search.user_id}
+			</if>
+			<if test="search.startDate!=null and search.startDate!=''">
+				and t1.apply_date>=#{search.startDate}
+			</if>
+			<if test="search.endDate!=null and search.endDate!=''">
+				and t1.apply_date&lt;=#{search.endDate}
+			</if>
+			<if test="chapter_name!=null and chapter_name!=''">
+				and t1.chapter_name like "%"#{chapter_name}"%"
+			</if>
+			<if test='check_status=="C" or check_status=="N"'>
+				and t1.check_status=#{check_status} and c.is_free='N'
+			</if>
+			<if test='check_status=="Y"'>
+				and (t1.check_status=#{check_status} or c.is_free='Y')
+			</if>
+			<if
+				test="search.course!=null and  search.course.course_name!=null and search.course.course_name!=''">
+				and c.course_name like "%"#{search.course.course_name}"%"
+			</if>
+			and t1.delflag='N'
+			and c.teacher_delflag='N'
+			<if test="search.user_id==null">
+			  and c.type!=3
+			  and c.is_free='N'
+			</if>
+		</where>
+	</select>
+
+
+
+	<select id="selectChapterPage1" resultMap="chapterMap1">
+		select
+		<include refid="columnsAs" />
+		from y_chapter t1
+		left join y_course c on t1.course_id=c.id
+		<where>
+			<if test="search.startDate!=null and search.startDate!=''">
+				and t1.apply_date>=#{search.startDate}
+			</if>
+			<if test="search.endDate!=null and search.endDate!=''">
+				and t1.apply_date&lt;=#{search.endDate}
+			</if>
+			<if test="chapter_name!=null and chapter_name!=''">
+				and t1.chapter_name like "%"#{chapter_name}"%"
+			</if>
+			<if test='check_status=="C" or check_status=="N"'>
+				and t1.check_status=#{check_status} and c.is_free='N'
+			</if>
+			<if test='check_status=="Y"'>
+				and (t1.check_status=#{check_status} or c.is_free='Y')
+			</if>
+			and t1.course_id=#{course_id}
+			and t1.delflag='N'
+			and c.teacher_delflag='N'
+		</where>
+		order by t1.order_num desc limit #{firstrownum}, #{limit}
+
+	</select>
+	<select id="selectChapterCount1" resultType="java.lang.Long">
+		select
+		count(t1.id)
+		from y_chapter t1
+		left join y_course c on
+		t1.course_id=c.id
+		<where>
+			<if test="search.startDate!=null and search.startDate!=''">
+				and t1.apply_date>=#{search.startDate}
+			</if>
+			<if test="search.endDate!=null and search.endDate!=''">
+				and t1.apply_date&lt;=#{search.endDate}
+			</if>
+			<if test="chapter_name!=null and chapter_name!=''">
+				and t1.chapter_name like "%"#{chapter_name}"%"
+			</if>
+			<if test='check_status=="C" or check_status=="N"'>
+				and t1.check_status=#{check_status} and c.is_free='N'
+			</if>
+			<if test='check_status=="Y"'>
+				and (t1.check_status=#{check_status} or c.is_free='Y')
+			</if>
+			and t1.course_id=#{course_id}
+			and t1.delflag='N'
+			and c.teacher_delflag='N'
+		</where>
+	</select>
+</mapper>

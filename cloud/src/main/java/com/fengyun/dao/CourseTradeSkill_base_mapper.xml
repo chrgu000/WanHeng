@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ICourseTradeSkillDao">
+
+	<sql id="columns">
+		id, course_id, trade_skill_id
+	</sql>
+	<sql id="vals">
+		#{id}, #{course_id}, #{trade_skill_id}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+		<if test="trade_skill_id != null and trade_skill_id != ''">
+			and trade_skill_id = #{trade_skill_id}
+		</if>
+	</sql>
+
+	<insert id="saveCourseTradeSkill" parameterType="com.fengyun.entity.CourseTradeSkill" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_course_trade_skill (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCourseTradeSkillVo" parameterType="com.fengyun.entity.CourseTradeSkillVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_course_trade_skill (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteCourseTradeSkill">
+		delete from y_course_trade_skill
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCourseTradeSkillVo">
+		delete from y_course_trade_skill
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleCourseTradeSkill">
+		delete from y_course_trade_skill
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCourseTradeSkillVo">
+		delete from y_course_trade_skill
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadCourseTradeSkill" resultType="com.fengyun.entity.CourseTradeSkillVo">
+		select 
+		<include refid="columns"/>
+		from y_course_trade_skill
+		where id=#{id} 
+	</select>
+	
+	<select id="selectCourseTradeSkill" resultType="com.fengyun.entity.CourseTradeSkillVo">
+		select 
+		<include refid="columns"/>
+		from y_course_trade_skill
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCourseTradeSkill">
+		update y_course_trade_skill
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			trade_skill_id=#{trade_skill_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCourseTradeSkillVo">
+		update y_course_trade_skill
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			trade_skill_id=#{trade_skill_id}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullCourseTradeSkill">
+		update y_course_trade_skill
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="trade_skill_id != null and trade_skill_id != ''">
+			trade_skill_id=#{trade_skill_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCourseTradeSkillVo">
+		update y_course_trade_skill
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="trade_skill_id != null and trade_skill_id != ''">
+			trade_skill_id=#{trade_skill_id}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleCourseTradeSkill">
+		update y_course_trade_skill
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="trade_skill_id != null and trade_skill_id != ''">
+			trade_skill_id=#{trade_skill_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCourseTradeSkillVo">
+		update y_course_trade_skill
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="trade_skill_id != null and trade_skill_id != ''">
+			trade_skill_id=#{trade_skill_id}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

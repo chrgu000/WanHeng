@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun-->
+<mapper namespace="com.fengyun.dao.ICommentDao">
+	<sql id="columnsAs">
+		t1.id, t1.content, t1.course_id, t1.create_date, t1.learner_user_id, t1.star_level, t1.learn_degree
+	</sql>
+	<select id="getLearnerById" resultType="com.fengyun.entity.UserInfo">
+	   select * from u_user_info where user_id=#{learner_user_id}
+	</select>
+    <resultMap type="com.fengyun.entity.CommentVo" id="CommentMap">
+      <association property="learner" column="learner_user_id" javaType="com.fengyun.entity.UserInfo" select="getLearnerById"/>
+    </resultMap>
+    <select id="selectCommentPage1" resultMap="CommentMap">
+		select <include refid="columnsAs"/> from y_comment t1 where t1.course_id 
+		in (select id from y_course where user_id=#{user_id}) order by t1.id desc
+		limit #{firstrownum}, #{limit} 
+		
+	</select>
+	<select id="selectCommentCount1" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_comment
+		where course_id 
+		in (select id from y_course where user_id=#{user_id})
+	</select>
+	<select id="selectCommentPage" resultMap="CommentMap">
+		select
+		<include refid="columnsAs"/> from
+		y_comment t1
+		where t1.course_id=#{course_id}
+		order by t1.id desc
+		limit #{firstrownum}, #{limit} 
+		 
+	</select>
+	<select id="selectCommentCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_comment
+		where course_id=#{course_id}
+	</select>
+
+</mapper>

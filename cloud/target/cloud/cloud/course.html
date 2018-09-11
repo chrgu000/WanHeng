@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./../js/jquery.min.js"></script>
+<script type="text/javascript">
+//获取所有兴趣方向
+function getAllInterestDirections(){
+  $.ajax({
+	  url:"../com/courseAction/getAllInterestDirections.action",
+	  data:{ 
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//获取所有行业技能
+function getAllTradeSkills(){
+	  $.ajax({
+		  url:"../com/courseAction/getAllTradeSkills.action",
+		  data:{ 
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+// 获取所有软件
+function getAllSoftwares(){
+  $.ajax({
+	  url:"../com/courseAction/getAllSoftwares.action",
+	  data:{ 
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//创建课程
+function createCourse(){
+  $.ajax({
+	  url:"../com/courseAction/createCourse.action",
+	  data:{ 
+		//course
+	    "course_name": "3",//'课程名称',
+	    "type": "1",//'课程类型1为录播课程,2为文本课程',
+	    "interest_direction_id": 2,//'兴趣方向id',
+	    "tradeSkillIds":"1,2,3",
+	    "softwareIds":"2,3,4",
+	    "course_cover": "3",//'课程封面',
+	    "course_overview": "3",//'课程概述',
+	    "is_free": "Y",//'收费免费(Y为免费,N为付费)',
+	    "price": 200,//'课程价格',
+	    "is_apply": "3",//'是否为邀约课程(Y为是,N为否)',
+	    "star_nums": 0,//'评论星级总数',
+	    //chapter
+        "course_id": '1',//'课程id',
+        "chapter_name": "4",//'章节名称',
+        "vedio_url": "",// '视频路径',
+        "course_content": "4",//'文本课程内容',
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//根据讲师id查询讲师已讲的课程,供新建课程用
+function getCoursesByUserMap(){
+  $.ajax({
+	  url:"../com/courseAction/getCoursesByUserMap.action",
+	  data:{ 
+		  type:''
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//根据课程id查询该课程下的所有章节,供添加课程和目录使用
+function getChaptersByCourseId(){
+  $.ajax({
+	  url:"../com/courseAction/getChaptersByCourseId.action",
+	  data:{ 
+		  "course_id":1
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+//首页根据讲师名字搜索讲师列表信息
+function searchCourseList(){
+  $.ajax({
+	  url:"../com/courseAction/searchCourseList.action",
+	  data:{ 
+	   "pageSize": 10,
+  	   "pageNo": 1,
+	   "course_name":'',//课程名称
+	   "type":'',//课程类型1为录播课程,2为文本课程
+	   "is_free":'',//Y为免费,N为付费
+	   "interest_direction_id":'',//兴趣方向
+	   "trade_skill_id":'',//专业技能
+	   "software_id":'',//软件
+	   "news":'',//最新
+	   "mood":'down'//人气，up升序，down降序
+	  },
+	  type:"post",
+	  dataType:"json",
+	  success:(data)=>{
+		  console.log(data);
+	  },
+	  error:()=>{
+		  alert("error");
+	  }
+  });
+}
+$(function(){
+	searchCourseList();
+});
+</script>
+</head>
+<body>
+
+</body>
+</html>

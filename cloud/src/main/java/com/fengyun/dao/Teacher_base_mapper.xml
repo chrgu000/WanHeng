@@ -1,0 +1,434 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ITeacherDao">
+	<select id="getCoursesByTeacherId" resultType="com.fengyun.entity.CourseVo">
+		select * from y_course where user_id=#{user_id} and teacher_delflag='N' and is_public='Y' order by id desc 
+	</select>
+	<resultMap type="com.fengyun.entity.Teacher" id="teachersMap">
+		<id property="user_id" column="user_id" />
+		<collection property="courses" column="user_id" javaType="arrayList"
+			ofType="com.fengyun.entity.CourseVo" select="getCoursesByTeacherId"></collection>
+	</resultMap>
+	<select id="getTeacherByName" resultMap="teachersMap">
+		select
+		<include refid="columns" />
+		from y_teacher where name like "%"#{name}"%"
+	</select>
+	<select id="getTeacherById" resultType="com.fengyun.entity.TeacherVo">
+		select
+		<include refid="columns" />
+		from y_teacher
+		where id=#{id}
+	</select>
+	<select id="checkTeacherByUserId" resultType="com.fengyun.entity.TeacherVo">
+		select
+		<include refid="columns" />
+		from y_teacher
+		where user_id=#{userId} 
+	</select>
+	<select id="getTeacherByUsrId" resultType="com.fengyun.entity.TeacherVo">
+		select
+		<include refid="columns" />
+		from y_teacher
+		where user_id=#{userId}
+	</select>
+	<sql id="columns">
+		id, user_id, evaluation_score, course_num, project_score,
+		name, introduce, head_pic_url, teacher_certification,
+		academic_certificate, other_certificate,
+		check_status, apply_date, role_type,is_apply, check_idea,composition
+	</sql>
+	<sql id="vals">
+		#{id}, #{user_id}, #{evaluation_score}, #{course_num},
+		#{project_score}, #{name}, #{introduce}, #{head_pic_url},
+		#{teacher_certification}, #{academic_certificate},
+		#{other_certificate}, #{check_status},
+		#{apply_date}, #{role_type},#{is_apply}, #{check_idea},#{composition}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="evaluation_score != null and evaluation_score != ''">
+			and evaluation_score = #{evaluation_score}
+		</if>
+		<if test="course_num != null and course_num != ''">
+			and course_num = #{course_num}
+		</if>
+		<if test="project_score != null and project_score != ''">
+			and project_score = #{project_score}
+		</if>
+		<if test="name != null and name != ''">
+			and name = #{name}
+		</if>
+		<if test="introduce != null and introduce != ''">
+			and introduce = #{introduce}
+		</if>
+		<if test="head_pic_url != null and head_pic_url != ''">
+			and head_pic_url = #{head_pic_url}
+		</if>
+		<if test="teacher_certification != null and teacher_certification != ''">
+			and teacher_certification = #{teacher_certification}
+		</if>
+		<if test="academic_certificate != null and academic_certificate != ''">
+			and academic_certificate = #{academic_certificate}
+		</if>
+		<if test="other_certificate != null and other_certificate != ''">
+			and other_certificate = #{other_certificate}
+		</if>
+		
+		<if test="check_status != null and check_status != ''">
+			and check_status = #{check_status}
+		</if>
+		<if test="apply_date != null">
+			and apply_date = #{apply_date}
+		</if>
+		<if test="role_type != null and role_type != ''">
+			and role_type = #{role_type}
+		</if>
+		<if test="check_idea != null and check_idea != ''">
+			and check_idea = #{check_idea}
+		</if>
+		<if test="composition != null and composition != ''">
+			and composition = #{composition}
+		</if>
+	</sql>
+
+	<insert id="saveTeacher" parameterType="com.fengyun.entity.Teacher"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_teacher (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveTeacherVo" parameterType="com.fengyun.entity.TeacherVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_teacher (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteTeacher">
+		delete from y_teacher
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteTeacherVo">
+		delete from y_teacher
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleTeacher">
+		delete from y_teacher
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleTeacherVo">
+		delete from y_teacher
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadTeacher" resultType="com.fengyun.entity.TeacherVo">
+		select
+		<include refid="columns" />
+		from y_teacher
+		where id=#{id}
+	</select>
+
+	<select id="selectTeacher" resultType="com.fengyun.entity.TeacherVo">
+		select
+		<include refid="columns" />
+		from y_teacher
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateTeacher">
+		update y_teacher
+		<set>
+			id=#{id},
+			user_id=#{user_id},
+			evaluation_score=#{evaluation_score},
+			course_num=#{course_num},
+			project_score=#{project_score},
+			name=#{name},
+			introduce=#{introduce},
+			head_pic_url=#{head_pic_url},
+			teacher_certification=#{teacher_certification},
+			academic_certificate=#{academic_certificate},
+			other_certificate=#{other_certificate},
+			certificate_name=#{certificate_name},
+			check_status=#{check_status},
+			apply_date=#{apply_date},
+			role_type=#{role_type},
+			check_idea=#{check_idea}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateTeacherVo">
+		update y_teacher
+		<set>
+			id=#{id},
+			user_id=#{user_id},
+			evaluation_score=#{evaluation_score},
+			course_num=#{course_num},
+			project_score=#{project_score},
+			name=#{name},
+			introduce=#{introduce},
+			head_pic_url=#{head_pic_url},
+			teacher_certification=#{teacher_certification},
+			academic_certificate=#{academic_certificate},
+			other_certificate=#{other_certificate},
+			certificate_name=#{certificate_name},
+			check_status=#{check_status},
+			apply_date=#{apply_date},
+			role_type=#{role_type},
+			check_idea=#{check_idea}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullTeacher">
+		update y_teacher
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="evaluation_score != null and evaluation_score != ''">
+				evaluation_score=#{evaluation_score},
+			</if>
+			<if test="course_num != null and course_num != ''">
+				course_num=#{course_num},
+			</if>
+			<if test="project_score != null and project_score != ''">
+				project_score=#{project_score},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="head_pic_url != null and head_pic_url != ''">
+				head_pic_url=#{head_pic_url},
+			</if>
+			<if test="teacher_certification != null and teacher_certification != ''">
+				teacher_certification=#{teacher_certification},
+			</if>
+			<if test="academic_certificate != null and academic_certificate != ''">
+				academic_certificate=#{academic_certificate},
+			</if>
+			<if test="other_certificate != null and other_certificate != ''">
+				other_certificate=#{other_certificate},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="apply_date != null">
+				apply_date=#{apply_date},
+			</if>
+			<if test="role_type != null and role_type != ''">
+				role_type=#{role_type},
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+				check_idea=#{check_idea},
+			</if>
+			<if test="composition != null and composition != ''">
+				composition=#{composition}
+			</if>
+				
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullTeacherVo">
+		update y_teacher
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="evaluation_score != null and evaluation_score != ''">
+				evaluation_score=#{evaluation_score},
+			</if>
+			<if test="course_num != null and course_num != ''">
+				course_num=#{course_num},
+			</if>
+			<if test="project_score != null and project_score != ''">
+				project_score=#{project_score},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="head_pic_url != null and head_pic_url != ''">
+				head_pic_url=#{head_pic_url},
+			</if>
+			<if test="teacher_certification != null and teacher_certification != ''">
+				teacher_certification=#{teacher_certification},
+			</if>
+			<if test="academic_certificate != null and academic_certificate != ''">
+				academic_certificate=#{academic_certificate},
+			</if>
+			<if test="other_certificate != null and other_certificate != ''">
+				other_certificate=#{other_certificate},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="apply_date != null">
+				apply_date=#{apply_date},
+			</if>
+			<if test="role_type != null and role_type != ''">
+				role_type=#{role_type},
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+				check_idea=#{check_idea}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleTeacher">
+		update y_teacher
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="evaluation_score != null and evaluation_score != ''">
+				evaluation_score=#{evaluation_score},
+			</if>
+			<if test="course_num != null and course_num != ''">
+				course_num=#{course_num},
+			</if>
+			<if test="project_score != null and project_score != ''">
+				project_score=#{project_score},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="head_pic_url != null and head_pic_url != ''">
+				head_pic_url=#{head_pic_url},
+			</if>
+			<if test="teacher_certification != null and teacher_certification != ''">
+				teacher_certification=#{teacher_certification},
+			</if>
+			<if test="academic_certificate != null and academic_certificate != ''">
+				academic_certificate=#{academic_certificate},
+			</if>
+			<if test="other_certificate != null and other_certificate != ''">
+				other_certificate=#{other_certificate},
+			</if>
+			<if test="certificate_name != null and certificate_name != ''">
+				certificate_name=#{certificate_name},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="apply_date != null">
+				apply_date=#{apply_date},
+			</if>
+			<if test="role_type != null and role_type != ''">
+				role_type=#{role_type},
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+				check_idea=#{check_idea}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleTeacherVo">
+		update y_teacher
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="evaluation_score != null and evaluation_score != ''">
+				evaluation_score=#{evaluation_score},
+			</if>
+			<if test="course_num != null and course_num != ''">
+				course_num=#{course_num},
+			</if>
+			<if test="project_score != null and project_score != ''">
+				project_score=#{project_score},
+			</if>
+			<if test="name != null and name != ''">
+				name=#{name},
+			</if>
+			<if test="introduce != null and introduce != ''">
+				introduce=#{introduce},
+			</if>
+			<if test="head_pic_url != null and head_pic_url != ''">
+				head_pic_url=#{head_pic_url},
+			</if>
+			<if test="teacher_certification != null and teacher_certification != ''">
+				teacher_certification=#{teacher_certification},
+			</if>
+			<if test="academic_certificate != null and academic_certificate != ''">
+				academic_certificate=#{academic_certificate},
+			</if>
+			<if test="other_certificate != null and other_certificate != ''">
+				other_certificate=#{other_certificate},
+			</if>
+			<if test="certificate_name != null and certificate_name != ''">
+				certificate_name=#{certificate_name},
+			</if>
+			<if test="check_status != null and check_status != ''">
+				check_status=#{check_status},
+			</if>
+			<if test="apply_date != null">
+				apply_date=#{apply_date},
+			</if>
+			<if test="role_type != null and role_type != ''">
+				role_type=#{role_type},
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+				check_idea=#{check_idea}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript" src="./../js/jquery.min.js"></script>
+<script type="text/javascript">
+	//创建邀约函
+	function createInvitationLetter(){
+	  $.ajax({
+		  url:"../com/invitationLetterAction/create.action",
+		  data:{ 
+		    "teacher_user_id": 3,//'讲师用户id',
+		    "content": "3",//'邀约函正文',
+		    "img_urls":"fsfgas&ksdksd&kjskdhsdf"
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+	//获取老师所收的邀约函中最新的一个未读邀约函
+	function getLastLetterOfIsNotRead(){
+		  $.ajax({
+			  url:"../com/invitationLetterAction/getLastLetterOfIsNotRead.action",
+			  data:{ 
+			  },
+			  type:"post",
+			  dataType:"json",
+			  success:(data)=>{
+				  console.log(data);
+			  },
+			  error:()=>{
+				  alert("error");
+			  }
+		  });
+		}
+	//老师对邀约函是否同意
+	function agreeLetterOrNot(){
+		  $.ajax({
+			  url:"../com/invitationLetterAction/agreeLetterOrNot.action",
+			  data:{ 
+				  "id":2,
+				  "is_agree":'Y',//Y表同意，N表不同意
+				  "refuse_letter":''//不同意时的理由和意见
+			  },
+			  type:"post",
+			  dataType:"json",
+			  success:(data)=>{
+				  console.log(data);
+			  },
+			  error:()=>{
+				  alert("error");
+			  }
+		  });
+		}
+ //讲师或者学员获取邀约函列表
+    function getLetterList(){
+	  $.ajax({
+		  url:"../com/invitationLetterAction/getLetterList.action",
+		  data:{ 
+			  "pageSize": 10,
+	   	      "pageNo": 1,
+	   	      "sendOrReceive":"all"  //send,receive
+	   	       
+		  },
+		  type:"post",
+		  dataType:"json",
+		  success:(data)=>{
+			  console.log(data);
+		  },
+		  error:()=>{
+			  alert("error");
+		  }
+	  });
+	}
+  $(function(){
+	  getLetterList();
+  });
+</script>
+</head>
+<body>
+
+</body>
+</html>

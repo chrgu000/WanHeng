@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ICommentDao">
+	<sql id="columns">
+		id, content, course_id, create_date, learner_user_id, star_level, learn_degree
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}, #{course_id}, #{create_date}, #{learner_user_id}, #{star_level}, #{learn_degree}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+		<if test="create_date != null">
+			and create_date = #{create_date}
+		</if>
+		<if test="learner_user_id != null and learner_user_id != ''">
+			and learner_user_id = #{learner_user_id}
+		</if>
+		<if test="star_level != null and star_level != ''">
+			and star_level = #{star_level}
+		</if>
+		<if test="learn_degree != null and learn_degree != ''">
+			and learn_degree = #{learn_degree}
+		</if>
+	</sql>
+
+	<insert id="saveComment" parameterType="com.fengyun.entity.Comment" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_comment (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveCommentVo" parameterType="com.fengyun.entity.CommentVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_comment (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteComment">
+		delete from y_comment
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteCommentVo">
+		delete from y_comment
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleComment">
+		delete from y_comment
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleCommentVo">
+		delete from y_comment
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadComment" resultType="com.fengyun.entity.CommentVo">
+		select 
+		<include refid="columns"/>
+		from y_comment
+		where id=#{id} 
+	</select>
+	
+	<select id="selectComment" resultType="com.fengyun.entity.CommentVo">
+		select 
+		<include refid="columns"/>
+		from y_comment
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateComment">
+		update y_comment
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			course_id=#{course_id}, 
+			create_date=#{create_date}, 
+			learner_user_id=#{learner_user_id}, 
+			star_level=#{star_level}, 
+			learn_degree=#{learn_degree}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateCommentVo">
+		update y_comment
+		<set>
+			id=#{id}, 
+			content=#{content}, 
+			course_id=#{course_id}, 
+			create_date=#{create_date}, 
+			learner_user_id=#{learner_user_id}, 
+			star_level=#{star_level}, 
+			learn_degree=#{learn_degree}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullComment">
+		update y_comment
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="create_date != null">
+			create_date=#{create_date}, 
+		</if>
+		<if test="learner_user_id != null and learner_user_id != ''">
+			learner_user_id=#{learner_user_id}, 
+		</if>
+		<if test="star_level != null and star_level != ''">
+			star_level=#{star_level}, 
+		</if>
+		<if test="learn_degree != null and learn_degree != ''">
+			learn_degree=#{learn_degree}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullCommentVo">
+		update y_comment
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="create_date != null">
+			create_date=#{create_date}, 
+		</if>
+		<if test="learner_user_id != null and learner_user_id != ''">
+			learner_user_id=#{learner_user_id}, 
+		</if>
+		<if test="star_level != null and star_level != ''">
+			star_level=#{star_level}, 
+		</if>
+		<if test="learn_degree != null and learn_degree != ''">
+			learn_degree=#{learn_degree}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleComment">
+		update y_comment
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="learner_user_id != null and learner_user_id != ''">
+			learner_user_id=#{learner_user_id}, 
+			</if>
+			<if test="star_level != null and star_level != ''">
+			star_level=#{star_level}, 
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+			learn_degree=#{learn_degree}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleCommentVo">
+		update y_comment
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="create_date != null">
+			create_date=#{create_date}, 
+			</if>
+			<if test="learner_user_id != null and learner_user_id != ''">
+			learner_user_id=#{learner_user_id}, 
+			</if>
+			<if test="star_level != null and star_level != ''">
+			star_level=#{star_level}, 
+			</if>
+			<if test="learn_degree != null and learn_degree != ''">
+			learn_degree=#{learn_degree}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

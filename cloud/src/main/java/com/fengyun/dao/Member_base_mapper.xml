@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao">
+
+	<sql id="columns">
+		real_name, nickname,friend_id, user_id, id,reply_msg,
+		apply_msg,gender,is_agree,head_pic_url,tel,state,progress_state
+	</sql>
+	<sql id="vals">
+		#{real_name},#{nickname}, #{friend_id}, #{user_id}, #{id},
+		#{reply_msg},
+		#{apply_msg},#{gender},#{is_agree},#{head_pic_url},#{tel},#{state},#{progress_state}
+	</sql>
+	<sql id="conds">
+		<if test="real_name != null and real_name != ''">
+			and real_name = #{real_name}
+		</if>
+		<if test="friend_id != null and friend_id != ''">
+			and friend_id = #{friend_id}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="reply_msg != null and reply_msg != ''">
+			and reply_msg = #{reply_msg}
+		</if>
+		<if test="gender != null and gender != ''">
+			and gender = #{gender}
+		</if>
+		<if test="apply_msg != null and apply_msg != ''">
+			and apply_msg = #{apply_msg}
+		</if>
+		<if test="is_agree != null and is_agree != ''">
+			and is_agree = #{is_agree}
+		</if>
+	</sql>
+	<select id="getGroupMembers" resultType="com.fengyun.entity.Member">
+	   select u.* from u_gmember u left join u_g_m m on u.id=m.member_id where m.group_id=#{group_id} order by m.id
+	</select>
+	<insert id="addMemberMessage" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		 insert into u_g_msg(id,group_id,user_id,message_id,readstate) 
+		values (#{id},#{group_id},#{user_id},#{message_id},#{readstate})
+	</insert>
+	<select id="searchGroupMembers" resultType="com.fengyun.entity.Member">
+	  select * from u_gmember where id in (select member_id from u_g_m where group_id=#{group_id})
+	  and  (nickname like "%"#{search}"%" or real_name like "%"#{search}"%" or tel like "%"#{search}"%")
+	</select>
+	<select id="searchGroup" resultType="java.util.HashMap">
+	  select distinct u.*,m.nickname,m.real_name from u_group u left join u_g_m g on u.id=g.group_id left join u_gmember m
+	  on  g.member_id=m.id  where u.name like "%"#{search}"%" and m.user_id=#{user_id}
+	</select>
+	<update id="changeGroupName">
+	   update u_group set name=#{name} where id=#{group_id}
+	</update>
+	<update id="changeGroupMemberRealName">
+	   update u_gmember set real_name=#{real_name} where user_id=#{user_id} and id in
+	   (select member_id from u_g_m where group_id=#{group_id})
+	</update>
+	<select id="getGroupInfoById" resultType="java.util.HashMap">
+	  select * from u_group where id =#{group_id}
+	</select>
+	<select id="getOnlyOnlineState" resultType="java.lang.String">
+	   select distinct state from u_member where user_id=#{user_id}
+	</select>
+	<select id="getOnlineState" resultType="java.lang.String">
+	  select state from u_member where user_id=#{friend_id} and friend_id=#{user_id}
+	</select>
+	<update id="updateOnlieState">
+	   update u_member set state=#{state} where  user_id=#{user_id}
+	</update>
+	<update id="changeRealName">
+	  update u_member set real_name=#{real_name}
+	  where user_id=#{user_id} and friend_id=#{friend_id}
+	</update>
+	<delete id="deleteMyFriend">
+	  delete from u_member where 
+	  (user_id=#{user_id} and friend_id=#{friend_id}) 
+	  or(user_id=#{friend_id} and friend_id=#{user_id})
+	</delete>
+	<update id="changeProgressState">
+	 update u_member 
+	  <set>
+	    progress_state='Y',
+	  </set> 
+	 where user_id=#{user_id} 
+	</update>
+	<update id="agree">
+	  update u_member 
+	  <set>
+	    <if test='reply_flag=="Y"'>
+	    reply_msg=#{reply_msg},
+	    </if>
+	    progress_state=#{progress_state},
+	    is_agree=#{agree}
+	  </set> 
+	 where user_id=#{user_id} 
+	  and friend_id=#{friend_id}
+	</update>
+	<select id="getMyNewFriend" resultType="com.fengyun.entity.Member">
+	   select u.real_name,u.nickname,u.progress_state,u.head_pic_url,u.is_agree,u.gender,um.apply_msg,u.reply_msg,u.user_id,u.friend_id from u_member u  join
+       u_member um on u.user_id=um.friend_id  and u.friend_id=um.user_id
+       where u.user_id=#{user_id} order by u.id desc
+	</select>
+	<update id="updateApplyState">
+	   update u_member set is_agree=#{is_agree} where user_id=#{friend_id} and friend_id=#{user_id}
+	</update>
+	<update id="updateApplyMsg">
+	   update u_member set apply_msg=#{apply_msg},state=#{state}
+	   where user_id=#{user_id} and friend_id=#{friend_id}
+	</update>
+	<select id="isExistOrNot" resultType="java.lang.Integer">
+	  select count(*) from u_member where user_id=#{user_id} and friend_id=#{friend_id}
+	</select>
+      
+     <select id="getDefaultMessage" resultType="java.lang.String">
+       select apply_msg from u_member where user_id=#{user_id} order by id desc limit 1
+     </select>
+     <select id="checkIsMyFriend" resultType="com.fengyun.entity.Member">
+		select * from u_member
+		where user_id=#{user_id} and friend_id=#{friend_id} and is_agree='Y'
+	</select>
+	
+	<select id="isMyFrendOrNot" resultType="com.fengyun.entity.Member">
+		select distinct u.* from u_member u left join u_member um on u.friend_id=um.user_id and u.user_id= um.friend_id
+		where u.user_id=#{user_id} and um.is_agree='Y' and u.is_agree='Y'
+		 and(u.real_name =#{search} or u.nickname =#{search} or u.tel=#{search})
+	</select>
+	<select id="searchMyFriend" resultType="com.fengyun.entity.Member">
+		select * from u_member
+		where user_id=#{user_id} and is_agree='Y' and(real_name like
+		"%"#{search}"%" or nickname like "%"#{search}"%" or tel like "%"#{search}"%")
+	</select>
+	<select id="searchFriend" resultType="com.fengyun.entity.Member">
+		select u.id as
+		friend_id,u.nickname,ui.head_pic_path as head_pic_url
+		,ui.name as
+		real_name,ui.sex as gender,u.tel from u_user u left join u_user_info ui
+		on u.id=ui.user_id where u.nickname=#{search} or u.tel=#{search} or
+		ui.name=#{search} or u.username=#{search}
+	</select>
+	<update id="updateGroupReadState">
+	  update u_g_msg set readstate='Y' where group_id=#{group_id} and user_id=#{user_id}
+	</update>
+	<update id="updateReadState">
+	   update u_message set readstate='Y' where user_id=#{friend_id} and friend_id=#{user_id} and readstate='N'
+	</update>
+	<select id="getGroupUnReadNum" resultType="java.lang.Long">
+	  select count(*) from u_g_msg where user_id=#{user_id} and group_id=#{group_id} and readstate='N'
+	</select>
+	<select id="getUnReadNum" resultType="java.lang.Long">
+	  select count(*) from u_message where user_id=#{friend_id} and friend_id=#{user_id} and readstate='N'
+	</select>
+	<select id="getMyFriends" resultType="com.fengyun.entity.Member">
+		select u.* from u_member u left join u_member um on u.user_id=um.friend_id 
+		and u.friend_id=um.user_id where u.user_id=#{user_id} 
+		and u.is_agree='Y' and um.is_agree='Y'
+	</select>
+	<select id="getChatMessages" resultType="com.fengyun.entity.Message">
+		select * from u_message
+		where (user_id=#{user_id} and
+		friend_id=#{friend_id})
+		or
+		(user_id=#{friend_id} and friend_id=#{user_id}) order by id desc
+		limit
+		5
+	</select>
+	<select id="getMasterGroupId" resultType="java.lang.Long">
+	  select group_master_id from u_group where id=#{group_id}
+	</select>
+	<select id="getGroupFriendsById" resultType="com.fengyun.entity.Member">
+	   select u.* from u_gmember u left join u_g_m m on u.id=m.member_id where m.group_id=#{group_id} order by m.id
+	</select>
+	<select id="getMyChatGroups" resultType="java.util.HashMap">
+	   select g.*,u.nickname,u.real_name from u_group g left join u_g_m m on g.id=m.group_id left join u_gmember u 
+	   on m.member_id =u.id where  u.user_id=#{user_id} 
+	</select>
+	<delete id="deleteGroupById">
+	  delete from u_group where id=#{group_id}
+	</delete>
+	<delete id="deleteMemberById">
+	  delete from u_gmember where id=#{member_id}
+	</delete>
+	<delete id="deleteGroupMember">
+	  delete from u_g_m where member_id=#{member_id} and group_id=#{group_id}
+	</delete>
+	<select id="getMemberIdByQuery" resultType="java.lang.Long">
+	   select u.id from u_gmember u left join u_g_m g on u.id=g.member_id
+	   where u.user_id=#{user_id} and g.group_id=#{group_id}
+	</select>
+	<select id="getGroupMemberNum" resultType="java.lang.Integer">
+	  select member_num from u_group where id=#{group_id}
+	</select>
+	<update id="updateGroupMemberNum">
+	 update u_group set member_num=#{memberNum} where id=#{group_id}
+	</update>
+	<insert id="addGroupMemberInfo" 
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_gmember (
+		 id,tel,nickname,head_pic_url,user_id,gender
+		)
+		values (
+		 #{id},#{tel},#{nickname},#{head_pic_url},#{user_id},#{gender}
+		)
+	</insert>
+	 <insert id="createNewGroupChat" 
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_group (
+		 id,name,head_pic_url,group_master_id,member_num
+		)
+		values (
+		 #{id},#{name},#{head_pic_url},#{group_master_id},#{member_num}
+		)
+	</insert>
+	<select id="getMemberById" resultType="com.fengyun.entity.Member">
+	  select * from u_member where friend_id=#{user_id} order by id limit 1
+	</select>
+    <insert id="addGroupMember"  
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_g_m (
+		   id,group_id,member_id
+		)
+		values (
+		  #{id},#{group_id},#{member_id}
+		)
+	</insert>
+	<insert id="saveMember" parameterType="com.fengyun.entity.Member"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_member (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveMemberVo" parameterType="com.fengyun.entity.MemberVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_member (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteMember">
+		delete from u_member
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteMemberVo">
+		delete from u_member
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleMember">
+		delete from u_member
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleMemberVo">
+		delete from u_member
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadMember" resultType="com.fengyun.entity.MemberVo">
+		select
+		<include refid="columns" />
+		from u_member
+		where id=#{id}
+	</select>
+
+	<select id="selectMember" resultType="com.fengyun.entity.MemberVo">
+		select
+		<include refid="columns" />
+		from u_member
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateMember">
+		update u_member
+		<set>
+			real_name=#{real_name},
+			friend_id=#{friend_id},
+			user_id=#{user_id},
+			id=#{id},
+			reply_msg=#{reply_msg},
+			apply_msg=#{apply_msg},
+			gender=#{gender},
+			is_agree=#{is_agree}
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateMemberVo">
+		update u_member
+		<set>
+			real_name=#{real_name},
+			friend_id=#{friend_id},
+			user_id=#{user_id},
+			id=#{id},
+			reply_msg=#{reply_msg},
+			apply_msg=#{apply_msg},
+			gender=#{gender},
+			is_agree=#{is_agree}
+		</set>
+		where id=#{id}
+	</update>
+
+
+	<update id="updateIgnoreNullMember">
+		update u_member
+		<set>
+			<if test="real_name != null and real_name != ''">
+				real_name=#{real_name},
+			</if>
+			<if test="friend_id != null and friend_id != ''">
+				friend_id=#{friend_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="reply_msg != null and reply_msg != ''">
+				reply_msg=#{reply_msg},
+			</if>
+			<if test="apply_msg != null and apply_msg != ''">
+				apply_msg=#{apply_msg},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				and is_agree = #{is_agree},
+			</if>
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullMemberVo">
+		update u_member
+		<set>
+			<if test="real_name != null and real_name != ''">
+				real_name=#{real_name},
+			</if>
+			<if test="friend_id != null and friend_id != ''">
+				friend_id=#{friend_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="reply_msg != null and reply_msg != ''">
+				reply_msg=#{reply_msg},
+			</if>
+			<if test="apply_msg != null and apply_msg != ''">
+				apply_msg=#{apply_msg},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				and is_agree = #{is_agree},
+			</if>
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleMember">
+		update u_member
+		<set>
+			<if test="real_name != null and real_name != ''">
+				real_name=#{real_name},
+			</if>
+			<if test="friend_id != null and friend_id != ''">
+				friend_id=#{friend_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="reply_msg != null and reply_msg != ''">
+				reply_msg=#{reply_msg},
+			</if>
+			<if test="apply_msg != null and apply_msg != ''">
+				apply_msg=#{apply_msg},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				and is_agree = #{is_agree},
+			</if>
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleMemberVo">
+		update u_member
+		<set>
+			<if test="real_name != null and real_name != ''">
+				real_name=#{real_name},
+			</if>
+			<if test="friend_id != null and friend_id != ''">
+				friend_id=#{friend_id},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="reply_msg != null and reply_msg != ''">
+				reply_msg=#{reply_msg},
+			</if>
+			<if test="apply_msg != null and apply_msg != ''">
+				apply_msg=#{apply_msg},
+			</if>
+			<if test="is_agree != null and is_agree != ''">
+				and is_agree = #{is_agree},
+			</if>
+			<if test="gender != null and gender != ''">
+				and gender = #{gender}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

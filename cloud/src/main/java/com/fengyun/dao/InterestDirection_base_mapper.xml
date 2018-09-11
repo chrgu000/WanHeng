@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.IInterestDirectionDao">
+     <select id="getAllInterestDirections" resultType="com.fengyun.entity.InterestDirectionVo">
+     select 
+		<include refid="columns"/>
+		from y_interest_direction <where>
+		type_id=#{type_id}
+		</where>  order by id asc
+	 
+     </select>
+	<sql id="columns">
+		id, content
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+	</sql>
+
+	<insert id="saveInterestDirection" parameterType="com.fengyun.entity.InterestDirection" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_interest_direction (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveInterestDirectionVo" parameterType="com.fengyun.entity.InterestDirectionVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_interest_direction (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteInterestDirection">
+		delete from y_interest_direction
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteInterestDirectionVo">
+		delete from y_interest_direction
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleInterestDirection">
+		delete from y_interest_direction
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleInterestDirectionVo">
+		delete from y_interest_direction
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadInterestDirection" resultType="com.fengyun.entity.InterestDirectionVo">
+		select 
+		<include refid="columns"/>
+		from y_interest_direction
+		where id=#{id} 
+	</select>
+	
+	<select id="selectInterestDirection" resultType="com.fengyun.entity.InterestDirectionVo">
+		select 
+		<include refid="columns"/>
+		from y_interest_direction
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateInterestDirection">
+		update y_interest_direction
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateInterestDirectionVo">
+		update y_interest_direction
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullInterestDirection">
+		update y_interest_direction
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullInterestDirectionVo">
+		update y_interest_direction
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleInterestDirection">
+		update y_interest_direction
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleInterestDirectionVo">
+		update y_interest_direction
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ISoftwareDao">
+     <select id="getAllSoftwares" resultType="com.fengyun.entity.SoftwareVo">
+     	select 
+		<include refid="columns"/>
+		from y_software <where>
+		   type_id=#{type_id} 
+		</where> order by id asc
+     </select>
+       <select id="getSoftwaresByInterestDirectionId" resultType="com.fengyun.entity.SoftwareVo">
+     	select 
+		<include refid="columns"/>
+		from y_software <where>
+		interest_direction_id=#{interest_direction_id} 
+		</where>  order by id asc
+     </select>
+     
+	<sql id="columns">
+		id, content
+	</sql>
+	<sql id="vals">
+		#{id}, #{content}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="content != null and content != ''">
+			and content = #{content}
+		</if>
+	</sql>
+
+	<insert id="saveSoftware" parameterType="com.fengyun.entity.Software" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveSoftwareVo" parameterType="com.fengyun.entity.SoftwareVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_software (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteSoftware">
+		delete from y_software
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteSoftwareVo">
+		delete from y_software
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleSoftware">
+		delete from y_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleSoftwareVo">
+		delete from y_software
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadSoftware" resultType="com.fengyun.entity.SoftwareVo">
+		select 
+		<include refid="columns"/>
+		from y_software
+		where id=#{id} 
+	</select>
+	
+	<select id="selectSoftware" resultType="com.fengyun.entity.SoftwareVo">
+		select 
+		<include refid="columns"/>
+		from y_software
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateSoftware">
+		update y_software
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateSoftwareVo">
+		update y_software
+		<set>
+			id=#{id}, 
+			content=#{content}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullSoftware">
+		update y_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullSoftwareVo">
+		update y_software
+		<set>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="content != null and content != ''">
+			content=#{content}
+		</if>
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleSoftware">
+		update y_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleSoftwareVo">
+		update y_software
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="content != null and content != ''">
+			content=#{content}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

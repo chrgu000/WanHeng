@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.ICourseDao">
+<update id="updateJoinNum">
+  update y_course set join_nums=#{num} where id=#{course_id}
+</update>
+<select id="getCourseJoinNumsById" resultType="java.lang.Integer">
+  select join_nums from y_course where id=#{course_id}
+</select>
+   <select id="getAllPrograms" resultType="com.fengyun.entity.Program">
+	   select * from y_program
+	</select>
+    <select id="getAllType" resultType="com.fengyun.entity.Type">
+	   select * from y_type 
+	</select>
+	<select id="getUpdateCourseNum" resultType="java.lang.Integer">
+	   select count(id) from y_chapter where course_id=#{id} and check_status='C' and delflag='N'
+	</select>
+    <select id="getsCourseIsMyOrNot" resultType="java.lang.Long">
+	  select id from y_course where user_id=#{user_id} and id=#{course_id}  
+	</select>
+	<select id="checkCourseIsMyOrNot" resultType="java.lang.Long">
+	  select count(id) from y_learner_course 
+	  <where>
+	    user_id=#{user_id} and course_id=#{course_id} and delflag='N'
+	    <if test='paid=="paid"'>
+	        and type=1
+	    </if>
+	  </where>
+	</select>
+	<select id="getChapterOrderOfCourse" resultType="com.fengyun.entity.Chapter">
+	  select * from y_chapter where course_id=#{course_id} and delflag='N'order by order_num asc
+	</select>
+	<select id="getCourseInfoById" resultMap="CourseVoMap">
+	  select * from y_course where id=#{id}
+	</select>
+    <select id="getApplyCourseNumByUserId" resultType="java.lang.Long">
+        select count(*) from y_course where user_id=#{user_id}   and teacher_delflag='N'and is_apply='Y' and (is_reply!='Y' or is_reply is null)
+    </select>
+	<select id="getCoursesByUserMap" resultType="com.fengyun.entity.Course">
+		select id, course_name from y_course where user_id=#{user_id} and type=#{type} and teacher_delflag='N' order by id
+		desc
+	</select>
+	<delete id="deleteCourseTradeSkill">
+		delete from y_course_trade_skill where course_id=#{course_id}
+	</delete>
+	<delete id="deleteCourseSoftware">
+		delete from y_course_software where course_id=#{course_id}
+	</delete>
+	<insert id="addCourseTradeSkill">
+		insert into y_course_trade_skill(course_id,trade_skill_id)
+		values(#{course_id},#{trade_skill_id})
+	</insert>
+	<insert id="addCourseSoftware">
+		insert into
+		y_course_software(course_id,software_id)values(#{course_id},#{software_id})
+	</insert>
+	<select id="getInterestDirectionById" resultType="com.fengyun.entity.InterestDirection">
+		select * from y_interest_direction where id=#{interest_direction_id}
+	</select>
+	<select id="getChaptersByCourseIdOfCheck" resultType="com.fengyun.entity.Chapter">
+		select * from y_chapter where course_id=#{id} and delflag='N'and (check_status='Y' or check_status='C')  
+	</select>
+	<select id="getChaptersByCourseId" resultType="com.fengyun.entity.Chapter">
+		select * from y_chapter c left join y_course y on c.course_id=y.id
+		where c.course_id=#{id} and c.delflag='N' and (c.check_status='Y'and y.is_free='N'
+		or y.is_free='Y') order by c.order_num asc
+	 
+	</select>
+	<select id="getSoftwaresByCourseId" resultType="com.fengyun.entity.Software">
+		select * from y_software where id in(select software_id from
+		y_course_software where course_id=#{id})
+	</select>
+	<select id="getTradeSkillsByCourseId" resultType="com.fengyun.entity.TradeSkill">
+		select * from y_trade_skill where id in(select trade_skill_id from
+		y_course_trade_skill where course_id=#{id})
+	</select>
+	<resultMap type="com.fengyun.entity.CourseVo" id="courseMap">
+		<id column="id" property="id" />
+		<association property="program" column="program_id" javaType="com.fengyun.entity.Program"
+			select="getProgramById"
+			></association>
+			<association property="type_obj" column="type_id" javaType="com.fengyun.entity.Type"
+			select="getTypeById"
+			></association>
+		<association property="interestDirection" column="interest_direction_id"
+			javaType="com.fengyun.entity.InterestDirection" select="getInterestDirectionById"></association>
+		<collection property="softwares" column="id" javaType="arrayList"
+			ofType="com.fengyun.entity.Software" select="getSoftwaresByCourseId"></collection>
+		<collection property="tradeSkills" column="id" javaType="arrayList"
+			ofType="com.fengyun.entity.TradeSkill" select="getTradeSkillsByCourseId"></collection>
+	</resultMap>
+	<select id="getProgramById" resultType="com.fengyun.entity.Program">
+	  select * from y_program where id=#{program_id}
+	</select>
+	<select id="getTypeById" resultType="com.fengyun.entity.Type">
+	  select * from y_type where id=#{type_id}
+	</select>
+	<select id="getCourseById" resultMap="courseMap">
+		select * from y_course where id=#{id}
+	</select>
+	<sql id="columns">
+		id, course_name, type, interest_direction_id, course_cover,
+		course_overview, is_free, price, user_id, teacher_delflag,
+		learner_delflag, is_apply, star_nums,join_nums,is_public,type_id,program_id,begin_date,end_date,onlive_time
+		,try_learn_time,is_save_video,privilege,create_date
+	</sql>
+	<sql id="vals">
+		#{id}, #{course_name}, #{type}, #{interest_direction_id},
+		#{course_cover}, #{course_overview}, #{is_free}, #{price}, #{user_id},
+		#{teacher_delflag}, #{learner_delflag}, #{is_apply}, #{star_nums},#{join_nums},#{is_public},#{type_id},#{program_id}
+		,#{begin_date},#{end_date},#{onlive_time},#{try_learn_time},#{is_save_video},#{privilege},#{create_date}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="course_name != null and course_name != ''">
+			and course_name = #{course_name}
+		</if>
+		<if test="type != null and type != ''">
+			and type = #{type}
+		</if>
+		<if test="interest_direction_id != null and interest_direction_id != ''">
+			and interest_direction_id = #{interest_direction_id}
+		</if>
+		<if test="course_cover != null and course_cover != ''">
+			and course_cover = #{course_cover}
+		</if>
+		<if test="course_overview != null and course_overview != ''">
+			and course_overview = #{course_overview}
+		</if>
+		<if test="is_free != null and is_free != ''">
+			and is_free = #{is_free}
+		</if>
+		<if test="price != null and price != ''">
+			and price = #{price}
+		</if>
+		<if test="user_id != null and user_id != ''">
+			and user_id = #{user_id}
+		</if>
+		<if test="teacher_delflag != null and teacher_delflag != ''">
+			and teacher_delflag = #{teacher_delflag}
+		</if>
+		<if test="learner_delflag != null and learner_delflag != ''">
+			and learner_delflag = #{learner_delflag}
+		</if>
+		<if test="is_apply != null and is_apply != ''">
+			and is_apply = #{is_apply}
+		</if>
+		<if test="star_nums != null and star_nums != ''">
+			and star_nums = #{star_nums}
+		</if>
+	</sql>
+  <insert id="addProgram"  
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Integer" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_program (
+		  content,type_id
+		)
+		values (
+		#{content},2
+		)
+	</insert>
+	<insert id="saveCourse" parameterType="com.fengyun.entity.Course"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_course (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<insert id="saveCourseVo" parameterType="com.fengyun.entity.CourseVo"
+		useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into y_course (
+		<include refid="columns" />
+		)
+		values (
+		<include refid="vals" />
+		)
+	</insert>
+
+	<delete id="deleteCourse">
+		delete from y_course
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteCourseVo">
+		delete from y_course
+		where id=#{id}
+	</delete>
+
+	<delete id="deleteByExampleCourse">
+		delete from y_course
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<delete id="deleteByExampleCourseVo">
+		delete from y_course
+		where 1=1
+		<include refid="conds" />
+	</delete>
+
+	<select id="loadCourse" resultType="com.fengyun.entity.CourseVo">
+		select
+		<include refid="columns" />
+		from y_course
+		where id=#{id}
+	</select>
+
+	<select id="selectCourse" resultType="com.fengyun.entity.CourseVo">
+		select
+		<include refid="columns" />
+		from y_course
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateCourse">
+		update y_course
+		<set>
+			id=#{id},
+			course_name=#{course_name},
+			type=#{type},
+			interest_direction_id=#{interest_direction_id},
+			course_cover=#{course_cover},
+			course_overview=#{course_overview},
+			is_free=#{is_free},
+			price=#{price},
+			user_id=#{user_id},
+			teacher_delflag=#{teacher_delflag},
+			learner_delflag=#{learner_delflag},
+			is_apply=#{is_apply},
+			star_nums=#{star_nums}
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateCourseVo">
+		update y_course
+		<set>
+			id=#{id},
+			course_name=#{course_name},
+			type=#{type},
+			interest_direction_id=#{interest_direction_id},
+			course_cover=#{course_cover},
+			course_overview=#{course_overview},
+			is_free=#{is_free},
+			price=#{price},
+			user_id=#{user_id},
+			teacher_delflag=#{teacher_delflag},
+			learner_delflag=#{learner_delflag},
+			is_apply=#{is_apply},
+			star_nums=#{star_nums}
+		</set>
+		where id=#{id}
+	</update>
+	<update id="updateIgnoreNullCourse">
+		update y_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_name != null and course_name != ''">
+				course_name=#{course_name},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="interest_direction_id != null and interest_direction_id != ''">
+				interest_direction_id=#{interest_direction_id},
+			</if>
+			<if test="course_cover != null and course_cover != ''">
+				course_cover=#{course_cover},
+			</if>
+			<if test="course_overview != null and course_overview != ''">
+				course_overview=#{course_overview},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test='is_free=="Y"'>
+			    price=null,
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="teacher_delflag != null and teacher_delflag != ''">
+				teacher_delflag=#{teacher_delflag},
+			</if>
+			<if test="learner_delflag != null and learner_delflag != ''">
+				learner_delflag=#{learner_delflag},
+			</if>
+			<if test="is_apply != null and is_apply != ''">
+				is_apply=#{is_apply},
+			</if>
+			<if test="join_nums != null and join_nums != ''">
+				join_nums=#{join_nums},
+			</if>
+			<if test="star_nums != null and star_nums != ''">
+				star_nums=#{star_nums},
+			</if>
+			<if test="is_public != null and is_public != ''">
+				is_public=#{is_public},
+			</if>
+			<if test="is_reply != null and is_reply != ''">
+				is_reply=#{is_reply},
+			</if>
+			<if test="check_delflag != null and check_delflag != ''">
+				check_delflag=#{check_delflag},
+			</if>
+			<if test="type_id!=null and type_id!=''">
+			    type_id=#{type_id},
+			</if>
+			<if test="program_id!=null and program_id!=''">
+				program_id=#{program_id},
+			</if>
+			<if test="begin_date!=null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date!=null">
+				end_date=#{end_date},
+			</if>
+			<if test="onlive_time!=null">
+				onlive_time=#{onlive_time},
+			</if>
+			<if test="live!=null">
+				live=#{live},
+			</if>
+			<if test="try_learn_time!=null and try_learn_time!=''">
+				try_learn_time=#{try_learn_time},
+			</if>
+			<if test="is_save_video!=null and is_save_video!=''">
+				is_save_video=#{is_save_video},
+			</if>
+			<if test="privilege!=null and privilege!=''">
+				privilege=#{privilege}
+			</if>
+			
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateIgnoreNullCourseVo">
+		update y_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_name != null and course_name != ''">
+				course_name=#{course_name},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="interest_direction_id != null and interest_direction_id != ''">
+				interest_direction_id=#{interest_direction_id},
+			</if>
+			<if test="course_cover != null and course_cover != ''">
+				course_cover=#{course_cover},
+			</if>
+			<if test="course_overview != null and course_overview != ''">
+				course_overview=#{course_overview},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test='is_free=="Y"'>
+			    price=null,
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="teacher_delflag != null and teacher_delflag != ''">
+				teacher_delflag=#{teacher_delflag},
+			</if>
+			<if test="learner_delflag != null and learner_delflag != ''">
+				learner_delflag=#{learner_delflag},
+			</if>
+			<if test="is_apply != null and is_apply != ''">
+				is_apply=#{is_apply},
+			</if>
+			<if test="join_nums != null and join_nums != ''">
+				join_nums=#{join_nums},
+			</if>
+			<if test="star_nums != null and star_nums != ''">
+				star_nums=#{star_nums},
+			</if>
+			<if test="is_public != null and is_public != ''">
+				is_public=#{is_public},
+			</if>
+			<if test="is_reply != null and is_reply != ''">
+				is_reply=#{is_reply},
+			</if>
+			<if test="check_delflag != null and check_delflag != ''">
+				check_delflag=#{check_delflag},
+			</if>
+			<if test="type_id!=null and type_id!=''">
+			    type_id=#{type_id},
+			</if>
+			<if test="program_id!=null and program_id!=''">
+				program_id=#{program_id},
+			</if>
+			<if test="begin_date!=null">
+				begin_date=#{begin_date},
+			</if>
+			<if test="end_date!=null">
+				end_date=#{end_date},
+			</if>
+			<if test="onlive_time!=null">
+				onlive_time=#{onlive_time},
+			</if>
+			<if test="live!=null">
+				live=#{live},
+			</if>
+			<if test="try_learn_time!=null and try_learn_time!=''">
+				try_learn_time=#{try_learn_time},
+			</if>
+			<if test="is_save_video!=null and is_save_video!=''">
+				is_save_video=#{is_save_video},
+			</if>
+			<if test="privilege!=null and privilege!=''">
+				privilege=#{privilege}
+			</if>
+		</set>
+		where id=#{id}
+	</update>
+
+	<update id="updateByExampleCourse">
+		update y_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_name != null and course_name != ''">
+				course_name=#{course_name},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="interest_direction_id != null and interest_direction_id != ''">
+				interest_direction_id=#{interest_direction_id},
+			</if>
+			<if test="course_cover != null and course_cover != ''">
+				course_cover=#{course_cover},
+			</if>
+			<if test="course_overview != null and course_overview != ''">
+				course_overview=#{course_overview},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="teacher_delflag != null and teacher_delflag != ''">
+				teacher_delflag=#{teacher_delflag},
+			</if>
+			<if test="learner_delflag != null and learner_delflag != ''">
+				learner_delflag=#{learner_delflag},
+			</if>
+			<if test="is_apply != null and is_apply != ''">
+				is_apply=#{is_apply},
+			</if>
+			<if test="star_nums != null and star_nums != ''">
+				star_nums=#{star_nums}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+	<update id="updateByExampleCourseVo">
+		update y_course
+		<set>
+			<if test="id != null and id != ''">
+				id=#{id},
+			</if>
+			<if test="course_name != null and course_name != ''">
+				course_name=#{course_name},
+			</if>
+			<if test="type != null and type != ''">
+				type=#{type},
+			</if>
+			<if test="interest_direction_id != null and interest_direction_id != ''">
+				interest_direction_id=#{interest_direction_id},
+			</if>
+			<if test="course_cover != null and course_cover != ''">
+				course_cover=#{course_cover},
+			</if>
+			<if test="course_overview != null and course_overview != ''">
+				course_overview=#{course_overview},
+			</if>
+			<if test="is_free != null and is_free != ''">
+				is_free=#{is_free},
+			</if>
+			<if test="price != null and price != ''">
+				price=#{price},
+			</if>
+			<if test="user_id != null and user_id != ''">
+				user_id=#{user_id},
+			</if>
+			<if test="teacher_delflag != null and teacher_delflag != ''">
+				teacher_delflag=#{teacher_delflag},
+			</if>
+			<if test="learner_delflag != null and learner_delflag != ''">
+				learner_delflag=#{learner_delflag},
+			</if>
+			<if test="is_apply != null and is_apply != ''">
+				is_apply=#{is_apply},
+			</if>
+			<if test="star_nums != null and star_nums != ''">
+				star_nums=#{star_nums}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

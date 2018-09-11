@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun-->
+<mapper namespace="com.fengyun.dao.ISoftwareDao">
+	<sql id="columnsAs">
+		t1.id, t1.content
+	</sql>
+
+	<select id="selectSoftwarePage" resultType="com.fengyun.entity.SoftwareVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		y_software t1
+		join
+		(SELECT
+		id
+		from
+		y_software
+		where 1=1
+		
+		<include refid="conds" />
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectSoftwareCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_software
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+</mapper>

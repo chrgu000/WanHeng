@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.fengyun.dao.IChapterDao">
+	<sql id="columns">
+		id, course_id, chapter_name, vedio_url,video_status, course_content, apply_date, check_status, check_idea, course_length, delflag,order_num,union_site
+	</sql>
+	<sql id="vals">
+		#{id}, #{course_id}, #{chapter_name}, #{vedio_url},#{video_status}, #{course_content}, #{apply_date}, #{check_status}, #{check_idea}, #{course_length}, #{delflag},#{order_num},#{union_site}
+	</sql>
+	<sql id="conds">
+		<if test="id != null and id != ''">
+			and id = #{id}
+		</if>
+		<if test="course_id != null and course_id != ''">
+			and course_id = #{course_id}
+		</if>
+		<if test="chapter_name != null and chapter_name != ''">
+			and chapter_name = #{chapter_name}
+		</if>
+		<if test="vedio_url != null and vedio_url != ''">
+			and vedio_url = #{vedio_url}
+		</if>
+		<if test="course_content != null and course_content != ''">
+			and course_content = #{course_content}
+		</if>
+		<if test="apply_date != null">
+			and apply_date = #{apply_date}
+		</if>
+		<if test="check_status != null and check_status != ''">
+			and check_status = #{check_status}
+		</if>
+		<if test="check_idea != null and check_idea != ''">
+			and check_idea = #{check_idea}
+		</if>
+		<if test="course_length != null and course_length != ''">
+			and course_length = #{course_length}
+		</if>
+		<if test="delflag != null and delflag != ''">
+			and delflag = #{delflag}
+		</if>
+	</sql>
+	<update id="updateChapterVideoUrl">
+	   update y_chapter set vedio_url=#{video_url} where id=#{chapter_id}
+	</update>
+	<select id="getHasChapterNumsOfCourse" resultType="java.lang.Long">
+	  select count(*) from y_chapter where course_id=#{course_id} and delflag='N'
+	</select>
+	<insert id="sendMessage"  useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		 insert into y_message(time,nickname,chapter_id,course_id,message,id) 
+		values (#{time},#{nickname},#{chapter_id},#{course_id},#{message},#{id})
+	</insert>
+	<insert id="sendUMessage" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		 insert into u_message(nickname,time,user_id,friend_id,message,id,readstate) 
+		values (#{nickname},#{time},#{user_id},#{friend_id},#{message},#{id},#{readstate})
+	</insert>
+	<select id="getYesCheckChapterByCourseId" resultType="java.lang.Integer">
+	   select count(*) from y_chapter where course_id=#{course_id} and delflag='N'and check_status='Y'
+	</select>
+	<select id="getNearChapter" resultType="com.fengyun.entity.Chapter">
+	   select id,order_num from y_chapter
+	    <where>
+	     delflag='N' and course_id=#{course_id}
+	    <if test="type=='up'">
+	      and order_num &lt; #{order_num}
+	   </if> 
+	    <if test="type=='down'">
+	      and order_num > #{order_num}
+	   </if> 
+	    </where>
+	   <if test="type=='up'">
+	     order by order_num desc limit 1
+	   </if> 
+	   <if test="type=='down'">
+	       order by order_num asc limit 1
+	   </if>
+	</select>
+	<select id="getMaxOrderByCourseId" resultType="java.lang.Integer">
+	   select order_num from y_chapter where course_id=#{course_id} order by order_num desc limit 1
+	</select>
+    <update id="updateVideoStatus">
+      update y_chapter <set><if test="video_status!=null">
+      video_status=#{video_status},
+      </if>
+      course_length=#{course_length}</set>  <where>vedio_url=#{vedio_url}</where> 
+    </update>
+	<insert id="saveChapter" parameterType="com.fengyun.entity.Chapter" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_chapter (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+	
+	<insert id="saveChapterVo" parameterType="com.fengyun.entity.ChapterVo" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		insert into y_chapter (<include refid="columns" />) 
+		values (<include refid="vals" />)
+	</insert>
+
+	<delete id="deleteChapter">
+		delete from y_chapter
+		where id=#{id} 
+	</delete>
+	
+	<delete id="deleteChapterVo">
+		delete from y_chapter
+		where id=#{id} 
+	</delete>
+
+	<delete id="deleteByExampleChapter">
+		delete from y_chapter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<delete id="deleteByExampleChapterVo">
+		delete from y_chapter
+		where 1=1
+		<include refid="conds" />
+	</delete>
+	
+	<select id="loadChapter" resultType="com.fengyun.entity.ChapterVo">
+		select 
+		<include refid="columns"/>
+		from y_chapter
+		where id=#{id} 
+	</select>
+	
+	<select id="selectChapter" resultType="com.fengyun.entity.ChapterVo">
+		select 
+		<include refid="columns"/>
+		from y_chapter
+		where 1=1
+		<include refid="conds" />
+	</select>
+
+	<update id="updateChapter">
+		update y_chapter
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			chapter_name=#{chapter_name}, 
+			vedio_url=#{vedio_url}, 
+			course_content=#{course_content}, 
+			apply_date=#{apply_date}, 
+			check_status=#{check_status}, 
+			check_idea=#{check_idea}, 
+			course_length=#{course_length}, 
+			delflag=#{delflag}
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateChapterVo">
+		update y_chapter
+		<set>
+			id=#{id}, 
+			course_id=#{course_id}, 
+			chapter_name=#{chapter_name}, 
+			vedio_url=#{vedio_url}, 
+			course_content=#{course_content}, 
+			apply_date=#{apply_date}, 
+			check_status=#{check_status}, 
+			check_idea=#{check_idea}, 
+			course_length=#{course_length}, 
+			delflag=#{delflag}
+		</set>
+		where id=#{id} 
+	</update>
+	
+
+	<update id="updateIgnoreNullChapter">
+		update y_chapter
+		<set>
+		<if test="order_num!=null and order_num!=''">
+		   order_num=#{order_num},
+		</if>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="chapter_name != null and chapter_name != ''">
+			chapter_name=#{chapter_name}, 
+		</if>
+		<if test="vedio_url != null and vedio_url != ''">
+			vedio_url=#{vedio_url}, 
+		</if>
+		<if test="course_content != null and course_content != ''">
+			course_content=#{course_content}, 
+		</if>
+		<if test="apply_date != null">
+			apply_date=#{apply_date}, 
+		</if>
+		<if test="check_status != null and check_status != ''">
+			check_status=#{check_status}, 
+		</if>
+		<if test="video_status != null and video_status != ''">
+			video_status=#{video_status}, 
+		</if>
+		<if test="check_idea != null and check_idea != ''">
+			check_idea=#{check_idea}, 
+		</if>
+		<if test="course_length != null and course_length != ''">
+			course_length=#{course_length}, 
+		</if>
+		<if test="delflag != null and delflag != ''">
+			delflag=#{delflag},
+		</if>
+		<if test='check_status=="C"'>
+		    check_idea=null,
+		</if>
+		<if test="union_site != null and union_site != ''">
+			union_site=#{union_site}
+		</if>
+		
+		</set>
+		where id=#{id} 
+	</update>
+	
+	<update id="updateIgnoreNullChapterVo">
+		update y_chapter
+		<set>
+		<if test="order_num!=null and order_num!=''">
+		   order_num=#{order_num},
+		</if>
+		<if test="id != null and id != ''">
+			id=#{id}, 
+		</if>
+		<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+		</if>
+		<if test="chapter_name != null and chapter_name != ''">
+			chapter_name=#{chapter_name}, 
+		</if>
+		<if test="vedio_url != null and vedio_url != ''">
+			vedio_url=#{vedio_url}, 
+		</if>
+		<if test="course_content != null and course_content != ''">
+			course_content=#{course_content}, 
+		</if>
+		<if test="apply_date != null">
+			apply_date=#{apply_date}, 
+		</if>
+		<if test="check_status != null and check_status != ''">
+			check_status=#{check_status}, 
+		</if>
+		<if test="check_idea != null and check_idea != ''">
+			check_idea=#{check_idea}, 
+		</if>
+		<if test="course_length != null and course_length != ''">
+			course_length=#{course_length}, 
+		</if>
+		<if test="delflag != null and delflag != ''">
+			delflag=#{delflag},
+		</if>
+		<if test="union_site != null and union_site != ''">
+			union_site=#{union_site}
+		</if>
+		
+		</set>
+		where id=#{id} 
+	</update>
+
+	<update id="updateByExampleChapter">
+		update y_chapter
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="chapter_name != null and chapter_name != ''">
+			chapter_name=#{chapter_name}, 
+			</if>
+			<if test="vedio_url != null and vedio_url != ''">
+			vedio_url=#{vedio_url}, 
+			</if>
+			<if test="course_content != null and course_content != ''">
+			course_content=#{course_content}, 
+			</if>
+			<if test="apply_date != null">
+			apply_date=#{apply_date}, 
+			</if>
+			<if test="check_status != null and check_status != ''">
+			check_status=#{check_status}, 
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+			check_idea=#{check_idea}, 
+			</if>
+			<if test="course_length != null and course_length != ''">
+			course_length=#{course_length}, 
+			</if>
+			<if test="delflag != null and delflag != ''">
+			delflag=#{delflag}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+	
+	<update id="updateByExampleChapterVo">
+		update y_chapter
+		<set>
+			<if test="id != null and id != ''">
+			id=#{id}, 
+			</if>
+			<if test="course_id != null and course_id != ''">
+			course_id=#{course_id}, 
+			</if>
+			<if test="chapter_name != null and chapter_name != ''">
+			chapter_name=#{chapter_name}, 
+			</if>
+			<if test="vedio_url != null and vedio_url != ''">
+			vedio_url=#{vedio_url}, 
+			</if>
+			<if test="course_content != null and course_content != ''">
+			course_content=#{course_content}, 
+			</if>
+			<if test="apply_date != null">
+			apply_date=#{apply_date}, 
+			</if>
+			<if test="check_status != null and check_status != ''">
+			check_status=#{check_status}, 
+			</if>
+			<if test="check_idea != null and check_idea != ''">
+			check_idea=#{check_idea}, 
+			</if>
+			<if test="course_length != null and course_length != ''">
+			course_length=#{course_length}, 
+			</if>
+			<if test="delflag != null and delflag != ''">
+			delflag=#{delflag}
+			</if>
+		</set>
+		where 1=1
+		<include refid="conds" />
+	</update>
+
+</mapper>

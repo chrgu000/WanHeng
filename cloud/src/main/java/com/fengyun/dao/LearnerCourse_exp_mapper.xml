@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun-->
+<mapper namespace="com.fengyun.dao.ILearnerCourseDao">
+	<sql id="columnsAs">
+		t1.id, t1.course_id, t1.type, t1.create_date, t1.delflag, t1.is_free, t1.is_buy, t1.learn_degree, t1.user_id
+	</sql>
+
+	<select id="selectLearnerCoursePage" resultType="com.fengyun.entity.LearnerCourseVo">
+		select
+		<include refid="columnsAs"/>
+		from
+		y_learner_course t1
+		join
+		(SELECT
+		id
+		from
+		y_learner_course
+		where user_id=#{user_id} and type=#{type} and delflag='N'
+		order by id desc
+		limit #{firstrownum}, #{limit}) t2
+		where t1.id = t2.id
+	</select>
+	
+	<select id="selectLearnerCourseCount" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_learner_course
+		where user_id=#{user_id} and type=#{type} and delflag='N'
+	</select>
+
+</mapper>

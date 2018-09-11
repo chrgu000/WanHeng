@@ -1,0 +1,248 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- @author yangjun -->
+<mapper namespace="com.fengyun.dao.ICourseDao">
+	<sql id="columnsAs">
+		t1.id, t1.course_name, t1.course_cover,t1.type,
+		t1.interest_direction_id,
+		t1.is_free, t1.price,
+		t1.user_id,t1.check_delflag,
+		t1.teacher_delflag, t1.learner_delflag,
+		t1.is_apply, t1.star_nums,
+		t1.join_nums,t1.is_public,t1.type_id,t1.program_id,
+		t1.begin_date,t1.end_date,t1.onlive_time,t1.try_learn_time,t1.is_save_video,
+		t1.privilege,t1.create_date
+	</sql>
+
+	<select id="getTeacherByUserId" resultType="com.fengyun.entity.Teacher">
+		select
+		id,name,user_id,head_pic_url,introduce,evaluation_score from
+		y_teacher
+		where user_id=#{user_id}
+	</select>
+	<resultMap type="com.fengyun.entity.CourseVo" id="CourseVoMap">
+		<association property="teacher" javaType="com.fengyun.entity.Teacher"
+			column="user_id" select="getTeacherByUserId" />
+	</resultMap>
+	<select id="getRecommendCourse" resultMap="CourseVoMap">
+		select distinct
+		<include refid="columnsAs" />
+		from y_course t1 where t1.teacher_delflag='N' and t1.is_public='Y' and
+		(t1.check_delflag!='Y' or t1.check_delflag is null) order by
+		t1.join_nums desc limit 5
+	</select>
+	<select id="selectCoursePage3" resultMap="CourseVoMap">
+		select distinct
+		<include refid="columnsAs" />
+		from y_course t1
+		where t1.course_name like "%"#{course_name}"%" and
+		t1.teacher_delflag='N'
+		and t1.is_public='Y' and (t1.check_delflag!='Y'
+		or t1.check_delflag is
+		null) order by t1.id desc
+		limit #{firstrownum},
+		#{limit}
+	</select>
+
+	<select id="selectCourseCount3" resultType="java.lang.Long">
+		select count(t1.id)
+		from y_course t1
+		where t1.course_name like "%"#{course_name}"%" and
+		t1.teacher_delflag='N'
+		and t1.is_public='Y' and (t1.check_delflag!='Y'
+		or t1.check_delflag is
+		null)
+	</select>
+
+	<select id="selectCoursePage2" resultType="com.fengyun.entity.CourseVo">
+		select distinct
+		<include refid="columnsAs" />
+		,y.id as yid,y.create_date from y_course t1
+		left join y_learner_course
+		y on t1.id=y.course_id and y.delflag='N'
+		<where>
+			y.type=#{search.type}
+			and y.user_id=#{search.user_id}
+			and t1.teacher_delflag='N'
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+		</where>
+		order by yid desc
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectCourseCount2" resultType="java.lang.Long">
+		select count(t1.id)
+		from y_course t1
+		left join y_learner_course y on t1.id=y.course_id
+		<where>
+			y.type=#{search.type}
+			and y.user_id=#{search.user_id}
+			and t1.teacher_delflag='N'
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+		</where>
+	</select>
+	<select id="selectCoursePage1" resultMap="CourseVoMap">
+		select
+		distinct
+		<include refid="columnsAs" />
+		from
+		y_course t1 where t1.user_id=#{user_id} and t1.teacher_delflag='N'
+		and t1.is_public='Y' and (t1.check_delflag!='Y' or t1.check_delflag is
+		null)
+		order by id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectCourseCount1" resultType="java.lang.Long">
+		select
+		count(distinct
+		t1.id)
+		from
+		y_course t1 where t1.user_id=#{user_id} and
+		t1.teacher_delflag='N' and t1.is_public='Y' and (t1.check_delflag!='Y'
+		or t1.check_delflag is null)
+	</select>
+	<select id="selectCoursePage" resultMap="CourseVoMap">
+		select
+		distinct
+		<include refid="columnsAs" />
+		from
+		y_course t1 left join y_course_software c on t1.id=c.course_id
+		left join y_course_trade_skill t on t1.id=t.course_id
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			<if test="type!=null and type!=''">
+				and t1.type=#{type}
+			</if>
+			<if test="is_free!=null and is_free!=''">
+				and t1.is_free=#{is_free}
+			</if>
+			<if test="interest_direction_id!=null and interest_direction_id!=''">
+				and t1.interest_direction_id=#{interest_direction_id}
+			</if>
+			<if test="search.trade_skill_id!=null and search.trade_skill_id!=''">
+				and t.trade_skill_id=#{search.trade_skill_id}
+			</if>
+			<if test="search.software_id!=null and search.software_id!=''">
+				and c.software_id=#{search.software_id}
+			</if>
+			<if test="search.type_id!=null and search.type_id!=''">
+				and t1.type_id=#{search.type_id}
+			</if>
+			<if test="search.program_id!=null and search.program_id!=''">
+				and t1.program_id=#{search.program_id}
+			</if>
+			and t1.teacher_delflag='N'
+			and t1.is_public='Y'
+			and
+			(t1.check_delflag!='Y' or t1.check_delflag is null)
+		</where>
+		order by
+		<if test="search.news=='news'">
+			t1.id desc,
+		</if>
+		<if test="search.mood=='up'">
+			t1.join_nums asc,
+		</if>
+		<if test="search.mood=='down'">
+			t1.join_nums desc,
+		</if>
+		t1.id desc
+		limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectCourseCount" resultType="java.lang.Long">
+		select
+		count(distinct t1.id)
+		from
+		y_course t1 left join y_course_software
+		c on t1.id=c.course_id
+		left join y_course_trade_skill t on
+		t1.id=t.course_id
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			<if test="type!=null and type!=''">
+				and t1.type=#{type}
+			</if>
+			<if test="is_free!=null and is_free!=''">
+				and t1.is_free=#{is_free}
+			</if>
+			<if test="interest_direction_id!=null and interest_direction_id!=''">
+				and t1.interest_direction_id=#{interest_direction_id}
+			</if>
+			<if test="search.trade_skill_id!=null and search.trade_skill_id!=''">
+				and t.trade_skill_id=#{search.trade_skill_id}
+			</if>
+			<if test="search.software_id!=null and search.software_id!=''">
+				and c.software_id=#{search.software_id}
+			</if>
+			<if test="search.type_id!=null and search.type_id!=''">
+				and t1.type_id=#{search.type_id}
+			</if>
+			<if test="search.program_id!=null and search.program_id!=''">
+				and t1.program_id=#{search.program_id}
+			</if>
+			and t1.teacher_delflag='N'
+			and t1.is_public='Y'
+			and
+			(t1.check_delflag!='Y' or t1.check_delflag is null)
+		</where>
+	</select>
+	<select id="selectCoursePage4" resultType="com.fengyun.entity.CourseVo">
+		select
+		<include refid="columnsAs" />
+		from y_course t1
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			and t1.user_id=#{user_id} and t1.teacher_delflag='N'
+		</where>
+		order by t1.id desc limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectCourseCount4" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_course t1
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			and t1.user_id=#{user_id} and t1.teacher_delflag='N'
+		</where>
+	</select>
+<select id="selectCoursePage5" resultType="com.fengyun.entity.CourseVo">
+		select
+		<include refid="columnsAs" />
+		from y_course t1
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			and  t1.teacher_delflag='N'
+		</where>
+		order by t1.id desc limit #{firstrownum}, #{limit}
+	</select>
+
+	<select id="selectCourseCount5" resultType="java.lang.Long">
+		select
+		count(id)
+		from y_course t1
+		<where>
+			<if test="course_name!=null and course_name!=''">
+				and t1.course_name like "%"#{course_name}"%"
+			</if>
+			and  t1.teacher_delflag='N'
+		</where>
+	</select>
+</mapper>
