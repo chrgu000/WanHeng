@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.chat.dao.IGroupChatWebSocketDao">
+	<insert id="sendGroupMessage" useGeneratedKeys="true"
+		keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_gmessage(nickname,time,user_id,message,id)
+		values (#{nickname},#{time},#{user_id},#{message},#{id})
+	</insert>
+	<select id="getGroupMembers" resultType="com.chat.entity.Member">
+		select u.* from u_gmember u left join u_g_m m on u.id=m.member_id where
+		m.group_id=#{group_id} order by m.id
+	</select>
+	<insert id="addMemberMessage" useGeneratedKeys="true"
+		keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select
+			last_insert_id()
+		</selectKey>
+		insert into u_g_msg(id,group_id,user_id,message_id,readstate)
+		values (#{id},#{group_id},#{user_id},#{message_id},#{readstate})
+	</insert>
+	<select id="getNameOfUserGroup" resultType="java.util.HashMap">
+		select u.nickname,u.real_name from u_gmember u left join u_g_m g on
+		u.id=g.member_id
+		where u.user_id=#{user_id} and g.group_id=#{group_id}
+	</select>
+	<update id="updateVideoStatus">
+		update y_chapter
+		<set>
+			<if test="video_status!=null">
+				video_status=#{video_status},
+			</if>
+			<if test="course_length!=null">
+				course_length=#{course_length}
+			</if>
+		</set>
+		<where>vedio_url=#{vedio_url}</where>
+	</update>
+</mapper>

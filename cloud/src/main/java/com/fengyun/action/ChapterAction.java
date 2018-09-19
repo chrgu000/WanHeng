@@ -1,6 +1,5 @@
 package com.fengyun.action;
 
-import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -14,7 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.alibaba.fastjson.JSONArray;
@@ -27,9 +25,7 @@ import com.fengyun.entity.Course;
 import com.fengyun.service.IChapterService;
 import com.fengyun.service.ICourseService;
 import com.fengyun.util.HTTPConfig;
-import com.fengyun.util.ConvertVideo;
 import com.fengyun.util.HttpUtil;
-import com.fengyun.util.ReadVideo;
 /**章节
 *  Author yangjun
 */
@@ -43,26 +39,25 @@ public class ChapterAction {
 	private ICourseService courseService;
 	private SimpleDateFormat sdf=new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat timeSdf=new SimpleDateFormat("HH:mm:ss");
+	/**
+	 * 获取聊天人员自己的昵称
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/getOwnName")
 	@ResponseBody
-	//TODO抽离
 	public String getOwnName(HttpSession session){
-		//'loginuser:{"id":2,"username":"kefu","nickname":"客服审核","tel":"1391588****","head_pic_path":"cgwas/user/ab175dbf-23a1-4920-a84d-fd9528bccf0a/images/avater/user/head_pic_path_456364.jpg","is_delete":"\u0000","uuid":"ab175dbf-23a1-4920-a84d-fd9528bccf0a"}';
-		//userInfo//{"sex":"2","birth":1513094400000,"nation":"汉","city":"330100","id":2,"area":"","weixin":"12121","address":"","email":"111111@qq.com","name":"金阳","head_pic_path":"cgwas/user/ab175dbf-23a1-4920-a84d-fd9528bccf0a/images/avater/user/head_pic_path_456364.jpg","province":"330000","user_id":2,"qq":"1212"}
-	 
 		JSONObject user=JSONObject.parseObject(session.getAttribute("loginUser").toString());
-//		Long userId = user.getLong("id");
-//		Map<String,Object>  query=new HashMap<String,Object>();
-//		query.put("userId", userId);
-//		String result1=HttpUtil.doPost(HttpConfig.HTTP_PREFIX+"/cgwas/cloud/getUserInfoById.action", query);
-//		JSONArray users=JSONArray.parseObject(result1).getJSONArray("data");
-//		JSONObject obj=users.getJSONObject(0);
 		String nickname= user.getString("nickname");
 		return nickname;
 	}
+	/**
+	 * 获取单聊中的用户的名称，用户id和头像路径。如果真实姓名为空，则返回昵称
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("getSingleChatOwnName")
 	@ResponseBody
-	//TODO抽离
 	public Map<String,Object> getSingleChatOwnName(HttpSession session){
 		JSONObject user=JSONObject.parseObject(session.getAttribute("loginUser").toString());
 		Long userId = user.getLong("id");
@@ -82,25 +77,15 @@ public class ChapterAction {
 		query.put("time", timeSdf.format(new Date()));
 		return query;
 	}
-	 
-	 @RequestMapping("/converVideo")
-	 @ResponseBody
-	 public Result converVideo(String source,String target,String videoTimeLength,String filePath) {
-		 System.out.println("source:"+source);
-		 System.out.println("target:"+target);
-		 System.out.println("videoTimeLength:"+videoTimeLength);
-		 System.out.println("filePath:"+filePath);
-		 ConvertVideo.ConvertVideoTest(source, target);
-         new File(source).delete();
-         Chapter chapter=new Chapter();
-         String course_length=ReadVideo.getVideoTimeLength(videoTimeLength);
-		 chapter.setCourse_length(course_length);
-         chapter.setVideo_status("Y");
-         chapter.setVedio_url(filePath);
-         chapterService.updateVideoStatus(chapter);
-         System.out.println("end");
-		 return new Result(Boolean.TRUE, "成功", null);
-		}
+	/**
+	 * 根据课程id查询该课程下的所有章节信息
+	 * @param pageSize
+	 * @param pageNo
+	 * @param chapter
+	 * @param startDate
+	 * @param endDate
+	 * @return
+	 */
 	@RequestMapping("/getChapterListByCourseId")
 	@ResponseBody
 	public Result getChapterListByCourseId(Integer pageSize,Integer pageNo,Chapter chapter,String startDate,String endDate){
@@ -216,15 +201,11 @@ public class ChapterAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-	@RequestMapping("/create")
-	public @ResponseBody Result create(Chapter chapter) {
-		if (chapter != null) {
-			chapterService.save(chapter);
-			return new Result("保存成功!");
-		} else {
-			return new Result("数据传输失败!");
-		}
-	}
+    /**
+     * 根据章节id查询章节信息
+     * @param id
+     * @return
+     */
 	@RequestMapping("/getChapterById")
 	@ResponseBody
 	public Result getChapterById(Long id){
@@ -232,7 +213,7 @@ public class ChapterAction {
 		return new Result(Result.SUCCESS,"成功!",chapter);
 	}
 	/**
-	 * 平台审核调用该方法
+	 * 更改课程章节的目录顺序
 	 * @param chapter
 	 * @return
 	 */
@@ -256,37 +237,39 @@ public class ChapterAction {
 		 chapterService.updateIgnoreNull(nearChapter);
 		return new Result(Result.SUCCESS,"成功",null);
 	}
+	/**
+	 * 修改章节信息,审核章节信息
+	 * @param map
+	 * @param chapter
+	 * @param course
+	 * @return
+	 */
 	@RequestMapping("/update")
 	public @ResponseBody Result update(@RequestBody Map<String,String> map,Chapter chapter,Course course) {
-		System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
-		System.out.println(map);
 		if(map.get("chapter_id")!=null){
 			chapter.setId(Long.valueOf(map.get("chapter_id")));
 			chapter.setCourse_content(map.get("course_content"));
 			chapter.setCheck_idea(map.get("check_idea"));
 			chapter.setCheck_status(map.get("check_status"));
 			chapter.setDelflag(map.get("delflag"));
-			System.out.println(map);
-			chapterService.updateIgnoreNull(chapter);
+			chapterService.updateIgnoreNull(chapter);//修改章节信息
 			Chapter c=chapterService.getChapterById(Long.valueOf(map.get("chapter_id")));
 			Long course_id=c.getCourse().getId();
-			List<Chapter> chapters=courseService.getChaptersByCourseIdOfCheck(course_id);
+			List<Chapter> chapters=courseService.getChaptersByCourseIdOfCheck(course_id);//根据课程id查询该课程下所有待审核和审核通过的章节
 			if(chapters.size()==0){
-				course.setCheck_delflag("Y");
+				course.setCheck_delflag("Y");//如果课程下的章节没有审核通过或者待审核的章节，则设置其检查删除标记为Y
 			}else{
 				course.setCheck_delflag("N");
 			}
-			Integer n=chapterService.getYesCheckChapterByCourseId(course_id);
-			if("N".equals(c.getCourse().getIs_free())&&n.equals(0)){
+			Integer n=chapterService.getYesCheckChapterByCourseId(course_id);//根据课程id查询该课程下审核通过的章节数量
+			if("N".equals(c.getCourse().getIs_free())&&n.equals(0)){//如果该课程是付费的并且没有审核通过的章节，那么设置其检查删除标记为是，公共权限设置为隐藏
 				course.setCheck_delflag("Y");
 				course.setIs_public("N");
 			}
 			course.setId(course_id);
 			courseService.updateIgnoreNull(course);
 			Course crs=courseService.getCourseById(course_id);
-			
-			System.out.println("check chapter userId:"+crs.getUser_id()+"check_status:"+chapter.getCheck_status());
-			if("Y".equals(chapter.getCheck_status())){
+			if("Y".equals(chapter.getCheck_status())){//对于审核，要在微信公众号进行消息推送
 				Map<String,Object> query=new HashMap<String,Object>();
 				query.put("firstTitle","课程审核结果消息提醒");
 				query.put("userId", crs.getUser_id());
@@ -311,31 +294,30 @@ public class ChapterAction {
 	    if(map.get("course_id")!=null){
 	    	course.setId(Long.valueOf(map.get("course_id")));
 			course.setCourse_overview(map.get("course_overview"));
-			System.out.println(map);
 			courseService.updateIgnoreNull(course);
 	    }
 		return new Result("保存成功!");
 	}
-	
+	/**
+	 * 删除章节信息
+	 * @param chapter
+	 * @return
+	 */
 	@RequestMapping("/delete")
 	public @ResponseBody Result delete(Chapter chapter) {
-		chapterService.delete(chapter);
-		Chapter c=chapterService.getChapterById(chapter.getId());
+		chapterService.delete(chapter);//删除章节
+		Chapter c=chapterService.getChapterById(chapter.getId());//根据章节id查询章节实体
 		Long course_id=c.getCourse().getId();
-		List<Chapter> chapters=courseService.getChaptersByCourseIdOfCheck(course_id);
-		Course crs=courseService.getCourseInfoById(course_id);
-		System.out.println(crs.getIs_free());
-		
+		List<Chapter> chapters=courseService.getChaptersByCourseIdOfCheck(course_id);//根据课程id查询该课程下所有待审核和审核通过的章节
 		Course course=new Course();
 		course.setId(course_id);
-		if(chapters.size()==0){
+		if(chapters.size()==0){//如果课程下的章节没有审核通过或者待审核的章节，则设置其检查删除标记为Y,将公共标记设置为隐藏
 			course.setCheck_delflag("Y");
 			course.setIs_public("N");
 		}else{
 			course.setCheck_delflag("N");
 			course.setIs_public("Y");
 		}
-		
  		courseService.updateIgnoreNull(course);
 		return new Result("删除成功!");
 	}

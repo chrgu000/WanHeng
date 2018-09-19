@@ -1,8 +1,5 @@
 package com.fengyun.action;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -52,11 +49,14 @@ public class InvitationLetterAction {
 	private ICourseService courseService;// 课程
 	@Autowired
 	private ILearnerCourseService learnerCourseService;// 我的课程
-
+    /**
+     * 获取邀约函的总数
+     * @param session
+     * @return
+     */
 	@RequestMapping("/getLetterNum")
 	@ResponseBody
 	public Result getLetterNum(HttpSession session) {
-		Map<String, Object> map = new HashMap<String, Object>();
 		JSONObject user = JSONObject.parseObject(session.getAttribute(
 				"loginUser").toString());
 		Long userId = user.getLong("id");
@@ -64,7 +64,14 @@ public class InvitationLetterAction {
 		return new Result(Boolean.TRUE, "成功", letterNum);
 	}
 
-	// 讲师或者学员获取邀约函列表
+	/**
+	 * 讲师或者学员获取邀约函列表
+	 * @param pageSize
+	 * @param pageNo
+	 * @param letter
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/getLetterList")
 	@ResponseBody
 	public Result getLetterList(Integer pageSize, Integer pageNo,
@@ -88,10 +95,10 @@ public class InvitationLetterAction {
 			for (InvitationLetter l : letters) {
 				if (l.getLearner_user_id().equals(userId)) {
 					send++;
-					l.setSendOrReceive("send");
+					l.setSendOrReceive("send");//发送的
 				} else {
 					receive++;
-					l.setSendOrReceive("receive");
+					l.setSendOrReceive("receive");//接收的
 				}
 				if (!"Y".equals(l.getIs_replay())) {
 					letterNum++;
@@ -114,7 +121,13 @@ public class InvitationLetterAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-
+    /**
+     * 根据id获取邀约函信息
+     * @param id
+     * @param sendOrReceive
+     * @param session
+     * @return
+     */
 	@RequestMapping("/getInvitationLetterById")
 	@ResponseBody
 	public Result getInvitationLetterById(Long id, String sendOrReceive,
@@ -156,7 +169,12 @@ public class InvitationLetterAction {
 		map.put("invitationLetter", invitationLetter);
 		return new Result(Result.SUCCESS, "成功", map);
 	}
-
+    /**
+     * 判断讲师是否有多余邀约函以便于可否创建邀约课程
+     * @param session
+     * @param course_id
+     * @return
+     */
 	@RequestMapping("/checkTeacherCreateCourseByUserId")
 	@ResponseBody
 	public Result checkTeacherCreateCourseByUserId(HttpSession session,
@@ -165,8 +183,8 @@ public class InvitationLetterAction {
 				"loginUser").toString());
 		Long userId = user.getLong("id");
 		Long unReplyLetterNum = invitationLetterService
-				.getUnReplyLetterNumByUserId(userId);
-		Long applyCourseNum = courseService.getApplyCourseNumByUserId(userId);
+				.getUnReplyLetterNumByUserId(userId);//未回复邀约函数量
+		Long applyCourseNum = courseService.getApplyCourseNumByUserId(userId);//已创建的邀约课程数量
 		Course c = courseService.getCourseInfoById(course_id);
 		if (unReplyLetterNum == 0
 				|| (applyCourseNum >= unReplyLetterNum && c == null)
@@ -176,7 +194,7 @@ public class InvitationLetterAction {
 		return new Result(Result.SUCCESS, "", true);
 	}
 
-	// 创建邀约函
+	// 创建邀约函时的图片
 	@Transactional
 	@RequestMapping("/createLetterImg")
 	public @ResponseBody
@@ -271,7 +289,12 @@ public class InvitationLetterAction {
 		invitationLetterService.updateIgnoreNull(invitationLetter);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 邀约函回复
+	 * @param letter
+	 * @param learnerCourse
+	 * @return
+	 */
 	@RequestMapping("/replyLetter")
 	@ResponseBody
 	public Result replyLetter(InvitationLetter letter,
@@ -294,22 +317,7 @@ public class InvitationLetterAction {
 		course.setId(letter.getCourse_id());
 		course.setIs_reply("Y");
 		course.setJoin_nums(course.getJoin_nums() + 1);
-		System.out.println(course.getId() + "," + course.getIs_reply() + ","
-				+ course.getJoin_nums());
 		courseService.updateIgnoreNull(course);
 		return new Result(Result.SUCCESS, "回函成功!", null);
-	}
-
-	@RequestMapping("/delete")
-	public @ResponseBody
-	Result delete(InvitationLetter invitationLetter) {
-		// TODO 有些关键数据是不能物理删除的，需要改为逻辑删除
-		invitationLetterService.delete(invitationLetter);
-		return new Result("删除成功!");
-	}
-
-	public static void main(String[] args) throws Exception {
-		 
-		 
 	}
 }

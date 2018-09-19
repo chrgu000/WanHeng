@@ -40,7 +40,7 @@ public class CommentAction {
 	@Autowired
 	private ITeacherService teacherService;
 	/**
-	 * 
+	 * 获取讲师下的所有评论信息
 	 * @param pageSize
 	 * @param pageNo
 	 * @param course_id
@@ -71,7 +71,7 @@ public class CommentAction {
 	}	
 	/**
 	 * 
-	 * 
+	 * 获取课程下的所有评论信息
 	 * @param pageSize
 	 * @param pageNo
 	 * @return
@@ -98,7 +98,7 @@ public class CommentAction {
 				if(user!=null){
 					for(Comment c : comments){
 						if(c.getLearner().getUser_id().equals(userId)){
-							c.setOwn(true);
+							c.setOwn(true);//如果消息的userId与自己当前用户id是相等的，那么标记为自己评论
 						}
 					}
 				}
@@ -114,7 +114,13 @@ public class CommentAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-
+	/**
+	 * 创建评论
+	 * @param comment
+	 * @param session
+	 * @param course
+	 * @return
+	 */
 	@RequestMapping("/create")
 	public @ResponseBody
 	Result create(@RequestBody Comment comment,HttpSession session,Course course) {
@@ -126,37 +132,17 @@ public class CommentAction {
 			commentService.save(comment);
 			Course c=courseService.getCourseInfoById(comment.getCourse_id());
 			course.setId(comment.getCourse_id());
-			course.setStar_nums(c.getStar_nums()+comment.getStar_level());
+			course.setStar_nums(c.getStar_nums()+comment.getStar_level());//将该课程的星星数量进行累加
 			courseService.updateIgnoreNull(course);
 			Teacher teacher=c.getTeacher();
-			teacher.setEvaluation_score(teacher.getEvaluation_score()+comment.getStar_level());
+			teacher.setEvaluation_score(teacher.getEvaluation_score()+comment.getStar_level());//将该课程的评分进行累加
 			teacherService.updateIgnoreNull(teacher);
 			return new Result("保存成功!");
 		} else {
 			return new Result("数据传输失败!");
 		}
 	}
-	@RequestMapping("/createComment")
-	public @ResponseBody
-	Result createComment(Comment comment,HttpSession session,Course course) {
-		JSONObject user=JSONObject.parseObject(session.getAttribute("loginUser").toString());
-		Long userId = user.getLong("id");
-		if (comment != null) {
-			comment.setLearner_user_id(userId);
-			comment.setCreate_date(new Date());
-			commentService.save(comment);
-			Course c=courseService.getCourseInfoById(comment.getCourse_id());
-			course.setId(comment.getCourse_id());
-			course.setStar_nums(c.getStar_nums()+comment.getStar_level());
-			courseService.updateIgnoreNull(course);
-			Teacher teacher=c.getTeacher();
-			teacher.setEvaluation_score(teacher.getEvaluation_score()+comment.getStar_level());
-			teacherService.updateIgnoreNull(teacher);
-			return new Result("保存成功!");
-		} else {
-			return new Result("数据传输失败!");
-		}
-	}
+	 
 	@RequestMapping("/update")
 	public @ResponseBody
 	Result update(Comment comment) {

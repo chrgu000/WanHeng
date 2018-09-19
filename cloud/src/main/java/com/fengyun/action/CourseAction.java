@@ -88,7 +88,11 @@ public class CourseAction {
 	private ILearnerCourseService learnerCourseService;// 我的课程
 	private SimpleDateFormat dateSdf = new SimpleDateFormat("yyyy-MM-dd");
 	private SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
-
+    /**
+     * 判断当前用户是不是超级管理员
+     * @param session
+     * @return
+     */
 	@RequestMapping("/checkSuperAdminOrNot")
 	@ResponseBody
 	public Result checkSuperAdminOrNot(HttpSession session) {
@@ -100,45 +104,43 @@ public class CourseAction {
 		}
 		return new Result(Result.FAILURE, "成功", null);
 	}
-
+    /**
+     * 将前端传来的base64码生成图片到OSS里面，并返回图片所在路径
+     * @param data
+     * @return
+     */
 	@RequestMapping("/uploadBase64")
 	@ResponseBody
 	public Result uploadBase64(String data) {
 		data = ImageUtil.changeBase64(data);
 		return new Result(Result.SUCCESS, "成功", data);
 	}
-	@RequestMapping("/transcodeFinished")
-    @ResponseBody
-    public void transcodeFinished1(){
-		 
-    	
-    	
-    	
-    	
-	}
-    @RequestMapping("/transcodeFinished1")
+	/**
+	 * 视频转码成功后的处理
+	 * @param map
+	 * @return
+	 * @throws Exception
+	 */
+    @RequestMapping("/transcodeFinished")
     @ResponseBody
     public Result transcodeFinished(@RequestBody Map<String,String> map) throws Exception{
-    	
     	String message=map.get("Message");
     	JSONObject obj=JSONObject.parseObject(message);
     	String jobId=obj.getString("jobId");
     	String state=obj.getString("state");
-    	System.out.println("state:"+state+"jobId:"+jobId);
-    	
     	String result=SearchTransCodeInfo.doExeUrl(jobId);
     	String file_path=JSONObject.parseObject(JSONObject.parseObject(result).getJSONObject("JobList").getJSONArray("Job").get(0).toString()).getJSONObject("Input").get("Object").toString();
 		String new_file_path=JSONObject.parseObject(JSONObject.parseObject(result).getJSONObject("JobList").getJSONArray("Job").get(0).toString()).getJSONObject("Output").getJSONObject("OutputFile").get("Object").toString();
 		file_path=URLDecoder.decode(file_path, "utf-8");
 		new_file_path=URLDecoder.decode(new_file_path, "utf-8");
 		Chapter chapter = new Chapter();
-		OSSFilesUtil.deleteFile(file_path);
+		OSSFilesUtil.deleteFile(file_path);//视频转码成功删除源文件
     	if("Success".equals(state)){
     		String course_length = ReadVideo.getVideoTimeLength("/usr/memory/"+URLDecoder.decode(new_file_path,"utf-8"));
 			chapter.setVideo_status("Y");
 			chapter.setVedio_url(new_file_path);
 			chapter.setCourse_length(course_length);
-			chapterService.updateVideoStatus(chapter);
+			chapterService.updateVideoStatus(chapter);//更改视频转码状态以及获取视频长度并录入
     	}else{
 			chapter.setVideo_status("C");
 			chapter.setCourse_length("未知");
@@ -147,21 +149,24 @@ public class CourseAction {
     	}
     	return new Result(Result.SUCCESS,"成功",null);
     }
+    /**
+     * 直播回掉函数
+     * @param notifyURL
+     * @param session
+     * @return
+     */
 	@RequestMapping("/liveCallback")
 	@ResponseBody
 	public Result liveCallback(NotifyURL notifyURL, HttpSession session) {
-		System.out.println("============================================>");
-		System.out.println("直播结束回掉函数");
 		String appName = notifyURL.getAppname();
 		String action = notifyURL.getAction();
-		System.out.println(notifyURL);
 		Long course_id = Long
 				.valueOf(appName.substring(0, appName.indexOf("_")));
 		Long chapter_id = Long
 				.valueOf(appName.substring(appName.indexOf("_") + 1));
 		Course c = new Course();
 		c.setId(course_id);
-		if ("publish".equals(action)) {
+		if ("publish".equals(action)) {//直播开始，设置直播状态为Y直播中
 			c.setLive("Y");
 		} else if ("publish_done".equals(action)) {
 			String stream = notifyURL.getId();
@@ -169,16 +174,15 @@ public class CourseAction {
 			chapter.setId(Long.valueOf(stream));
 			chapter.setUnion_site("Y");
 			chapterService.updateIgnoreNull(chapter);
-			c.setLive("N");
+			c.setLive("N");//直播结束，设置直播状态为N
 			session.getServletContext().removeAttribute("" + chapter_id);
 		}
 		courseService.updateIgnoreNull(c);
-		System.out.println("==============================================>");
 		return new Result(Result.SUCCESS, "成功", "直播结束回掉函数");
 	}
 
 	/**
-	 * 查询单个录制索引文件
+	 *直播的视频录制回调函数
 	 * 
 	 * @param courseName
 	 * @param chapterName
@@ -187,22 +191,25 @@ public class CourseAction {
 	@RequestMapping("/recordCallback")
 	@ResponseBody
 	public Result searchSingleRecord(@RequestBody Callback callback) {
-		System.out.println("============================================>");
-		System.out.println("录播结束回掉函数");
-		Integer duration = (int) (Double.valueOf(callback.getDuration()) * 1000);
+		Integer duration = (int) (Double.valueOf(callback.getDuration()) * 1000);//获取直播期间的视频时长
 		Chapter c = new Chapter();
 		String url = callback.getUri();
 		c.setVedio_url(url);
-		c.setCourse_length(ReadVideo.secToTime(duration));
+		c.setCourse_length(ReadVideo.secToTime(duration));//将视频时长转为时分秒的个数
 		c.setId(Long.valueOf(callback.getStream()));
 		chapterService.updateIgnoreNull(c);
 		DeleteVideoRecord.doExeUrl(callback.getApp());
-		System.out.println(callback);
-		System.out.println("==============================================>");
-
 		return new Result(Result.SUCCESS, "成功", "录播结束回掉函数");
 	}
-
+    /**
+     * 查询自己参与的课程
+     * @param type
+     * @param session
+     * @param pageSize
+     * @param pageNo
+     * @param course
+     * @return
+     */
 	@RequestMapping("/getMySelfCourse")
 	@ResponseBody
 	public Result getMySelfCourse(String type, HttpSession session,
@@ -237,7 +244,10 @@ public class CourseAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-
+    /**
+     * 查询课程详情页中的推荐课程，查询规则是按照课程参与人数倒序前5个课程
+     * @return
+     */
 	@RequestMapping("/getRecommendCourse")
 	@ResponseBody
 	public Result getRecommendCourse() {
@@ -245,12 +255,15 @@ public class CourseAction {
 		return new Result(Result.SUCCESS, "成功", courses);
 	}
 
-	@RequestMapping("/testHttpClient")
-	@ResponseBody
-	public void testHttpClient() {
-
-	}
-
+	 
+    /**
+     * 课程支付
+     * @param session
+     * @param password
+     * @param course_id
+     * @param request
+     * @return
+     */
 	@RequestMapping("/payCourse")
 	@ResponseBody
 	public Result payCourse(HttpSession session, String password,
@@ -263,8 +276,6 @@ public class CourseAction {
 		query.put("userId", userId);
 		String result = HttpUtil.doPost(HTTPConfig.HTTP_PREFIX
 				+ "/cgwas/cloud/getUserWallet.action", query);
-		System.out.println("result:" + result);
-		System.out.println("user_id:" + userId);
 		JSONObject retn = JSONObject.parseObject(result).getJSONObject("data");
 
 		if (!retn.getString("pay_password").equals(
@@ -403,7 +414,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 获取所有分类
+	 * 获取所有分类，供首页用
 	 * 
 	 * @return
 	 */
@@ -415,7 +426,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 获取所有兴趣方向
+	 * 获取所有兴趣方向，供首页用
 	 * 
 	 * @return
 	 */
@@ -428,7 +439,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 获取所有软件
+	 * 获取所有软件，供首页用
 	 * 
 	 * @return
 	 */
@@ -438,7 +449,11 @@ public class CourseAction {
 		List<Software> softwares = softwareService.getAllSoftwares(type_id);
 		return new Result(Result.SUCCESS, "成功", softwares);
 	}
-
+    /**
+     * 根据兴趣方向id获取软件，供首页用
+     * @param interest_direction_id
+     * @return
+     */
 	@RequestMapping("/getSoftwaresByInterestDirectionId")
 	@ResponseBody
 	public Result getSoftwaresByInterestDirectionId(
@@ -449,7 +464,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 获取所有行业技能
+	 * 获取所有行业技能，供首页用
 	 * 
 	 * @return
 	 */
@@ -460,7 +475,11 @@ public class CourseAction {
 				.getAllTradeSkills(type_id);
 		return new Result(Result.SUCCESS, "成功", tadeSkills);
 	}
-
+    /**
+     * 根据软件id获取相应的行业技能，供首页用
+     * @param software_id
+     * @return
+     */
 	@RequestMapping("/getTradeSkillsBySoftwareId")
 	@ResponseBody
 	public Result getTradeSkillsBySoftwareId(Integer software_id) {
@@ -468,15 +487,24 @@ public class CourseAction {
 				.getTradeSkillsBySoftwareId(software_id);
 		return new Result(Result.SUCCESS, "成功", tadeSkills);
 	}
-
+    /**
+     * 获取所有的程序，供首页用
+     * @param request
+     * @return
+     */
 	@RequestMapping("/getAllPrograms")
 	@ResponseBody
 	public Result getAllPrograms(HttpServletRequest request) {
-		System.out.println(request);
 		List<Program> programs = courseService.getAllPrograms();
 		return new Result(Result.SUCCESS, "成功", programs);
 	}
-	// 上传图片
+	/**
+	 * 上传图片，返回base64码
+	 * @param userfile
+	 * @param request
+	 * @param response
+	 * @return
+	 */
 	@ResponseBody
 	@RequestMapping("/previewImgFile")
 	public Result previewImgFile(MultipartFile userfile,
@@ -498,7 +526,32 @@ public class CourseAction {
 			return new Result(Boolean.TRUE, "上传成功", base64Data); // 返回结果;
 		}
 	}
-
+	/**
+	 * 根据讲师id查询讲师已讲的课程,供新建课程用
+	 * 
+	 * @param session
+	 * @return
+	 */
+	@RequestMapping("/getCoursesByUserMap")
+	public @ResponseBody
+	Result getCoursesByUserMap(HttpSession session, String type) {
+		Map<String, Object> map = new HashMap<String, Object>();
+		JSONObject user = JSONObject.parseObject(session.getAttribute(
+				"loginUser").toString());
+		Long userId = user.getLong("id");
+		map.put("user_id", userId);
+		map.put("type", type);
+		List<Course> courses = courseService.getCoursesByUserMap(map);
+		return new Result(Result.SUCCESS, "成功", courses);
+	}
+	/**
+	 * 获取讲师自身所创建的课程
+	 * @param pageSize
+	 * @param pageNo
+	 * @param course
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/getCoursesByUserMap1")
 	@ResponseBody
 	public Result getCoursesByUserMap1(Integer pageSize, Integer pageNo,
@@ -530,7 +583,13 @@ public class CourseAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-
+    /**
+     * 超级管理员看到的课程
+     * @param pageSize
+     * @param pageNo
+     * @param course
+     * @return
+     */
 	@RequestMapping("/getCoursesByAdmin")
 	@ResponseBody
 	public Result getCoursesByAdmin(Integer pageSize, Integer pageNo,
@@ -559,25 +618,14 @@ public class CourseAction {
 		return new Result(Boolean.TRUE, "成功", map);
 	}
 
-	/**
-	 * 根据讲师id查询讲师已讲的课程,供新建课程用
-	 * 
-	 * @param session
-	 * @return
-	 */
-	@RequestMapping("/getCoursesByUserMap")
-	public @ResponseBody
-	Result getCoursesByUserMap(HttpSession session, String type) {
-		Map<String, Object> map = new HashMap<String, Object>();
-		JSONObject user = JSONObject.parseObject(session.getAttribute(
-				"loginUser").toString());
-		Long userId = user.getLong("id");
-		map.put("user_id", userId);
-		map.put("type", type);
-		List<Course> courses = courseService.getCoursesByUserMap(map);
-		return new Result(Result.SUCCESS, "成功", courses);
-	}
-
+	
+    /**
+     * 根据课程名称查询课程，供首页课程查询使用
+     * @param pageSize
+     * @param pageNo
+     * @param course
+     * @return
+     */
 	@RequestMapping("/searchCourseByName")
 	@ResponseBody
 	public Result searchCourseByName(Integer pageSize, Integer pageNo,
@@ -605,7 +653,14 @@ public class CourseAction {
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
-
+    /**
+     * 查询某位老师下所发布的课程，供首页查询使用
+     * @param pageSize
+     * @param pageNo
+     * @param course
+     * @param user_id
+     * @return
+     */
 	@RequestMapping("/getCourseListByTeacher")
 	@ResponseBody
 	public Result getCourseListByTeacher(Integer pageSize, Integer pageNo,
@@ -684,7 +739,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * @return
+	 *根据课程id，按照章节顺序查询章节
 	 */
 	@RequestMapping("/getChapterOrderOfCourse")
 	public @ResponseBody
@@ -695,7 +750,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 
+	 * 根据课程id查询章节信息
 	 * @return
 	 */
 	@RequestMapping("/getChaptersByCourseId")
@@ -704,7 +759,13 @@ public class CourseAction {
 		List<Chapter> chapters = courseService.getChaptersByCourseId(course_id);
 		return new Result(Result.SUCCESS, "成功", chapters);
 	}
-
+    /**
+     * 检查课程是不是自己参与的课程
+     * @param id
+     * @param paid
+     * @param session
+     * @return
+     */
 	@RequestMapping("/checkCourseIsMyOrNot")
 	@ResponseBody
 	public Result checkCourseIsMyOrNot(Long id, String paid, HttpSession session) {
@@ -722,7 +783,11 @@ public class CourseAction {
 		}
 		return new Result(Result.FAILURE, "成功", null);
 	}
-
+    /**
+     * 根据课程id查询课程信息
+     * @param id
+     * @return
+     */
 	@RequestMapping("/getCourseInfoById")
 	@ResponseBody
 	public Result getCourseInfoById(Long id) {
@@ -735,14 +800,22 @@ public class CourseAction {
 		}
 		return new Result(Result.SUCCESS, "成功", course);
 	}
-
+	 /**
+     * 根据课程id查询课程信息，注意与上面的接口获取的信息是不同的
+     * @param id
+     * @return
+     */
 	@RequestMapping("/getCourseById")
 	public @ResponseBody
 	Result getCourseById(Long id) {
 		Course course = courseService.getCourseById(id);
 		return new Result(Result.SUCCESS, "成功", course);
 	}
-
+	/**
+	 * 上传课程封面
+	 * @param cover
+	 * @return
+	 */
 	@RequestMapping("/uploadImg")
 	@ResponseBody
 	public Result uploadImg(@RequestBody Map<String,String> cover) {
@@ -765,7 +838,22 @@ public class CourseAction {
 			return new Result(Result.SUCCESS, "成功", null);
 		}
 	}
-
+	/**
+	 * 创建课程
+	 * @param course
+	 * @param chapter
+	 * @param tradeSkillIds
+	 * @param softwareIds
+	 * @param session
+	 * @param type_id
+	 * @param program_id
+	 * @param program_content
+	 * @param beginDate
+	 * @param endDate
+	 * @param onliveTime
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("/createCourse")
 	@Transactional
 	public @ResponseBody
@@ -880,11 +968,9 @@ public class CourseAction {
 					course.setOnlive_time(new Time(timeSdf.parse(onliveTime)
 							.getTime()));
 				}
-				System.out.println(course.getOnlive_time());
 				courseService.updateIgnoreNull(course);
 				Integer maxOrder = chapterService.getMaxOrderByCourseId(chapter
 						.getCourse_id());
-				System.out.println("chpater:"+chapter);
 				if(maxOrder==null){
 					maxOrder=0;
 				}
@@ -900,14 +986,12 @@ public class CourseAction {
 			} else {
 				chapter.setCheck_status("C");
 			}
-			System.out.println("course is_free=============:"
-					+ course.getIs_free());
 			if ("N".equals(course.getIs_free())) {
+				//创建课程后需要推送公众号消息到审核员里面
 				Map<String, Object> query = new HashMap<String, Object>();
 				query.put("firstTitle", "申请课程审核消息提醒");
 				query.put("applyTitle", "课程审核申请");
 				query.put("userId", userId);
-				System.out.println("create course ... userId:" + userId);
 				query.put("applyType", "课程审核");
 				query.put("remark", "请尽快登录我和云平台进行审核");
 				HttpUtil.doPost(HTTPConfig.HTTP_PREFIX
@@ -921,7 +1005,11 @@ public class CourseAction {
 			return new Result(Result.FAILURE, "数据传输失败!", null);
 		}
 	}
-
+	/**
+	 * 将邀约课程公开，使得首页可以被检索到
+	 * @param course
+	 * @return
+	 */
 	@RequestMapping("/publicCourse")
 	@ResponseBody
 	public Result publicCourse(Course course) {
@@ -929,7 +1017,23 @@ public class CourseAction {
 		courseService.updateIgnoreNull(course);
 		return new Result(Result.SUCCESS, "公开成功!", null);
 	}
-
+	/**
+	 * 更新课程
+	 * @param course
+	 * @param chapter
+	 * @param cid
+	 * @param chapter_id
+	 * @param tradeSkillIds
+	 * @param softwareIds
+	 * @param type_id
+	 * @param program_id
+	 * @param program_content
+	 * @param beginDate
+	 * @param endDate
+	 * @param onliveTime
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("/updateCourse")
 	@Transactional
 	public @ResponseBody
@@ -1080,7 +1184,12 @@ public class CourseAction {
 		}
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+    /**
+     * 检查课程是否是自己已收藏
+     * @param course_id
+     * @param session
+     * @return
+     */
 	@RequestMapping("/getCollectCourseOfMyOrNot")
 	@ResponseBody
 	public Result getCollectCourseOfMyOrNot(Long course_id, HttpSession session) {
@@ -1108,7 +1217,7 @@ public class CourseAction {
 	}
 
 	/**
-	 * 立即报名相关课程
+	 * 立即收藏相关课程
 	 * 
 	 * @param course_id
 	 * @return
@@ -1158,7 +1267,11 @@ public class CourseAction {
 
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 删除课程
+	 * @param course_id
+	 * @return
+	 */
 	@RequestMapping("/delete")
 	public @ResponseBody
 	Result delete(Long course_id) {
@@ -1172,7 +1285,11 @@ public class CourseAction {
 		courseService.updateIgnoreNull(c);
 		return new Result(Result.SUCCESS, "删除成功!", null);
 	}
-
+    /**
+     * 根据软件ids获取行业技能
+     * @param softwareIds
+     * @return
+     */
 	@RequestMapping("/getTradeSkillsBySoftwareIds")
 	@ResponseBody
 	public Result getTradeSkillsBySoftwareIds(String softwareIds) {
@@ -1191,7 +1308,12 @@ public class CourseAction {
 		}
 		return new Result(Result.SUCCESS, "成功", tradeSkills);
 	}
-
+    /**
+     * 获取直播课程的直播站点
+     * @param course_id
+     * @param chapter_id
+     * @return
+     */
 	@RequestMapping("/getOnlineSite")
 	@ResponseBody
 	public Result getOnlineSite(String course_id, String chapter_id) {
@@ -1267,10 +1389,8 @@ public class CourseAction {
 		chapterService.updateChapterVideoUrl(map);
 		Chapter chapter = new Chapter();
 		String course_length = ReadVideo.getVideoTimeLength("/usr/memory/"+URLDecoder.decode(fileName,"utf-8"));
-		System.out.println(course_length);
 		chapter.setCourse_length(course_length);
 		chapter.setVedio_url(newFileName);
-		System.out.println(chapter);
 		chapterService.updateVideoStatus(chapter);
 	    OSSFilesUtil.SimpleTranscode(fileName, newFileName);
 		return new Result(Result.SUCCESS, "上传成功!", newFileName);

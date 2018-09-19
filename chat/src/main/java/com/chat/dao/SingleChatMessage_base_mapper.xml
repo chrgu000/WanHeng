@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.chat.dao.ISingleChatMessageDao">
+	<insert id="sendUMessage" useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		 insert into u_message(nickname,time,user_id,friend_id,message,id,readstate) 
+		values (#{nickname},#{time},#{user_id},#{friend_id},#{message},#{id},#{readstate})
+	</insert>
+</mapper>

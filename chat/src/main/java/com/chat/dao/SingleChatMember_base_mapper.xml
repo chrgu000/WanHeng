@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.chat.dao.ISingleChatMemberDao">
+	<update id="updateOnlieState">
+	   update u_member set state=#{state} where  user_id=#{user_id}
+	</update>
+	<select id="getNameOfUser" resultType="java.util.HashMap">
+	  select nickname,real_name from u_member where user_id=#{friend_id} and friend_id=#{user_id}
+	</select>
+</mapper>

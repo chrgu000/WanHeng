@@ -83,13 +83,16 @@ public class TeacherAction{
 		teacherInfo.put("project_score", 100);
 		return new Result(Result.SUCCESS, "成功", teacherInfo);
 	}
+	/**
+	 * 判断指定用户是不是讲师
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/checkTeacherByUserId")
 	@ResponseBody
 	public Result checkTeacherByUserId(HttpSession session){
 		JSONObject user=JSONObject.parseObject(session.getAttribute("loginUser").toString());
 		Long userId = user.getLong("id");
-		System.out.println("&&&&&&&&&&&&&&&&&&&&&&&&7");
-		System.out.println(userId);
 		Teacher teacher=teacherService.checkTeacherByUserId(userId);
 		if(userId==1L){
 			return new Result(Result.SUCCESS, "admin", teacher);
@@ -122,6 +125,11 @@ public class TeacherAction{
 		}
 		return new Result(Result.FAILURE, "未登录", null);
 	}
+	/**
+	 * 根据用户id获取讲师信息
+	 * @param user_id
+	 * @return
+	 */
 	@RequestMapping("/getTeacherInfoByUserId")
 	@ResponseBody
 	public Result getTeacherInfoByUserId(Long user_id){
@@ -179,6 +187,11 @@ public class TeacherAction{
 		}
 		return new Result(Boolean.TRUE, "成功", map);
 	}
+	/**
+	 * 按照名称搜索老师信息
+	 * @param name
+	 * @return
+	 */
 	@RequestMapping("/searchTeacherByName")
 	@ResponseBody
 	public Result searchTeacherByName(String name) {
@@ -253,6 +266,12 @@ public class TeacherAction{
 		HttpUtil.doPost(HTTPConfig.HTTP_PREFIX+"/cgwas/wxMessageSendApi/applySend.json", query);
 		return new Result(Result.SUCCESS,"提交成功,请在消息中心查看审核结果!",null);
 	}
+	/**
+	 * 更改讲师在后台的信息
+	 * @param teacher
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/updateIndexTeacherData")
 	@ResponseBody
 	public Result updateIndexTeacherData(@RequestBody Teacher teacher,HttpSession session){
@@ -260,7 +279,12 @@ public class TeacherAction{
 		teacherService.updateIgnoreNull(teacher);
 		return new Result("保存成功!");
 	}
-    //讲师在审核调用该方法
+    /**
+     * 讲师在审核调用该方法
+     * @param teacher
+     * @param session
+     * @return
+     */
 	@RequestMapping("/update")
 	public @ResponseBody
 	Result update(@RequestBody Teacher teacher,HttpSession session) {
@@ -288,7 +312,6 @@ public class TeacherAction{
 			Map<String,Object> query=new HashMap<String,Object>();
 			query.put("firstTitle", "讲师审核结果消息提醒");
 			query.put("userId", teacher.getUser_id());
-			System.out.println("check teacher ...userId:"+teacher.getUser_id());
 			if("Y".equals(teacher.getCheck_status())){
 				query.put("applyTitle", "审核通过!");
 				query.put("remark", "恭喜您的讲师申请,审核通过!");
@@ -302,11 +325,4 @@ public class TeacherAction{
 			return new Result("数据传输失败!");
 		}
 	}
-//	@RequestMapping("/delete")
-//	public @ResponseBody
-//	Result delete(Teacher teacher) {
-//		// TODO 有些关键数据是不能物理删除的，需要改为逻辑删除
-//		teacherService.delete(teacher);
-//		return new Result("删除成功!");
-//	}
 }

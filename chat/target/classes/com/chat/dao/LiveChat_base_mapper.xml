@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!--@author yangjun -->
+<mapper namespace="com.chat.dao.ILiveChatWebSocketDao">
+	<insert id="sendMessage"  useGeneratedKeys="true" keyProperty="id">
+		<selectKey keyProperty="id" resultType="Long" order="AFTER">
+			select last_insert_id()
+		</selectKey>
+		 insert into y_message(time,nickname,chapter_id,course_id,message,id) 
+		values (#{time},#{nickname},#{chapter_id},#{course_id},#{message},#{id})
+	</insert>
+</mapper>

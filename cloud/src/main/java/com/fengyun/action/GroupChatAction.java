@@ -28,17 +28,22 @@ import com.fengyun.util.HTTPConfig;
 import com.fengyun.util.HttpUtil;
 import com.fengyun.util.Pinyin4jUtil;
 
-/**
+/**群聊
  * Author yangjun
  */
 @Controller
 @Transactional
 @RequestMapping("com/groupChatAction")
 public class GroupChatAction {
-	private SimpleDateFormat timeSdf = new SimpleDateFormat("HH:mm:ss");
 	private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
 	@Autowired
 	private IMemberService memberService;
+	/**
+	 * 将消息添加到聊天成员和消息的中间表中
+	 * @param group_id
+	 * @param message_id
+	 * @return
+	 */
 	@RequestMapping("/addMemberMessage")
 	@ResponseBody
 	public Result addMemberMessage(Long group_id,Long message_id){
@@ -49,7 +54,7 @@ public class GroupChatAction {
 			Map<String,Object> mess=new HashMap<String,Object>();
 			Map<String,Object> select=new HashMap<String,Object>();
 			select.put("user_id", m.getUser_id());
-			List<String> onlineStates=memberService.getOnlyOnlineState(select);
+			List<String> onlineStates=memberService.getOnlyOnlineState(select);//获取指定的userId是否在线
 			if(onlineStates.contains("Y")){
 				mess.put("readstate","Y");
 			}else{
@@ -63,7 +68,12 @@ public class GroupChatAction {
 		}
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-	
+	/**
+	 * 搜索用户所添加的聊天群组
+	 * @param search
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/searchGroup")
 	@ResponseBody
 	public Result searchGroup(String search,HttpSession session) {
@@ -76,13 +86,19 @@ public class GroupChatAction {
 		List<Map<String,Object>> groups = memberService.searchGroup(query);
 		for (Map<String, Object> group : groups) {
 			if(user_id.equals(Long.valueOf(""+group.get("group_master_id")))){
-				group.put("is_master","Y");
+				group.put("is_master","Y");//是否是群主
 			}else{
 				group.put("is_master", "N");
 			}
 		}
 		return new Result(Result.SUCCESS, "成功", groups);
 	}
+	/**
+	 * 搜索指定群组的组员
+	 * @param search
+	 * @param group_id
+	 * @return
+	 */
 	@RequestMapping("/searchGroupMembers")
 	@ResponseBody
 	public Result searchGroupMembers(String search,Long group_id) {
@@ -93,7 +109,13 @@ public class GroupChatAction {
 		sortMemebers(members);
 		return new Result(Result.SUCCESS, "成功", members);
 	}
-	
+	/**
+	 * 检查当前用户是不是指定群的群主
+	 * @param session
+	 * @param group_id
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("/checkIsMasterOfGroupOrNot")
 	@ResponseBody
 	public Result checkIsMasterOfGroupOrNot(HttpSession session, Long group_id)
@@ -110,7 +132,14 @@ public class GroupChatAction {
 		return new Result(Result.FAILURE, "成功", null);
 
 	}
-
+     /**
+      * 创建群组
+      * @param session
+      * @param ids
+      * @param name
+      * @param head_pic_url
+      * @return
+      */
 	@RequestMapping("/createNewGroupChat")
 	@ResponseBody
 	public Result createNewGroupChat(HttpSession session, String ids,
@@ -150,7 +179,12 @@ public class GroupChatAction {
 		member.put("group_id", group.get("id"));
 		memberService.addGroupMember(member);
 	}
-
+    /**
+     * 拉好友进指定群组
+     * @param ids
+     * @param group_id
+     * @return
+     */
 	@RequestMapping("/addFriendsToGroup")
 	@ResponseBody
 	public Result addFriendsToGroup(String ids, Long group_id) {
@@ -180,7 +214,12 @@ public class GroupChatAction {
 		memberService.updateGroupMemberNum(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 退出指定群组
+	 * @param group_id
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/exitGroupChat")
 	@ResponseBody
 	public Result exitGroupChat(Long group_id, HttpSession session) {
@@ -201,7 +240,12 @@ public class GroupChatAction {
 		memberService.updateGroupMemberNum(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 删除指定某些群组成员
+	 * @param group_id
+	 * @param ids
+	 * @return
+	 */
 	@RequestMapping("/deleteGroupMembers")
 	@ResponseBody
 	public Result deleteGroupMembers(Long group_id, String ids) {
@@ -227,7 +271,11 @@ public class GroupChatAction {
 		}
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+    /**
+     * 获取当前用户参与的聊天群组
+     * @param session
+     * @return
+     */
 	@RequestMapping("/getMyChatGroups")
 	@ResponseBody
 	public Result getMyChatGroups(HttpSession session) {
@@ -242,11 +290,9 @@ public class GroupChatAction {
 			Map<String, Object> select = new HashMap<String, Object>();
 			select.put("user_id", user_id);
 			select.put("group_id", group.get("id"));
-			System.out.println("===================");
-			System.out.println(select);
 			Long num = memberService.getGroupUnReadNum(select);
 			if(user_id.equals(Long.valueOf(""+group.get("group_master_id")))){
-				group.put("is_master","Y");
+				group.put("is_master","Y");//自己是否是该群组的群主
 			}else{
 				group.put("is_master", "N");
 			}
@@ -254,6 +300,14 @@ public class GroupChatAction {
 		}
 		return new Result(Result.SUCCESS, "成功", groups);
 	}
+	/**
+	 * 获取指定群组的聊天记录
+	 * @param session
+	 * @param member
+	 * @param pageSize
+	 * @param pageNo
+	 * @return
+	 */
 	@RequestMapping("/getGroupChatMessage")
 	@ResponseBody
 	public Result getChatMessage(HttpSession session, Member member,
@@ -276,7 +330,6 @@ public class GroupChatAction {
 		params.put("pageNo", String.valueOf(pageNo));
 		Page page = PageUtils.createPage(params);
 		page = memberService.page1(page, member);
-		System.out.println(page.getDataList());
 		@SuppressWarnings("unchecked")
 		List<Message> messages = (List<Message>) page.getDataList();
 		for (int i = messages.size() - 1; i >= 0; i--) {
@@ -379,6 +432,10 @@ public class GroupChatAction {
 		params.put("message", sb.toString());
 		return new Result(Result.SUCCESS, "成功", params);
 	}
+	/**
+	 * 对群组成员的按名称拼音排序
+	 * @param members
+	 */
 	private void sortMemebers(List<Member> members) {
 		Collections.sort(members, new Comparator<Member>() {
 			@Override
@@ -416,7 +473,13 @@ public class GroupChatAction {
 			}
 		});
 	}
-
+    /**
+     * 根据群id获取群的信息
+     * @param group_id
+     * @param session
+     * @return
+     * @throws Exception
+     */
 	@RequestMapping("/getGroupInfoById")
 	@ResponseBody
 	public Result getGroupFriendsById(Long group_id,HttpSession session) throws Exception {
@@ -426,8 +489,6 @@ public class GroupChatAction {
 		Map<String, Long> query = new HashMap<String, Long>();
 		query.put("group_id", group_id);
 		Map<String,Object> group=memberService.getGroupInfoById(query);
-		System.out.println(group);
-		System.out.println(user_id);
 		if(user_id.equals(Long.valueOf(""+group.get("group_master_id")))){
 			group.put("is_master","Y");
 		}else{
@@ -448,8 +509,12 @@ public class GroupChatAction {
 		group.put("members", members);
 		return new Result(Result.SUCCESS, "成功", group);
 	}
-
-	// TODO群聊状态如何实现
+	/**
+	 * 更改群的消息读取状态
+	 * @param group_id
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/updateGroupReadState")
 	@ResponseBody
 	public Result updateReadState(Long group_id, HttpSession session) {
@@ -462,6 +527,12 @@ public class GroupChatAction {
 		memberService.updateGroupReadState(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
+	/**
+	 * 更改群名称
+	 * @param name
+	 * @param group_id
+	 * @return
+	 */
     @RequestMapping("/changeGroupName")
     @ResponseBody
     public Result changeGroupName(String name,Long group_id){
@@ -471,6 +542,13 @@ public class GroupChatAction {
 		memberService.changeGroupName(query);
 		return new Result(Result.SUCCESS, "成功", null);
     }
+    /**
+     * 更改群成员的这是名称
+     * @param real_name
+     * @param group_id
+     * @param session
+     * @return
+     */
     @RequestMapping("/changeGroupMemberRealName")
     @ResponseBody
     public Result changeGroupMemberRealName(String real_name, Long group_id,HttpSession session){
@@ -484,15 +562,4 @@ public class GroupChatAction {
 		memberService.changeGroupMemberRealName(query);
 		return new Result(Result.SUCCESS, "成功", null);
     }
-	@RequestMapping("/update")
-	public @ResponseBody
-	Result update(Member member) {
-		if (member != null) {
-			memberService.updateIgnoreNull(member);
-			return new Result("保存成功!");
-		} else {
-			return new Result("数据传输失败!");
-		}
-	}
-
 }

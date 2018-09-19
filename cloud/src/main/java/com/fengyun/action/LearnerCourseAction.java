@@ -30,11 +30,6 @@ public class LearnerCourseAction {
 	private ILearnerCourseService learnerCourseService;
 	@Autowired
     private ICourseService courseService;
-	@RequestMapping("/index")
-	public String index() {
-		return "/dsoul/learnerCourse/learnerCourse_index.jsp";
-	}
-
 	/**
 	 * 根据课程用户id查询该用户下所有参与的课程
 	 * 
@@ -70,27 +65,11 @@ public class LearnerCourseAction {
 	}
 	
 	
-	@RequestMapping("/create_page")
-	public String create_page(Model model) {
-		LearnerCourse learnerCourse = new LearnerCourse();
-		model.addAttribute("learnerCourse", learnerCourse);
-		return "/dsoul/learnerCourse/learnerCourse_create.jsp";
-	}
-	
-	@RequestMapping("/update_page")
-	public String update_page(LearnerCourse learnerCourse, Model model) {
-		learnerCourse = learnerCourseService.load(learnerCourse);
-		model.addAttribute("learnerCourse", learnerCourse);
-		return "/dsoul/learnerCourse/learnerCourse_update.jsp";
-	}
-
-	@RequestMapping("/detail_page")
-	public String detail_page(LearnerCourse learnerCourse, Model model) {
-		learnerCourse = learnerCourseService.load(learnerCourse);
-		model.addAttribute("learnerCourse", learnerCourse);
-		return "/dsoul/learnerCourse/learnerCourse_detail.jsp";
-	}
-
+	 /**
+	  * 创建我的课程
+	  * @param learnerCourse
+	  * @return
+	  */
 	@RequestMapping("/create")
 	public @ResponseBody Result create(LearnerCourse learnerCourse) {
 		if (learnerCourse != null) {
@@ -100,7 +79,11 @@ public class LearnerCourseAction {
 			return new Result("数据传输失败!");
 		}
 	}
-	
+	/**
+	 * 更改我的课程
+	 * @param learnerCourse
+	 * @return
+	 */
 	@RequestMapping("/update")
 	public @ResponseBody Result update(LearnerCourse learnerCourse) {
 		if (learnerCourse != null) {
@@ -109,15 +92,16 @@ public class LearnerCourseAction {
 		} else {
 			return new Result("数据传输失败!");
 		}
-	}
+	} 
+	/**
+	 * 删除我参与的课程
+	 * @param learnerCourse
+	 * @return
+	 */
 	
 	@RequestMapping("/delete")
 	public @ResponseBody Result delete(LearnerCourse learnerCourse) {
 		learnerCourse.setDelflag("Y");
-		System.out.println(learnerCourse.getId());
-		System.out.println(learnerCourse.getDelflag());
-		System.out.println(learnerCourse.getCourse_id());
-		System.out.println(learnerCourse.getType());
 		learnerCourseService.updateIgnoreNull(learnerCourse);
 		Map<String,Object> query=new HashMap<String,Object>();
 		Integer num=courseService.getCourseJoinNumsById(learnerCourse.getCourse_id());

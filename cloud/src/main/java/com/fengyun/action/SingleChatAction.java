@@ -24,12 +24,13 @@ import com.cgwas.common.json.entity.Result;
 import com.fengyun.entity.Member;
 import com.fengyun.entity.Message;
 import com.fengyun.service.IMemberService;
-import com.fengyun.util.HTTPConfig;
 import com.fengyun.util.GenerateFile;
+import com.fengyun.util.HTTPConfig;
 import com.fengyun.util.HttpUtil;
 import com.fengyun.util.Pinyin4jUtil;
 
 /**
+ * 单聊
  * Author yangjun
  */
 @Controller
@@ -40,10 +41,13 @@ public class SingleChatAction {
 	private SimpleDateFormat sdf = new SimpleDateFormat("MM/dd HH:mm:ss");
 	@Autowired
 	private IMemberService memberService;
-
+	/**
+	 * 获取自己在单聊中的名称
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("getSingleChatOwnName")
 	@ResponseBody
-	// TODO抽离
 	public Map<String, Object> getSingleChatOwnName(HttpSession session) {
 		JSONObject user = JSONObject.parseObject(session.getAttribute(
 				"loginUser").toString());
@@ -65,7 +69,13 @@ public class SingleChatAction {
 		query.put("time", timeSdf.format(new Date()));
 		return query;
 	}
-
+    /**
+     * 更改自己在单聊中的聊天在线状态
+     * @param session
+     * @param state
+     * @param user_id
+     * @return
+     */
 	@RequestMapping("/changeOnlineState")
 	@ResponseBody
 	public Result changeOnlineState(HttpSession session, String state,
@@ -78,12 +88,16 @@ public class SingleChatAction {
 		Map<String, Object> query = new HashMap<String, Object>();
 		query.put("user_id", user_id);
 		query.put("state", state);
-		System.out.println("============changeOnlineState==user_id:" + user_id
-				+ "============");
 		memberService.updateOnlieState(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 更改自己在单聊中的真实姓名
+	 * @param real_name
+	 * @param friend_id
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/changeRealName")
 	@ResponseBody
 	public Result changeRealName(String real_name, Long friend_id,
@@ -98,7 +112,14 @@ public class SingleChatAction {
 		memberService.changeRealName(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+     /**
+      * 是否同意别人邀你为好友关系
+      * @param session
+      * @param friend_id
+      * @param agree
+      * @param msg
+      * @return
+      */
 	@RequestMapping("/agree")
 	@ResponseBody
 	public Result agree(HttpSession session, Long friend_id, String agree,
@@ -121,7 +142,7 @@ public class SingleChatAction {
 
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+    
 	@RequestMapping("changeProgressState")
 	@ResponseBody
 	public Result changeProgressState(HttpSession session) {
@@ -133,7 +154,12 @@ public class SingleChatAction {
 		memberService.changeProgressState(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+    /**
+     * 删除我的好友
+     * @param session
+     * @param friend_id
+     * @return
+     */
 	@RequestMapping("/deleteMyFriend")
 	@ResponseBody
 	public Result deleteMyFriend(HttpSession session, Long friend_id) {
@@ -148,7 +174,11 @@ public class SingleChatAction {
 	}
 
 	
-
+	/**
+	 * 获取我的新好友
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/getMyNewFriend")
 	@ResponseBody
 	public Result getMyNewFriend(HttpSession session) {
@@ -167,6 +197,7 @@ public class SingleChatAction {
 		}
 		return new Result(Result.SUCCESS, String.valueOf(count), members);
 	}
+	//添加员工到好友列表里
 	@RequestMapping("/addEmployeeToChatMember")
 	@ResponseBody
 	public Result addEmployeeToChatMember(Long user_id,
@@ -218,6 +249,13 @@ public class SingleChatAction {
 		}
 		return new Result(Result.SUCCESS, "", null);
 	}
+	/**
+	 * 申请添加好友
+	 * @param session
+	 * @param member
+	 * @param msg
+	 * @return
+	 */
 	@RequestMapping("/joinMemeber")
 	@ResponseBody
 	public Result joinMemeber(HttpSession session, Member member, String msg) {
@@ -233,12 +271,9 @@ public class SingleChatAction {
 		member.setState("Y");
 		int num = memberService.isExistOrNot(member);
 		if (num == 0) {
-			System.out.println("=====================");
 			memberService.save(member);
-			System.out.println(member);
 			Map<String, Object> query = new HashMap<String, Object>();
 			query.put("search", nickname);
-			System.out.println(query);
 			List<Member> members = memberService.searchFriend(query);
 			if (members.size() > 0) {
 				Member m = members.get(0);
@@ -253,8 +288,6 @@ public class SingleChatAction {
 				} else {
 					m.setState("N");
 				}
-				System.out.println(m);
-				System.out.println("=====================");
 				memberService.save(m);
 			}
 		} else {
@@ -269,7 +302,12 @@ public class SingleChatAction {
 		}
 		return new Result(Result.SUCCESS, "", null);
 	}
-
+	/**
+	 * 检查指定人员是否为我的好友
+	 * @param session
+	 * @param friend_id
+	 * @return
+	 */
 	@RequestMapping("/checkIsMyFriend")
 	@ResponseBody
 	public Result checkIsMyFriend(HttpSession session, Long friend_id) {
@@ -285,7 +323,14 @@ public class SingleChatAction {
 		}
 		return new Result(Result.SUCCESS, "是好友关系", null);
 	}
-
+     /**
+      * 获取单聊的聊天记录
+      * @param session
+      * @param member
+      * @param pageSize
+      * @param pageNo
+      * @return
+      */
 	@RequestMapping("/getChatMessage")
 	@ResponseBody
 	public Result getChatMessage(HttpSession session, Member member,
@@ -413,7 +458,11 @@ public class SingleChatAction {
 		params.put("message", sb.toString());
 		return new Result(Result.SUCCESS, "成功", params);
 	}
-
+    /**
+     * 获取对方的邀请好友消息
+     * @param session
+     * @return
+     */
 	@RequestMapping("/getDefaultMessage")
 	@ResponseBody
 	public Result getDefaultMessage(HttpSession session) {
@@ -429,7 +478,11 @@ public class SingleChatAction {
 		}
 		return new Result(Result.SUCCESS, "成功", message);
 	}
-
+	/**
+	 * 搜索好友
+	 * @param search
+	 * @return
+	 */
 	@RequestMapping("/searchFriend")
 	@ResponseBody
 	public Result searchFriend(String search) {
@@ -438,7 +491,7 @@ public class SingleChatAction {
 		List<Member> members = memberService.searchFriend(query);
 		return new Result(Result.SUCCESS, "成功", members);
 	}
-
+    
 	@SuppressWarnings("unchecked")
 	@RequestMapping("/isMyFrendOrNot")
 	@ResponseBody
@@ -452,7 +505,12 @@ public class SingleChatAction {
 		List<Member> members = memberService.isMyFrendOrNot(query);
 		return new Result(Result.SUCCESS, "成功", members);
 	}
-
+	/**
+	 * 搜索我的好友
+	 * @param search
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/searchMyFriend")
 	@ResponseBody
 	public Result searchMyFriend(String search, HttpSession session) {
@@ -466,7 +524,12 @@ public class SingleChatAction {
 		sortMemebers(members);
 		return new Result(Result.SUCCESS, "成功", members);
 	}
-
+	/**
+	 * 更改我的消息阅读状态
+	 * @param friend_id
+	 * @param session
+	 * @return
+	 */
 	@RequestMapping("/updateReadState")
 	@ResponseBody
 	public Result updateReadState(Long friend_id, HttpSession session) {
@@ -479,7 +542,12 @@ public class SingleChatAction {
 		memberService.updateReadState(query);
 		return new Result(Result.SUCCESS, "成功", null);
 	}
-
+	/**
+	 * 获取我的好友列表
+	 * @param session
+	 * @return
+	 * @throws Exception
+	 */
 	@RequestMapping("/getMyFriends")
 	@ResponseBody
 	public Result getMyFriends(HttpSession session) throws Exception {
@@ -506,7 +574,10 @@ public class SingleChatAction {
 		sortMemebers(members);
 		return new Result(Result.SUCCESS, onlineNum + "", members);
 	}
-
+	/**
+	 * 对于好友列表按名称拼音排序
+	 * @param members
+	 */
 	private void sortMemebers(List<Member> members) {
 		Collections.sort(members, new Comparator<Member>() {
 			@Override
@@ -550,16 +621,4 @@ public class SingleChatAction {
 			}
 		});
 	}
-
-	@RequestMapping("/update")
-	public @ResponseBody
-	Result update(Member member) {
-		if (member != null) {
-			memberService.updateIgnoreNull(member);
-			return new Result("保存成功!");
-		} else {
-			return new Result("数据传输失败!");
-		}
-	}
-
 }

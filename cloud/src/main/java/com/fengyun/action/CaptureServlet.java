@@ -20,7 +20,7 @@ import com.cloopen.rest.sdk.utils.encoder.BASE64Encoder;
 import com.fengyun.util.ImageUtil;
 
 /**
- * Servlet implementation class Capture
+ * 该servlet实现了聊天中截图工具生成图片并返回图片存储路径
  */
 public class CaptureServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
